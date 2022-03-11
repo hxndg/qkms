@@ -1,0 +1,87 @@
+// 以下的所有请求，写权限都是只有该密钥的拥有者，也就是grpc签名的appkey和密钥的appkey一致的才能拥有
+// 读权限都是看权限授予表里面有没有授予对应appkey相应密钥的权限
+
+message ReadAccessKeyRequest {
+    string namespace = 1;
+    string name = 2;
+    string environment = 3;
+}
+
+message ReadAccessKeyReply {
+    uint64 error_code = 1;
+    string namespace = 2;
+    string name = 3;
+    string plain_ak = 4;
+    string key_type = 5;
+    string environment = 6;
+    uint64 version = 7;
+}
+
+message GenerateAccessKeyRequest {
+    string namespace = 1;
+    string name = 2;
+    string key_type = 3;
+    string environment = 4;
+}
+
+message GenerateAccessKeyReply {
+    uint64 error_code = 1;
+}
+
+// 首先key_type需要和数据库里面的key_type一致。
+// 其次，这个是自动rotate，如果类型的key_type不是opquae那么会出错
+message RotateAccessKeyRequest {
+    string namespace = 1;
+    string name = 2;
+    string key_type = 3;
+    string environment = 4;
+}
+
+message RotateAccessKeyReply {
+    uint64 error_code = 1;
+}
+
+message CreateAccessKeyRequest {
+    string namespace = 1;
+    string name = 2;
+    string content = 3;
+    string key_type = 4;
+    string environment = 5;
+}
+
+message CreateAccessKeyReply {
+    uint64 error_code = 1;
+}
+
+// 首先key_type需要和数据库里面的key_type一致。
+message UpdateAccessKeyRequest {
+    string namespace = 1;
+    string name = 2;
+    string key_type = 3;
+    string content = 4;
+    string environment = 5;
+}
+
+message UpdateAccessKeyReply {
+    uint64 error_code = 1;
+}
+
+message GrantAccessKeyAuthorizationRequest {
+    strign namespace = 1;
+    string name = 2;
+    string environment = 3;
+    string appkey = 4;
+}
+
+message GrantAccessKeyAuthorizationReply {
+    uint64 error_code = 1;
+}
+
+service qkms {
+    rpc ReadAccessKey(ReadAccessKeyRequest) returns (ReadAccessKeyReply) {}
+    rpc GenerateAccessKey() 
+    rpc CreateAccessKey()
+    rpc UpdateAccessKey()
+    rpc RotateAccessKey()
+    rpc GrantAccessKeyAuthorization()
+}
