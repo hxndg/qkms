@@ -79,9 +79,9 @@ message GrantAccessKeyAuthorizationReply {
 
 service qkms {
     rpc ReadAccessKey(ReadAccessKeyRequest) returns (ReadAccessKeyReply) {}
-    rpc GenerateAccessKey() 
-    rpc CreateAccessKey()
-    rpc UpdateAccessKey()
-    rpc RotateAccessKey()
-    rpc GrantAccessKeyAuthorization()
+    rpc GenerateAccessKey(GenerateAccessKeyReply) returns (GenerateAccessKeyReply) {}
+    rpc CreateAccessKey(CreateAccessKeyRequest) returns (CreateAccessKeyRequest) {}
+    rpc UpdateAccessKey(UpdateAccessKeyRequest) returns (UpdateAccessKeyReply) {}
+    rpc RotateAccessKey(RotateAccessKeyRequest) returns (RotateAccessKeyReply) {}
+    rpc GrantAccessKeyAuthorization(GrantAccessKeyAuthorizationRequest) returns (GrantAccessKeyAuthorizationReply) {}
 }
