@@ -1,6 +1,12 @@
 // 以下的所有请求，写权限都是只有该密钥的拥有者，也就是grpc签名的appkey和密钥的appkey一致的才能拥有
 // 读权限都是看权限授予表里面有没有授予对应appkey相应密钥的权限
 
+syntax = "proto3";
+
+option go_package="./;qkms_proto";
+
+package qkms_proto;
+
 message ReadAccessKeyRequest {
     string namespace = 1;
     string name = 2;
@@ -67,7 +73,7 @@ message UpdateAccessKeyReply {
 }
 
 message GrantAccessKeyAuthorizationRequest {
-    strign namespace = 1;
+    string   namespace = 1;
     string name = 2;
     string environment = 3;
     string appkey = 4;

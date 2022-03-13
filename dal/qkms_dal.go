@@ -2,6 +2,7 @@ package qkms_dal
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/golang/glog"
@@ -46,4 +47,36 @@ func (d *BaseDal) Init(cfg DBConfig) error {
 
 func (d *BaseDal) Query(ctx context.Context) *gorm.DB {
 	return d.DB.WithContext(ctx)
+}
+
+var (
+	dalCli *Dal
+)
+
+type Dal struct {
+	cli BaseDal
+}
+
+func (d *Dal) Query(ctx context.Context) *gorm.DB {
+	return d.cli.WithContext(ctx)
+}
+
+func (d *Dal) IsNotFound(err error) bool {
+	if err == nil {
+		return false
+	}
+	return errors.Is(err, gorm.ErrRecordNotFound)
+}
+
+func MustInit(cfg DBConfig) {
+	dalCli = &Dal{}
+	dalCli.cli.MustInit(cfg)
+}
+
+func GetDal() *Dal {
+	if dalCli == nil {
+		glog.Fatalf("dal not initialized")
+		return nil
+	}
+	return dalCli
 }
