@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
+	"encoding/base64"
 )
 
 //@brief:填充明文
@@ -48,4 +49,12 @@ func AesCBCDecrypt(crypted, key []byte) ([]byte, error) {
 	blockMode.CryptBlocks(origData, crypted)
 	origData = PKCS5UnPadding(origData)
 	return origData, nil
+}
+
+func Base64Encoding(src []byte) string {
+	return base64.StdEncoding.EncodeToString(src)
+}
+
+func Base64Decoding(src string) ([]byte, error) {
+	return base64.StdEncoding.DecodeString(src)
 }
