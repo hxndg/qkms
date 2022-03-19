@@ -2,7 +2,7 @@ package qkms_model
 
 type KeyEncryptionKey struct {
 	ID           uint64 `gorm:"primaryKey;column:id"`
-	NameSpace    string `gorm:"index;column:namespace"`
+	NameSpace    string `gorm:"uniqueIndex;column:namespace"`
 	EncryptedKEK string `gorm:"column:encryptedkek"`
 	KeyType      string `gorm:"column:keytype"`
 	Srand        uint64 `gorm:"column:srand"`

@@ -9,6 +9,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
+
+
 	"github.com/golang/glog"
 
 	pb "qkms/proto"
@@ -70,12 +72,12 @@ func main() {
 	kek.OwnerAppkey = "abc"
 	kek.RKVersion = 0
 
-	enc_content, enc_error := qkms_crypto.AesCBCEncrypt([]byte("hello world"), []byte(root_key))
+	enc_content, enc_error := qkms_crypto.AesCBCEncrypt([]byte("hello worldddddddddddddddd"), []byte(root_key))
 	if enc_error != nil {
 		glog.Error("Can't Create Server, %s", enc_error)
 	}
 	kek.EncryptedKEK = qkms_crypto.Base64Encoding(enc_content)
-	glog.Info(fmt.Sprintf("Input KEK is %+v, plain_kek is %s", kek, "hello world"))
+	glog.Info(fmt.Sprintf("Input KEK is %+v, plain_kek is %s", kek, "hello worldddddddddddddddd"))
 
 	_, err := qkms_dal.GetDal().CreateKeyEncryptionKey(context.Background(), &kek)
 	if err != nil {
