@@ -12,3 +12,7 @@ type KeyEncryptionKey struct {
 	RKVersion    uint64 `gorm:"column:rkversion"`
 	OwnerAppkey  string `gorm:"column:ownerappkey"`
 }
+
+func (KeyEncryptionKey) TableName() string {
+	return "KeyEncryptionKeys"
+}

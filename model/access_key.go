@@ -13,3 +13,7 @@ type AccessKey struct {
 	KEKVersion  uint64 `gorm:"column:kekversion"`
 	OwnerAppkey string `gorm:"column:ownerappkey"`
 }
+
+func (AccessKey) TableName() string {
+	return "AccessKeys"
+}

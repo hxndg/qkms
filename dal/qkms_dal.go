@@ -33,8 +33,8 @@ func (d *BaseDal) MustInit(cfg DBConfig) {
 
 func (d *BaseDal) Init(cfg DBConfig) error {
 	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		cfg.Username, cfg.Password, cfg.Host, cfg.Port, cfg.DbName,
+		"host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai",
+		cfg.Host, cfg.Username, cfg.Password, cfg.DbName, cfg.Port,
 	)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Error), // log sql
@@ -45,7 +45,7 @@ func (d *BaseDal) Init(cfg DBConfig) error {
 	}
 	d.DB = db
 	//自动迁移，如果表已经存在不会重新创建。
-	d.DB.AutoMigrate(&qkms_model.AccessKey{}, &qkms_model.KeyAuthorization{}, &qkms_model.KeyAuthorization{})
+	d.DB.AutoMigrate(&qkms_model.AccessKey{}, &qkms_model.KeyEncryptionKey{}, &qkms_model.KeyAuthorizationRelation{})
 	return err
 }
 
