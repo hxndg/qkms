@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 
+	qkms_model "qkms/model"
+
 	"github.com/golang/glog"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -38,10 +40,12 @@ func (d *BaseDal) Init(cfg DBConfig) error {
 		Logger: logger.Default.LogMode(logger.Error), // log sql
 	})
 	if err != nil {
-		glog.Errorf("connect database failed. err=%v config=%v", err, cfg)
+		glog.Errorf("Connect database failed. err=%v config=%v", err, cfg)
 		return err
 	}
 	d.DB = db
+	//自动迁移，如果表已经存在不会重新创建。
+	d.DB.AutoMigrate(&qkms_model.AccessKey{}, &qkms_model.KeyAuthorization{}, &qkms_model.KeyAuthorization{})
 	return err
 }
 

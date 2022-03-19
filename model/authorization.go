@@ -5,5 +5,6 @@ type KeyAuthorization struct {
 	NameSpace     string `gorm:"index;column:namespace"`
 	Name          string `gorm:"index;column:name"`
 	Environment   string `gorm:"column:environment"`
-	GrantedAppkey string `gorm:"column:grant_appkey"`
+	OwnerAppkey   string `gorm:"column:ownerappkey"`
+	GrantedAppkey string `gorm:"column:grantappkey"`
 }
