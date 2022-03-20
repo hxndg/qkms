@@ -5,6 +5,9 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/base64"
+	"fmt"
+
+	"github.com/golang/glog"
 )
 
 //@brief:填充明文
@@ -57,4 +60,19 @@ func Base64Encoding(src []byte) string {
 
 func Base64Decoding(src string) ([]byte, error) {
 	return base64.StdEncoding.DecodeString(src)
+}
+
+func Base64DecodeAesCBCDecrypt(src string, pass []byte) ([]byte, error) {
+	old_enc_content, err := Base64Decoding(src)
+	if err != nil {
+		glog.Error(fmt.Sprintf("Base64DecodeAesCBCDecrypt failed! Base64 decode failed! %s", err.Error()))
+		return nil, err
+	}
+
+	plain_content, err := AesCBCDecrypt(old_enc_content, pass)
+	if err != nil {
+		glog.Error(fmt.Sprintf("Base64DecodeAesCBCDecrypt failed! Decrypted failed! %s", err.Error()))
+		return nil, err
+	}
+	return plain_content, nil
 }

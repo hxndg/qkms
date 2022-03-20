@@ -25,10 +25,10 @@ func (d *Dal) AccquireKeyEncryptionKey(ctx context.Context, namespace string, en
 func (d *Dal) CreateKeyEncryptionKey(ctx context.Context, key *qkms_model.KeyEncryptionKey) (int64, error) {
 	result := d.Query(ctx).Create(key)
 	if result.Error != nil {
-		glog.Error(fmt.Sprintf("Insert new KEK failed! KEK Info: %+v, Failed Info: %s", *key, result.Error.Error()))
+		glog.Error(fmt.Sprintf("Create new KEK failed! KEK Info: %+v, Failed Info: %s", *key, result.Error.Error()))
 		return 500, result.Error
 	}
-	glog.Info(fmt.Sprintf("Insert new KEK success! KEK Info: %+v", *key))
+	glog.Info(fmt.Sprintf("Create new KEK success! KEK Info: %+v", *key))
 
 	return 200, nil
 }
@@ -38,11 +38,11 @@ func (d *Dal) UpdateKeyEncryptionKey(ctx context.Context, key *qkms_model.KeyEnc
 		// 先读取，如果找不到就放弃了,借此尽量用读锁，放弃写锁的争用
 		var old_kek qkms_model.KeyEncryptionKey
 		if err := tx.Model(&qkms_model.KeyEncryptionKey{}).Where("namespace = ? AND keytype = ? AND environment = ? AND version = ? AND rkversion = ? AND ownerappkey = ?", key.NameSpace, key.KeyType, key.Environment, key.Version-1, key.RKVersion, key.OwnerAppkey).First(&old_kek).Error; err != nil {
-			glog.Error(fmt.Sprintf("Update new KEK failed! Can't find original KEK Info: %+v, Failed Info: %s", *key, err.Error()))
+			glog.Error(fmt.Sprintf("Update new KEK failed! Can't find original KEK: %+v, Failed Info: %s", *key, err.Error()))
 			return err
 		}
-		if err := tx.Model(&qkms_model.KeyEncryptionKey{}).Where("namespace = ? AND keytype = ? AND environment = ? AND version = ? AND rkversion = ? AND ownerappkey = ?", key.NameSpace, key.KeyType, key.Environment, key.Version-1, key.RKVersion, key.OwnerAppkey).Updates(key).Error; err != nil {
-			glog.Error(fmt.Sprintf("Update new KEK failed! KEK Info: %+v, Failed Info: %s", *key, err.Error()))
+		if err := tx.Model(&old_kek).Updates(key).Error; err != nil {
+			glog.Error(fmt.Sprintf("Update new KEK failed! Can't update finded original KEK. KEK Info: %+v, Failed Info: %s", *key, err.Error()))
 			return err
 		}
 		glog.Info(fmt.Sprintf("Try lock update new KEK success! KEK Info: %+v", *key))
@@ -76,9 +76,10 @@ func (d *Dal) UpdateKeyEncryptionKey(ctx context.Context, key *qkms_model.KeyEnc
 			new_ak.EncryptedAK = base64_new_enc_content
 			new_ak.KEKVersion = key.Version
 			if err := tx.Model(&qkms_model.AccessKey{}).Where(aks[i]).Updates(new_ak).Error; err != nil {
-				glog.Error(fmt.Sprintf("Update new KEK use new AK failed! KEK Info:%+v, AK Info: %+v, Failed Info: %s", *key, aks[i], err.Error()))
+				glog.Error(fmt.Sprintf("Update new KEK related new AK failed! KEK Info:%+v, AK Info: %+v, Failed Info: %s", *key, aks[i], err.Error()))
 				return err
 			}
+			glog.Error(fmt.Sprintf("Update new KEK related AK success ! old AK : %+v, new AK : %+v", aks[i], new_ak))
 		}
 
 		glog.Info(fmt.Sprintf("Update new KEK success! KEK Info:%+v", *key))

@@ -13,8 +13,9 @@ import (
 func (d *Dal) CreateAccessKey(ctx context.Context, key *qkms_model.AccessKey) (int64, error) {
 	trans_error := d.Query(ctx).Transaction(func(tx *gorm.DB) error {
 		// 先根据accesskey的内容，使用共享锁锁住kek
-		if err := tx.First(&qkms_model.KeyEncryptionKey{NameSpace: key.NameSpace, Environment: key.Environment, Version: key.KEKVersion}).Error; err != nil {
-			glog.Error(fmt.Sprintf("Lock KEK failed!, AK Info :%+v, Failed Info: %s", *key, err.Error()))
+		var kek qkms_model.KeyEncryptionKey
+		if err := tx.Model(&qkms_model.KeyEncryptionKey{}).Where("namespace = ? AND environment = ? AND version = ? ", key.NameSpace, key.Environment, key.KEKVersion).First(&kek).Error; err != nil {
+			glog.Error(fmt.Sprintf("Create new AK failed! Can't find original KEK Info: %+v, Failed Info: %s", *key, err.Error()))
 			return err
 		}
 		// 现在尝试写入ak的内容
