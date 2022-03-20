@@ -2,8 +2,8 @@ package qkms_model
 
 type KeyAuthorizationRelation struct {
 	ID            uint64 `gorm:"primaryKey;column:id"`
-	NameSpace     string `gorm:"uniqueIndex;column:namespace"`
-	Name          string `gorm:"uniqueIndex;column:name"`
+	NameSpace     string `gorm:"index:idx_kar,unique;column:namespace"`
+	Name          string `gorm:"index:idx_kar,unique;column:name"`
 	Environment   string `gorm:"column:environment"`
 	OwnerAppkey   string `gorm:"column:ownerappkey"`
 	GrantedAppkey string `gorm:"column:grantappkey"`

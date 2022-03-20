@@ -2,8 +2,8 @@ package qkms_model
 
 type AccessKey struct {
 	ID          uint64 `gorm:"primaryKey;column:id"`
-	NameSpace   string `gorm:"uniqueIndex;column:namespace"`
-	Name        string `gorm:"uniqueIndex;column:name"`
+	NameSpace   string `gorm:"index:idx_ak,unique;column:namespace"`
+	Name        string `gorm:"index:idx_ak,unique;column:name"`
 	EncryptedAK string `gorm:"column:encryptedak"`
 	KeyType     string `gorm:"column:keytype"`
 	Srand       uint64 `gorm:"column:srand"`

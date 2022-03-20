@@ -36,13 +36,19 @@ func (d *Dal) CreateAccessKey(ctx context.Context, key *qkms_model.AccessKey) (i
 func (d *Dal) UpdateAccessKey(ctx context.Context, key *qkms_model.AccessKey) (int64, error) {
 	trans_error := d.Query(ctx).Transaction(func(tx *gorm.DB) error {
 		// 先根据accesskey的内容，使用共享锁锁住kek
-		if err := tx.First(&qkms_model.KeyEncryptionKey{NameSpace: key.NameSpace, Environment: key.Environment, Version: key.KEKVersion}).Error; err != nil {
-			glog.Error(fmt.Sprintf("Lock KEK failed!, AK Info :%+v, Failed Info: %s", *key, err.Error()))
+		var kek qkms_model.KeyEncryptionKey
+		if err := tx.Model(&qkms_model.KeyEncryptionKey{}).Where("namespace = ? AND environment = ? AND version = ? ", key.NameSpace, key.Environment, key.KEKVersion).First(&kek).Error; err != nil {
+			glog.Error(fmt.Sprintf("Update new AK failed! Can't find original KEK Info: %+v, Failed Info: %s", *key, err.Error()))
 			return err
 		}
 		// 现在尝试写入ak的内容
-		if err := tx.Model(&qkms_model.AccessKey{}).Where("namespace = ? AND name = ? AND keytype = ? AND environment = ? AND version = ? AND kekversion = ? AND ownerappkey = ?", key.NameSpace, key.Name, key.KeyType, key.Environment, key.Version-1, key.KEKVersion, key.OwnerAppkey).Updates(key).Error; err != nil {
-			glog.Error(fmt.Sprintf("Update AK failed!, AK Info :%+v, Failed info: %s", *key, err.Error()))
+		var old_ak qkms_model.AccessKey
+		if err := tx.Model(&qkms_model.AccessKey{}).Where("namespace = ? AND name = ? AND keytype = ? AND environment = ? AND version = ? AND kekversion = ? AND ownerappkey = ?", key.NameSpace, key.Name, key.KeyType, key.Environment, key.Version-1, key.KEKVersion, key.OwnerAppkey).First(&old_ak).Error; err != nil {
+			glog.Error(fmt.Sprintf("Update AK failed, Can't find original AK! AK Info :%+v, Failed info: %s", *key, err.Error()))
+			return err
+		}
+		if err := tx.Model(&old_ak).Updates(key).Error; err != nil {
+			glog.Error(fmt.Sprintf("Update AK failed, AK Info :%+v, Failed info: %s", *key, err.Error()))
 			return err
 		}
 
