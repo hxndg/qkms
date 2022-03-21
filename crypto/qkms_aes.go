@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/rand"
 )
 
 //@brief:填充明文
@@ -48,6 +49,12 @@ func AesCBCDecrypt(crypted, key []byte) ([]byte, error) {
 	blockMode.CryptBlocks(origData, crypted)
 	origData = PKCS5UnPadding(origData)
 	return origData, nil
+}
+
+func GenerateIV(bytes int) []byte {
+	b := make([]byte, bytes)
+	rand.Read(b)
+	return b
 }
 
 func AesCTRDefaultIVEncrypt(plaintext []byte, key []byte) ([]byte, error) {
