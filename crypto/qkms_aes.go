@@ -4,10 +4,6 @@ import (
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
-	"encoding/base64"
-	"fmt"
-
-	"github.com/golang/glog"
 )
 
 //@brief:填充明文
@@ -54,25 +50,38 @@ func AesCBCDecrypt(crypted, key []byte) ([]byte, error) {
 	return origData, nil
 }
 
-func Base64Encoding(src []byte) string {
-	return base64.StdEncoding.EncodeToString(src)
-}
-
-func Base64Decoding(src string) ([]byte, error) {
-	return base64.StdEncoding.DecodeString(src)
-}
-
-func Base64DecodeAesCBCDecrypt(src string, pass []byte) ([]byte, error) {
-	old_enc_content, err := Base64Decoding(src)
+func AesCTRDefaultIVEncrypt(plaintext []byte, key []byte) ([]byte, error) {
+	block, err := aes.NewCipher(key)
 	if err != nil {
-		glog.Error(fmt.Sprintf("Base64DecodeAesCBCDecrypt failed! Base64 decode failed! %s", err.Error()))
 		return nil, err
 	}
+	// Default IV
+	iv := []byte{0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff}
+	//CTR模式是不需要填充的，返回一个计数器模式的，底层采用block生成key流的srtream接口
+	stream := cipher.NewCTR(block, iv)
+	ciphertext := make([]byte, len(plaintext))
+	//加密操作
+	stream.XORKeyStream(ciphertext, plaintext)
+	return ciphertext, nil
+}
 
-	plain_content, err := AesCBCDecrypt(old_enc_content, pass)
+func AesCTRDefaultIVDecrypt(plaintext []byte, key []byte) ([]byte, error) {
+	return AesCTRDefaultIVEncrypt(plaintext, key)
+}
+
+func AesCTREncrypt(plaintext []byte, iv []byte, key []byte) ([]byte, error) {
+	block, err := aes.NewCipher(key)
 	if err != nil {
-		glog.Error(fmt.Sprintf("Base64DecodeAesCBCDecrypt failed! Decrypted failed! %s", err.Error()))
 		return nil, err
 	}
-	return plain_content, nil
+	//CTR模式是不需要填充的，返回一个计数器模式的，底层采用block生成key流的srtream接口
+	stream := cipher.NewCTR(block, iv)
+	ciphertext := make([]byte, len(plaintext))
+	//加密操作
+	stream.XORKeyStream(ciphertext, plaintext)
+	return ciphertext, nil
+}
+
+func AesCTRDecrypt(plaintext []byte, iv []byte, key []byte) ([]byte, error) {
+	return AesCTREncrypt(plaintext, iv, key)
 }
