@@ -5,14 +5,14 @@ import (
 	"crypto/x509"
 	qkms_crypto "qkms/crypto"
 	qkms_dal "qkms/dal"
-	pb "qkms/proto"
+	qkms_proto "qkms/proto"
 
 	"github.com/golang/glog"
 	cmap "github.com/orcaman/concurrent-map"
 )
 
 type QkmsRealServer struct {
-	pb.UnimplementedQkmsServer
+	qkms_proto.UnimplementedQkmsServer
 	x509_cert tls.Certificate
 	root_key  []byte
 	cache_key []byte

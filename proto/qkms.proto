@@ -78,7 +78,7 @@ message GrantAccessKeyAuthorizationRequest {
     string Name = 2;
     string Environment = 3;
     string Appkey = 4;
-    string Bahavior = 5;
+    string Behavior = 5;
 }
 
 message GrantAccessKeyAuthorizationReply {

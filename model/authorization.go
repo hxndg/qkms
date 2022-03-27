@@ -7,6 +7,7 @@ type KeyAuthorizationRelation struct {
 	Environment   string `gorm:"column:environment"`
 	OwnerAppkey   string `gorm:"column:ownerappkey"`
 	GrantedAppkey string `gorm:"column:grantappkey"`
+	Behavior      string `gorm:"column:behavior"`
 }
 
 func (KeyAuthorizationRelation) TableName() string {

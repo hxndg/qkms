@@ -6,7 +6,7 @@ import (
 	qkms_crypto "qkms/crypto"
 	qkms_dal "qkms/dal"
 	qkms_model "qkms/model"
-	pb "qkms/proto"
+	qkms_proto "qkms/proto"
 
 	"github.com/golang/glog"
 )
@@ -208,9 +208,9 @@ func (server *QkmsRealServer) ReadKEKByNamespaceAndVersion(ctx context.Context, 
 	return QKMS_ERROR_CODE_KEK_VERSION_MISMATCH, nil, errors.New("kek version mismatch")
 }
 
-func (server *QkmsRealServer) CreateKeyEncryptionKey(ctx context.Context, req *pb.CreateKeyEncryptionKeyRequest) (*pb.CreateKeyEncryptionKeyReply, error) {
+func (server *QkmsRealServer) CreateKeyEncryptionKey(ctx context.Context, req *qkms_proto.CreateKeyEncryptionKeyRequest) (*qkms_proto.CreateKeyEncryptionKeyReply, error) {
 	cmap_key := req.NameSpace + "#" + req.Environment
-	var reply pb.CreateKeyEncryptionKeyReply
+	var reply qkms_proto.CreateKeyEncryptionKeyReply
 	plain_cache_kek := PlainCacheKEK{
 		NameSpace:    req.NameSpace,
 		KEKPlaintext: qkms_crypto.Base64Encoding(qkms_crypto.GeneratePass(16)),
