@@ -8,88 +8,90 @@ option go_package="./;qkms_proto";
 package qkms_proto;
 
 message ReadAccessKeyRequest {
-    string namespace = 1;
-    string name = 2;
-    string environment = 3;
+    string NameSpace = 1;
+    string Name = 2;
+    string Environment = 3;
 }
 
 message ReadAccessKeyReply {
-    uint64 error_code = 1;
-    string namespace = 2;
-    string name = 3;
-    string plain_ak = 4;
-    string key_type = 5;
-    string environment = 6;
-    uint64 version = 7;
+    uint64 ErrorCode = 1;
+    string NameSpace = 2;
+    string Name = 3;
+    string AKPlaintext = 4;
+    string KeyType = 5;
+    string Environment = 6;
+    uint64 Version = 7;
 }
 
 message GenerateAccessKeyRequest {
-    string namespace = 1;
-    string name = 2;
-    string key_type = 3;
-    string environment = 4;
+    string NameSpace = 1;
+    string Name = 2;
+    string KeyType = 3;
+    string Environment = 4;
 }
 
 message GenerateAccessKeyReply {
-    uint64 error_code = 1;
+    uint64 ErrorCode = 1;
 }
 
 // 首先key_type需要和数据库里面的key_type一致。
 // 其次，这个是自动rotate，如果类型的key_type不是opquae那么会出错
 message RotateAccessKeyRequest {
-    string namespace = 1;
-    string name = 2;
-    string key_type = 3;
-    string environment = 4;
+    string NameSpace = 1;
+    string Name = 2;
+    string KeyType = 3;
+    string Environment = 4;
 }
 
 message RotateAccessKeyReply {
-    uint64 error_code = 1;
+    uint64 ErrorCode = 1;
 }
 
 message CreateAccessKeyRequest {
-    string namespace = 1;
-    string name = 2;
-    string content = 3;
-    string key_type = 4;
-    string environment = 5;
+    string NameSpace = 1;
+    string Name = 2;
+    string AKPlaintext = 3;
+    string KeyType = 4;
+    string Environment = 5;
 }
 
 message CreateAccessKeyReply {
-    uint64 error_code = 1;
+    uint64 ErrorCode = 1;
 }
 
 // 首先key_type需要和数据库里面的key_type一致。
 message UpdateAccessKeyRequest {
-    string namespace = 1;
-    string name = 2;
-    string key_type = 3;
-    string content = 4;
-    string environment = 5;
+    string NameSpace = 1;
+    string Name = 2;
+    string KeyType = 3;
+    string AKPlaintext = 4;
+    string Environment = 5;
+    uint64 Version = 6;
 }
 
 message UpdateAccessKeyReply {
-    uint64 error_code = 1;
+    uint64 ErrorCode = 1;
 }
 
 message GrantAccessKeyAuthorizationRequest {
-    string   namespace = 1;
-    string name = 2;
-    string environment = 3;
-    string appkey = 4;
+    string NameSpace = 1;
+    string Name = 2;
+    string Environment = 3;
+    string Appkey = 4;
+    string Bahavior = 5;
 }
 
 message GrantAccessKeyAuthorizationReply {
-    uint64 error_code = 1;
+    uint64 ErrorCode = 1;
 }
 
 message CreateKeyEncryptionKeyRequest {
-    string namespace = 1;
-    string environment = 2;
+    string NameSpace = 1;
+    string Environment = 2;
 }
 
 message CreateKeyEncryptionKeyReply {
-    uint64 error_code = 1;
+    uint64 ErrorCode = 1;
 }
 
 service qkms {

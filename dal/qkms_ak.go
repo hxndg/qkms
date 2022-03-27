@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (d *Dal) CreateAccessKey(ctx context.Context, key *qkms_model.AccessKey) (int64, error) {
+func (d *Dal) CreateAccessKey(ctx context.Context, key *qkms_model.AccessKey) (uint64, error) {
 	trans_error := d.Query(ctx).Transaction(func(tx *gorm.DB) error {
 		// 先根据accesskey的内容，使用共享锁锁住kek
 		var kek qkms_model.KeyEncryptionKey
@@ -34,7 +34,7 @@ func (d *Dal) CreateAccessKey(ctx context.Context, key *qkms_model.AccessKey) (i
 	return 200, nil
 }
 
-func (d *Dal) UpdateAccessKey(ctx context.Context, key *qkms_model.AccessKey) (int64, error) {
+func (d *Dal) UpdateAccessKey(ctx context.Context, key *qkms_model.AccessKey) (uint64, error) {
 	trans_error := d.Query(ctx).Transaction(func(tx *gorm.DB) error {
 		// 先根据accesskey的内容，使用共享锁锁住kek
 		var kek qkms_model.KeyEncryptionKey

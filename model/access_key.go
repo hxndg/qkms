@@ -4,7 +4,7 @@ type AccessKey struct {
 	ID           uint64 `gorm:"primaryKey;column:id"`
 	NameSpace    string `gorm:"index:idx_ak,unique;column:namespace"`
 	Name         string `gorm:"index:idx_ak,unique;column:name"`
-	CipherTextAK string `gorm:"column:ciphertextak"`
+	AKCiphertext string `gorm:"column:akciphertext"`
 	KeyType      string `gorm:"column:keytype"`
 	Srand        uint64 `gorm:"column:srand"`
 	TimeStamp    uint64 `gorm:"column:timestamp"`

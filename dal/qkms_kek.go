@@ -22,7 +22,7 @@ func (d *Dal) AccquireKeyEncryptionKey(ctx context.Context, namespace string, en
 	return &kek, nil
 }
 
-func (d *Dal) CreateKeyEncryptionKey(ctx context.Context, key *qkms_model.KeyEncryptionKey) (int64, error) {
+func (d *Dal) CreateKeyEncryptionKey(ctx context.Context, key *qkms_model.KeyEncryptionKey) (uint64, error) {
 	result := d.Query(ctx).Create(key)
 	if result.Error != nil {
 		glog.Error(fmt.Sprintf("Create new KEK failed! KEK Info: %+v, Failed Info: %s", *key, result.Error.Error()))
@@ -33,7 +33,7 @@ func (d *Dal) CreateKeyEncryptionKey(ctx context.Context, key *qkms_model.KeyEnc
 	return 200, nil
 }
 
-func (d *Dal) UpdateKeyEncryptionKey(ctx context.Context, key *qkms_model.KeyEncryptionKey, plain_old_kek string, plain_new_kek string) (int64, error) {
+func (d *Dal) UpdateKeyEncryptionKey(ctx context.Context, key *qkms_model.KeyEncryptionKey, plain_old_kek string, plain_new_kek string) (uint64, error) {
 	trans_error := d.Query(ctx).Transaction(func(tx *gorm.DB) error {
 		// 先读取，如果找不到就放弃了,借此尽量用读锁，放弃写锁的争用
 		var old_kek qkms_model.KeyEncryptionKey
@@ -54,7 +54,7 @@ func (d *Dal) UpdateKeyEncryptionKey(ctx context.Context, key *qkms_model.KeyEnc
 		}
 
 		for i := 0; i < len(aks); i++ {
-			old_enc_content, err := qkms_crypto.Base64Decoding(aks[i].CipherTextAK)
+			old_enc_content, err := qkms_crypto.Base64Decoding(aks[i].AKCiphertext)
 			if err != nil {
 				glog.Error(fmt.Sprintf("Update new KEK to decode base64 related AK failed! KEK Info:%+v, AK Info: %+v, Failed Info: %s", *key, aks[i], err.Error()))
 				return err
@@ -73,7 +73,7 @@ func (d *Dal) UpdateKeyEncryptionKey(ctx context.Context, key *qkms_model.KeyEnc
 			base64_new_enc_content := qkms_crypto.Base64Encoding(new_enc_content)
 
 			new_ak := aks[i]
-			new_ak.CipherTextAK = base64_new_enc_content
+			new_ak.AKCiphertext = base64_new_enc_content
 			new_ak.KEKVersion = key.Version
 			if err := tx.Model(&qkms_model.AccessKey{}).Where(aks[i]).Updates(new_ak).Error; err != nil {
 				glog.Error(fmt.Sprintf("Update new KEK related new AK failed! KEK Info:%+v, AK Info: %+v, Failed Info: %s", *key, aks[i], err.Error()))
