@@ -25,6 +25,7 @@ type QkmsClient interface {
 	ReadAccessKey(ctx context.Context, in *ReadAccessKeyRequest, opts ...grpc.CallOption) (*ReadAccessKeyReply, error)
 	GenerateAccessKey(ctx context.Context, in *GenerateAccessKeyReply, opts ...grpc.CallOption) (*GenerateAccessKeyReply, error)
 	CreateAccessKey(ctx context.Context, in *CreateAccessKeyRequest, opts ...grpc.CallOption) (*CreateAccessKeyRequest, error)
+	CreateKeyEncryptionKey(ctx context.Context, in *CreateKeyEncryptionKeyRequest, opts ...grpc.CallOption) (*CreateKeyEncryptionKeyReply, error)
 	UpdateAccessKey(ctx context.Context, in *UpdateAccessKeyRequest, opts ...grpc.CallOption) (*UpdateAccessKeyReply, error)
 	RotateAccessKey(ctx context.Context, in *RotateAccessKeyRequest, opts ...grpc.CallOption) (*RotateAccessKeyReply, error)
 	GrantAccessKeyAuthorization(ctx context.Context, in *GrantAccessKeyAuthorizationRequest, opts ...grpc.CallOption) (*GrantAccessKeyAuthorizationReply, error)
@@ -65,6 +66,15 @@ func (c *qkmsClient) CreateAccessKey(ctx context.Context, in *CreateAccessKeyReq
 	return out, nil
 }
 
+func (c *qkmsClient) CreateKeyEncryptionKey(ctx context.Context, in *CreateKeyEncryptionKeyRequest, opts ...grpc.CallOption) (*CreateKeyEncryptionKeyReply, error) {
+	out := new(CreateKeyEncryptionKeyReply)
+	err := c.cc.Invoke(ctx, "/qkms_proto.qkms/CreateKeyEncryptionKey", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *qkmsClient) UpdateAccessKey(ctx context.Context, in *UpdateAccessKeyRequest, opts ...grpc.CallOption) (*UpdateAccessKeyReply, error) {
 	out := new(UpdateAccessKeyReply)
 	err := c.cc.Invoke(ctx, "/qkms_proto.qkms/UpdateAccessKey", in, out, opts...)
@@ -99,6 +109,7 @@ type QkmsServer interface {
 	ReadAccessKey(context.Context, *ReadAccessKeyRequest) (*ReadAccessKeyReply, error)
 	GenerateAccessKey(context.Context, *GenerateAccessKeyReply) (*GenerateAccessKeyReply, error)
 	CreateAccessKey(context.Context, *CreateAccessKeyRequest) (*CreateAccessKeyRequest, error)
+	CreateKeyEncryptionKey(context.Context, *CreateKeyEncryptionKeyRequest) (*CreateKeyEncryptionKeyReply, error)
 	UpdateAccessKey(context.Context, *UpdateAccessKeyRequest) (*UpdateAccessKeyReply, error)
 	RotateAccessKey(context.Context, *RotateAccessKeyRequest) (*RotateAccessKeyReply, error)
 	GrantAccessKeyAuthorization(context.Context, *GrantAccessKeyAuthorizationRequest) (*GrantAccessKeyAuthorizationReply, error)
@@ -117,6 +128,9 @@ func (UnimplementedQkmsServer) GenerateAccessKey(context.Context, *GenerateAcces
 }
 func (UnimplementedQkmsServer) CreateAccessKey(context.Context, *CreateAccessKeyRequest) (*CreateAccessKeyRequest, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAccessKey not implemented")
+}
+func (UnimplementedQkmsServer) CreateKeyEncryptionKey(context.Context, *CreateKeyEncryptionKeyRequest) (*CreateKeyEncryptionKeyReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateKeyEncryptionKey not implemented")
 }
 func (UnimplementedQkmsServer) UpdateAccessKey(context.Context, *UpdateAccessKeyRequest) (*UpdateAccessKeyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateAccessKey not implemented")
@@ -194,6 +208,24 @@ func _Qkms_CreateAccessKey_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Qkms_CreateKeyEncryptionKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateKeyEncryptionKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QkmsServer).CreateKeyEncryptionKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/qkms_proto.qkms/CreateKeyEncryptionKey",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QkmsServer).CreateKeyEncryptionKey(ctx, req.(*CreateKeyEncryptionKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Qkms_UpdateAccessKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateAccessKeyRequest)
 	if err := dec(in); err != nil {
@@ -266,6 +298,10 @@ var Qkms_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateAccessKey",
 			Handler:    _Qkms_CreateAccessKey_Handler,
+		},
+		{
+			MethodName: "CreateKeyEncryptionKey",
+			Handler:    _Qkms_CreateKeyEncryptionKey_Handler,
 		},
 		{
 			MethodName: "UpdateAccessKey",

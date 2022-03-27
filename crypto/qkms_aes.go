@@ -57,6 +57,19 @@ func GenerateIV(bytes int) []byte {
 	return b
 }
 
+func GeneratePass(bytes int) []byte {
+	return GenerateIV(bytes)
+}
+
+func GenerateIVFromTwoNumber(srand uint64, timestamp uint64) []byte {
+	default_iv := []byte{0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff}
+	output_iv := make([]byte, len(default_iv))
+	for i := 0; i < len(output_iv); i++ {
+		output_iv[i] = byte((uint64(default_iv[i])*srand + timestamp) % 256)
+	}
+	return output_iv
+}
+
 func AesCTRDefaultIVEncrypt(plaintext []byte, key []byte) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
@@ -89,6 +102,6 @@ func AesCTREncrypt(plaintext []byte, iv []byte, key []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func AesCTRDecrypt(plaintext []byte, iv []byte, key []byte) ([]byte, error) {
-	return AesCTREncrypt(plaintext, iv, key)
+func AesCTRDecrypt(ciphertext []byte, iv []byte, key []byte) ([]byte, error) {
+	return AesCTREncrypt(ciphertext, iv, key)
 }

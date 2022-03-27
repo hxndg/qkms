@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	qkms_crypto "qkms/crypto"
+	qkms_dal "qkms/dal"
 	pb "qkms/proto"
 
 	"github.com/golang/glog"
@@ -19,7 +20,8 @@ type QkmsRealServer struct {
 	kek_map   cmap.ConcurrentMap
 }
 
-func (server *QkmsRealServer) Init(cert string, key string) error {
+func (server *QkmsRealServer) Init(cert string, key string, db_config qkms_dal.DBConfig) error {
+	qkms_dal.MustInit(db_config)
 	var err error
 	server.x509_cert, err = tls.LoadX509KeyPair("cert.pem", "key.pem")
 	if err != nil {
@@ -32,8 +34,7 @@ func (server *QkmsRealServer) Init(cert string, key string) error {
 		return err
 	}
 
-	root_key_info := qkms_crypto.GenerateIV(32)
-	server.root_key, err = qkms_crypto.Sha256HKDF(x509_key, root_key_info, 16)
+	server.root_key, err = qkms_crypto.Sha256HKDF(x509_key, x509_key, 16)
 	if err != nil {
 		glog.Error("Init QKMS Server Failed! Can't qkms_crypto.Sha256HKDF Server Root Key")
 		return err

@@ -54,7 +54,7 @@ func (d *Dal) UpdateKeyEncryptionKey(ctx context.Context, key *qkms_model.KeyEnc
 		}
 
 		for i := 0; i < len(aks); i++ {
-			old_enc_content, err := qkms_crypto.Base64Decoding(aks[i].EncryptedAK)
+			old_enc_content, err := qkms_crypto.Base64Decoding(aks[i].CipherTextAK)
 			if err != nil {
 				glog.Error(fmt.Sprintf("Update new KEK to decode base64 related AK failed! KEK Info:%+v, AK Info: %+v, Failed Info: %s", *key, aks[i], err.Error()))
 				return err
@@ -73,7 +73,7 @@ func (d *Dal) UpdateKeyEncryptionKey(ctx context.Context, key *qkms_model.KeyEnc
 			base64_new_enc_content := qkms_crypto.Base64Encoding(new_enc_content)
 
 			new_ak := aks[i]
-			new_ak.EncryptedAK = base64_new_enc_content
+			new_ak.CipherTextAK = base64_new_enc_content
 			new_ak.KEKVersion = key.Version
 			if err := tx.Model(&qkms_model.AccessKey{}).Where(aks[i]).Updates(new_ak).Error; err != nil {
 				glog.Error(fmt.Sprintf("Update new KEK related new AK failed! KEK Info:%+v, AK Info: %+v, Failed Info: %s", *key, aks[i], err.Error()))

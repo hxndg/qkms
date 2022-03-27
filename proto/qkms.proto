@@ -83,10 +83,20 @@ message GrantAccessKeyAuthorizationReply {
     uint64 error_code = 1;
 }
 
+message CreateKeyEncryptionKeyRequest {
+    string namespace = 1;
+    string environment = 2;
+}
+
+message CreateKeyEncryptionKeyReply {
+    uint64 error_code = 1;
+}
+
 service qkms {
     rpc ReadAccessKey(ReadAccessKeyRequest) returns (ReadAccessKeyReply) {}
     rpc GenerateAccessKey(GenerateAccessKeyReply) returns (GenerateAccessKeyReply) {}
     rpc CreateAccessKey(CreateAccessKeyRequest) returns (CreateAccessKeyRequest) {}
+    rpc CreateKeyEncryptionKey(CreateKeyEncryptionKeyRequest) returns (CreateKeyEncryptionKeyReply) {}
     rpc UpdateAccessKey(UpdateAccessKeyRequest) returns (UpdateAccessKeyReply) {}
     rpc RotateAccessKey(RotateAccessKeyRequest) returns (RotateAccessKeyReply) {}
     rpc GrantAccessKeyAuthorization(GrantAccessKeyAuthorizationRequest) returns (GrantAccessKeyAuthorizationReply) {}
