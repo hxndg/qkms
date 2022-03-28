@@ -95,12 +95,12 @@ func PlainCacheAK2CipherCacheAK(in *PlainCacheAK, key []byte) (*CipherCacheAK, e
 
 	plaintext_ak, err := qkms_crypto.Base64Decoding(in.AKPlaintext)
 	if err != nil {
-		glog.Error("Transfer PlainCacheAK to CipherCacheAK failed! Can't decode base64 from, %+v", in)
+		glog.Error("Transfer PlainCacheAK to CipherCacheAK failed! Can't decode base64 from, %+v", *in)
 		return nil, err
 	}
 	ciphertext_ak, err := qkms_crypto.AesCTREncrypt(plaintext_ak, encrypt_iv, key)
 	if err != nil {
-		glog.Error("Transfer PlainCacheAK to CipherCacheAK failed! Can't Encrypt AKPlaintext from %+v, using key %s", in, qkms_crypto.Base64Encoding(key))
+		glog.Error("Transfer PlainCacheAK to CipherCacheAK failed! Can't Encrypt AKPlaintext from %+v, using key %s", *in, qkms_crypto.Base64Encoding(key))
 		return nil, err
 	}
 	out.AKCiphertext = qkms_crypto.Base64Encoding(ciphertext_ak)
@@ -127,7 +127,7 @@ func PlainCacheAK2ModelAK(in *PlainCacheAK, key []byte) (*qkms_model.AccessKey, 
 	}
 	ciphertext_ak, err := qkms_crypto.AesCTREncrypt(plaintext_ak, encrypt_iv, key)
 	if err != nil {
-		glog.Error("Transfer PlainCacheAK to model.AccessKey failed! Can't Encrypt AKPlaintext from %+v, using key %s", in, qkms_crypto.Base64Encoding(key))
+		glog.Error("Transfer PlainCacheAK to model.AccessKey failed! Can't Encrypt AKPlaintext from %+v, using key %s", *in, qkms_crypto.Base64Encoding(key))
 		return nil, err
 	}
 	out.AKCiphertext = qkms_crypto.Base64Encoding(ciphertext_ak)
@@ -291,5 +291,9 @@ func (server *QkmsRealServer) UpdateAccessKey(ctx context.Context, req *qkms_pro
 	return &qkms_proto.UpdateAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_UPDATE_AK_SUCCESS}, nil
 
 }
-func (server *QkmsRealServer) RotateAccessKey(ctx context.Context, req *qkms_proto.RotateAccessKeyRequest) (*qkms_proto.RotateAccessKeyReply, error)
-func (server *QkmsRealServer) GrantAccessKeyAuthorization(ctx context.Context, req *qkms_proto.GrantAccessKeyAuthorizationRequest) (*qkms_proto.GrantAccessKeyAuthorizationReply, error)
+func (server *QkmsRealServer) RotateAccessKey(ctx context.Context, req *qkms_proto.RotateAccessKeyRequest) (*qkms_proto.RotateAccessKeyReply, error) {
+	return nil, nil
+}
+func (server *QkmsRealServer) GrantAccessKeyAuthorization(ctx context.Context, req *qkms_proto.GrantAccessKeyAuthorizationRequest) (*qkms_proto.GrantAccessKeyAuthorizationReply, error) {
+	return nil, nil
+}

@@ -23,7 +23,7 @@ type QkmsRealServer struct {
 func (server *QkmsRealServer) Init(cert string, key string, db_config qkms_dal.DBConfig) error {
 	qkms_dal.MustInit(db_config)
 	var err error
-	server.x509_cert, err = tls.LoadX509KeyPair("cert.pem", "key.pem")
+	server.x509_cert, err = tls.LoadX509KeyPair(cert, key)
 	if err != nil {
 		glog.Error("Init QKMS Server Failed! Can't Load Cert & Key")
 		return err
