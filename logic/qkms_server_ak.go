@@ -3,6 +3,7 @@ package qkms_logic
 import (
 	"context"
 	"errors"
+	"fmt"
 	qkms_crypto "qkms/crypto"
 	qkms_dal "qkms/dal"
 	qkms_model "qkms/model"
@@ -38,7 +39,7 @@ type CipherCacheAK struct {
 func ModelAK2CipherCacheAK(in *qkms_model.AccessKey, decypt_key []byte, encrypt_key []byte) (*CipherCacheAK, error) {
 	ak_plaintext, err := DecryptedAESCtrBySrandTimeStamp(in.AKCiphertext, in.Srand, in.TimeStamp, decypt_key)
 	if err != nil {
-		glog.Error("Transfer ModelAK to CipherCacheAK failed! %+v", *in)
+		glog.Error(fmt.Sprintf("Transfer ModelAK to CipherCacheAK failed! %+v", *in))
 		return nil, err
 	}
 	out := CipherCacheAK{
@@ -53,7 +54,7 @@ func ModelAK2CipherCacheAK(in *qkms_model.AccessKey, decypt_key []byte, encrypt_
 	out.Srand, out.TimeStamp = qkms_crypto.GenerateSrandAndTimeStamp()
 	ak_ciphertext, err := EncryptAESCtrBySrandTimeStamp(qkms_crypto.Base64Encoding(ak_plaintext), out.Srand, out.TimeStamp, encrypt_key)
 	if err != nil {
-		glog.Error("Transfer ModelAK to CipherCacheAK failed! Can't encrypt %+v, from %+v by key %s", out, *in, qkms_crypto.Base64Encoding(encrypt_key))
+		glog.Error(fmt.Sprintf("Transfer ModelAK to CipherCacheAK failed! Can't encrypt %+v, from %+v by key %s", out, *in, qkms_crypto.Base64Encoding(encrypt_key)))
 		return nil, err
 	}
 	out.AKCiphertext = qkms_crypto.Base64Encoding(ak_ciphertext)
@@ -70,7 +71,7 @@ func ModelAK2ProtoReadAKReply(in *qkms_model.AccessKey, key []byte) (*qkms_proto
 	}
 	ak_plaintext, err := DecryptedAESCtrBySrandTimeStamp(in.AKCiphertext, in.Srand, in.TimeStamp, key)
 	if err != nil {
-		glog.Error("Transfer ModelAK to ReadAccessKeyReply failed! %+v", *in)
+		glog.Error(fmt.Sprintf("Transfer ModelAK to ReadAccessKeyReply failed! %+v", *in))
 		out.ErrorCode = QKMS_ERROR_CODE_INTERNAL_ERROR
 		return &out, err
 	}
@@ -95,12 +96,12 @@ func PlainCacheAK2CipherCacheAK(in *PlainCacheAK, key []byte) (*CipherCacheAK, e
 
 	plaintext_ak, err := qkms_crypto.Base64Decoding(in.AKPlaintext)
 	if err != nil {
-		glog.Error("Transfer PlainCacheAK to CipherCacheAK failed! Can't decode base64 from, %+v", *in)
+		glog.Error(fmt.Sprintf("Transfer PlainCacheAK to CipherCacheAK failed! Can't decode base64 from, %+v", *in))
 		return nil, err
 	}
 	ciphertext_ak, err := qkms_crypto.AesCTREncrypt(plaintext_ak, encrypt_iv, key)
 	if err != nil {
-		glog.Error("Transfer PlainCacheAK to CipherCacheAK failed! Can't Encrypt AKPlaintext from %+v, using key %s", *in, qkms_crypto.Base64Encoding(key))
+		glog.Error(fmt.Sprintf("Transfer PlainCacheAK to CipherCacheAK failed! Can't Encrypt AKPlaintext from %+v, using key %s", *in, qkms_crypto.Base64Encoding(key)))
 		return nil, err
 	}
 	out.AKCiphertext = qkms_crypto.Base64Encoding(ciphertext_ak)
@@ -122,12 +123,12 @@ func PlainCacheAK2ModelAK(in *PlainCacheAK, key []byte) (*qkms_model.AccessKey, 
 
 	plaintext_ak, err := qkms_crypto.Base64Decoding(in.AKPlaintext)
 	if err != nil {
-		glog.Error("Transfer PlainCacheAK to model.AccessKey failed! Can't decode base64 from, %+v", in)
+		glog.Error(fmt.Sprintf("Transfer PlainCacheAK to model.AccessKey failed! Can't decode base64 from, %+v", in))
 		return nil, err
 	}
 	ciphertext_ak, err := qkms_crypto.AesCTREncrypt(plaintext_ak, encrypt_iv, key)
 	if err != nil {
-		glog.Error("Transfer PlainCacheAK to model.AccessKey failed! Can't Encrypt AKPlaintext from %+v, using key %s", *in, qkms_crypto.Base64Encoding(key))
+		glog.Error(fmt.Sprintf("Transfer PlainCacheAK to model.AccessKey failed! Can't Encrypt AKPlaintext from %+v, using key %s", *in, qkms_crypto.Base64Encoding(key)))
 		return nil, err
 	}
 	out.AKCiphertext = qkms_crypto.Base64Encoding(ciphertext_ak)
@@ -143,7 +144,7 @@ func (server *QkmsRealServer) ReadAccessKey(ctx context.Context, req *qkms_proto
 
 		ak_plaintext, err := DecryptedAESCtrBySrandTimeStamp(cipher_cache_ak.AKCiphertext, cipher_cache_ak.Srand, cipher_cache_ak.TimeStamp, server.cache_key)
 		if err != nil {
-			glog.Error("Decrypt CipherCacheAK failed ! CipherCacheAK %+v, using key %s", cipher_cache_ak, qkms_crypto.Base64Encoding(server.cache_key))
+			glog.Error(fmt.Sprintf("Decrypt CipherCacheAK failed ! CipherCacheAK %+v, using key %s", cipher_cache_ak, qkms_crypto.Base64Encoding(server.cache_key)))
 			return &qkms_proto.ReadAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_INTERNAL_ERROR}, err
 		}
 		var reply qkms_proto.ReadAccessKeyReply
@@ -161,17 +162,17 @@ func (server *QkmsRealServer) ReadAccessKey(ctx context.Context, req *qkms_proto
 		//encrypted_ak*qkms_model.AccessKey类型
 		encrypted_ak, err := qkms_dal.GetDal().AccquireAccessKey(ctx, req.NameSpace, req.Name, req.Environment)
 		if err != nil {
-			glog.Error("Can't get AK from database, request for namespace:%s name:%s, environment:%s", req.NameSpace, req.Name, req.Environment)
+			glog.Error(fmt.Sprintf("Can't get AK from database, request for namespace:%s name:%s, environment:%s", req.NameSpace, req.Name, req.Environment))
 			return &qkms_proto.ReadAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_AK_NOT_FOUND}, err
 		}
 		error_code, plain_cache_kek, err := server.ReadKEKByNamespaceAndVersion(ctx, encrypted_ak.NameSpace, encrypted_ak.Environment, encrypted_ak.KEKVersion)
 		if err != nil {
-			glog.Error("Can't get related KEK for encrypted Ak, encrypted AK %+v", encrypted_ak)
+			glog.Error(fmt.Sprintf("Can't get related KEK for encrypted Ak, encrypted AK %+v", encrypted_ak))
 			return &qkms_proto.ReadAccessKeyReply{ErrorCode: error_code}, err
 		}
 		kek_plaintext, err := qkms_crypto.Base64Decoding(plain_cache_kek.KEKPlaintext)
 		if err != nil {
-			glog.Error("Can't Decoding plain kek %+v, ", *plain_cache_kek)
+			glog.Error(fmt.Sprintf("Can't Decoding plain kek %+v, ", *plain_cache_kek))
 			return &qkms_proto.ReadAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_INTERNAL_ERROR}, err
 		}
 		cipher_cache_ak, err := ModelAK2CipherCacheAK(encrypted_ak, kek_plaintext, server.root_key)
@@ -197,12 +198,12 @@ func (server *QkmsRealServer) CreateAccessKey(ctx context.Context, req *qkms_pro
 		//encrypted_ak*qkms_model.AccessKey类型
 		error_code, plain_cache_kek, err := server.ReadKEKByNamespace(ctx, req.NameSpace, req.Environment)
 		if err != nil {
-			glog.Error("Create AK failed, no related kek for database. Request for namespace:%s name:%s, environment:%s", req.NameSpace, req.Name, req.Environment)
+			glog.Error(fmt.Sprintf("Create AK failed, no related kek for database. Request for namespace:%s name:%s, environment:%s", req.NameSpace, req.Name, req.Environment))
 			return &qkms_proto.CreateAccessKeyReply{ErrorCode: error_code}, err
 		}
 		kek_plaintext, err := qkms_crypto.Base64Decoding(plain_cache_kek.KEKPlaintext)
 		if err != nil {
-			glog.Error("Create AK failed, can't decode plain kek. Request for namespace:%s name:%s, environment:%s, kek: %+v", req.NameSpace, req.Name, req.Environment, *plain_cache_kek)
+			glog.Error(fmt.Sprintf("Create AK failed, can't decode plain kek. Request for namespace:%s name:%s, environment:%s, kek: %+v", req.NameSpace, req.Name, req.Environment, *plain_cache_kek))
 			return &qkms_proto.CreateAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_INTERNAL_ERROR}, err
 		}
 		encrypted_ak := qkms_model.AccessKey{
@@ -217,13 +218,13 @@ func (server *QkmsRealServer) CreateAccessKey(ctx context.Context, req *qkms_pro
 		encrypted_ak.Srand, encrypted_ak.TimeStamp = qkms_crypto.GenerateSrandAndTimeStamp()
 		ak_ciphertext, err := EncryptAESCtrBySrandTimeStamp(req.AKPlaintext, encrypted_ak.Srand, encrypted_ak.TimeStamp, kek_plaintext)
 		if err != nil {
-			glog.Error("Create AK failed, can't encrypt ak, encrypted_ak:%+v, plain_cache_kek:%+v", encrypted_ak, *plain_cache_kek)
+			glog.Error(fmt.Sprintf("Create AK failed, can't encrypt ak, encrypted_ak:%+v, plain_cache_kek:%+v", encrypted_ak, *plain_cache_kek))
 			return &qkms_proto.CreateAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_INTERNAL_ERROR}, err
 		}
 		encrypted_ak.AKCiphertext = qkms_crypto.Base64Encoding(ak_ciphertext)
 		error_code, err = qkms_dal.GetDal().CreateAccessKey(ctx, &encrypted_ak)
 		if err != nil {
-			glog.Error("Create AK failed, insert into database filed, encrypted_ak:%+v", encrypted_ak)
+			glog.Error(fmt.Sprintf("Create AK failed, insert into database filed, encrypted_ak:%+v", encrypted_ak))
 			return &qkms_proto.CreateAccessKeyReply{ErrorCode: error_code}, err
 		} else {
 			cipher_cache_ak, err := ModelAK2CipherCacheAK(&encrypted_ak, kek_plaintext, server.cache_key)
@@ -252,12 +253,12 @@ func (server *QkmsRealServer) UpdateAccessKey(ctx context.Context, req *qkms_pro
 	//encrypted_ak*qkms_model.AccessKey类型
 	error_code, plain_cache_kek, err := server.ReadKEKByNamespace(ctx, req.NameSpace, req.Environment)
 	if err != nil {
-		glog.Error("Update AK failed, no related kek for database. Request for namespace:%s name:%s, environment:%s", req.NameSpace, req.Name, req.Environment)
+		glog.Error(fmt.Sprintf("Update AK failed, no related kek for database. Request for namespace:%s name:%s, environment:%s", req.NameSpace, req.Name, req.Environment))
 		return &qkms_proto.UpdateAccessKeyReply{ErrorCode: error_code}, err
 	}
 	kek_plaintext, err := qkms_crypto.Base64Decoding(plain_cache_kek.KEKPlaintext)
 	if err != nil {
-		glog.Error("Create AK failed, can't decode plain kek. Request for namespace:%s name:%s, environment:%s, kek: %+v", req.NameSpace, req.Name, req.Environment, *plain_cache_kek)
+		glog.Error(fmt.Sprintf("Create AK failed, can't decode plain kek. Request for namespace:%s name:%s, environment:%s, kek: %+v", req.NameSpace, req.Name, req.Environment, *plain_cache_kek))
 		return &qkms_proto.UpdateAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_INTERNAL_ERROR}, err
 	}
 	encrypted_ak := qkms_model.AccessKey{
@@ -272,13 +273,13 @@ func (server *QkmsRealServer) UpdateAccessKey(ctx context.Context, req *qkms_pro
 	encrypted_ak.Srand, encrypted_ak.TimeStamp = qkms_crypto.GenerateSrandAndTimeStamp()
 	ak_ciphertext, err := EncryptAESCtrBySrandTimeStamp(req.AKPlaintext, encrypted_ak.Srand, encrypted_ak.TimeStamp, kek_plaintext)
 	if err != nil {
-		glog.Error("Update AK failed, can't encrypt ak, encrypted_ak:%+v, plain_cache_kek:%+v", encrypted_ak, *plain_cache_kek)
+		glog.Error(fmt.Sprintf("Update AK failed, can't encrypt ak, encrypted_ak:%+v, plain_cache_kek:%+v", encrypted_ak, *plain_cache_kek))
 		return &qkms_proto.UpdateAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_INTERNAL_ERROR}, err
 	}
 	encrypted_ak.AKCiphertext = qkms_crypto.Base64Encoding(ak_ciphertext)
 	error_code, err = qkms_dal.GetDal().UpdateAccessKey(ctx, &encrypted_ak)
 	if err != nil {
-		glog.Error("Update AK failed, insert into database filed, encrypted_ak:%+v", encrypted_ak)
+		glog.Error(fmt.Sprintf("Update AK failed, insert into database filed, encrypted_ak:%+v", encrypted_ak))
 		return &qkms_proto.UpdateAccessKeyReply{ErrorCode: error_code}, err
 	} else {
 		cipher_cache_ak, err := ModelAK2CipherCacheAK(&encrypted_ak, kek_plaintext, server.cache_key)

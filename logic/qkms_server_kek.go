@@ -3,6 +3,7 @@ package qkms_logic
 import (
 	"context"
 	"errors"
+	"fmt"
 	qkms_crypto "qkms/crypto"
 	qkms_dal "qkms/dal"
 	qkms_model "qkms/model"
@@ -49,12 +50,12 @@ func PlainCacheKEK2CipherCacheKEK(in *PlainCacheKEK, key []byte) (*CipherCacheKE
 
 	kek_plaintext, err := qkms_crypto.Base64Decoding(in.KEKPlaintext)
 	if err != nil {
-		glog.Error("Can't decode base64 for plaincachekek, %+v", in)
+		glog.Error(fmt.Sprintf("Can't decode base64 for plaincachekek, %+v", in))
 		return nil, err
 	}
 	kek_ciphertext, err := qkms_crypto.AesCTREncrypt(kek_plaintext, encrypt_iv, key)
 	if err != nil {
-		glog.Error("Can't encrypt for encrypted cache kek, plaincachekey is %+v, using key %s", in, qkms_crypto.Base64Encoding(key))
+		glog.Error(fmt.Sprintf("Can't encrypt for encrypted cache kek, plaincachekey is %+v, using key %s", in, qkms_crypto.Base64Encoding(key)))
 		return nil, err
 	}
 	out.KEKCiphertext = qkms_crypto.Base64Encoding(kek_ciphertext)
@@ -75,12 +76,12 @@ func PlainCacheKEK2ModelKEK(in *PlainCacheKEK, key []byte) (*qkms_model.KeyEncry
 
 	kek_plaintext, err := qkms_crypto.Base64Decoding(in.KEKPlaintext)
 	if err != nil {
-		glog.Error("Can't decode base64 for plaincachekek, %+v", in)
+		glog.Error(fmt.Sprintf("Can't decode base64 for plaincachekek, %+v", in))
 		return nil, err
 	}
 	kek_ciphertext, err := qkms_crypto.AesCTREncrypt(kek_plaintext, encrypt_iv, key)
 	if err != nil {
-		glog.Error("Can't encrypt for encrypted cache kek, plaincachekey is %+v, using key %s", in, qkms_crypto.Base64Encoding(key))
+		glog.Error(fmt.Sprintf("Can't encrypt for encrypted cache kek, plaincachekey is %+v, using key %s", in, qkms_crypto.Base64Encoding(key)))
 		return nil, err
 	}
 	out.KEKCiphertext = qkms_crypto.Base64Encoding(kek_ciphertext)
@@ -97,7 +98,7 @@ func (server *QkmsRealServer) ReadKEKByNamespace(ctx context.Context, namespace 
 
 		kek_plaintext, err := DecryptedAESCtrBySrandTimeStamp(encrypted_kek.KEKCiphertext, encrypted_kek.Srand, encrypted_kek.TimeStamp, server.cache_key)
 		if err != nil {
-			glog.Error("Can't decrypted for encryptedkek %+v, using key %s", encrypted_kek, qkms_crypto.Base64Encoding(server.cache_key))
+			glog.Error(fmt.Sprintf("Can't decrypted for encryptedkek %+v, using key %s", encrypted_kek, qkms_crypto.Base64Encoding(server.cache_key)))
 			return QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
 		}
 		plain_cache_kek := PlainCacheKEK{
@@ -114,12 +115,12 @@ func (server *QkmsRealServer) ReadKEKByNamespace(ctx context.Context, namespace 
 		//这里注意下encrypted_kek是*qkms_model.KeyEncryptionKey类型
 		encrypted_kek, err := qkms_dal.GetDal().AccquireKeyEncryptionKey(ctx, namespace, environment)
 		if err != nil {
-			glog.Error("Can't get kek from database, namespace: %s, environment: %s", namespace, environment)
+			glog.Error(fmt.Sprintf("Can't get kek from database, namespace: %s, environment: %s", namespace, environment))
 			return QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
 		}
 		kek_plaintext, err := DecryptedAESCtrBySrandTimeStamp(encrypted_kek.KEKCiphertext, encrypted_kek.Srand, encrypted_kek.TimeStamp, server.root_key)
 		if err != nil {
-			glog.Error("Can't decrypted for encryptedkek %+v, using key %s", encrypted_kek, qkms_crypto.Base64Encoding(server.root_key))
+			glog.Error(fmt.Sprintf("Can't decrypted for encryptedkek %+v, using key %s", encrypted_kek, qkms_crypto.Base64Encoding(server.root_key)))
 			return QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
 		}
 
@@ -151,13 +152,13 @@ func (server *QkmsRealServer) ReadKEKByNamespaceAndVersion(ctx context.Context, 
 		cached_version = encrypted_kek.Version
 		if version < encrypted_kek.Version {
 			// 请求老版本的kek，理论上不太可能。因为如果KEK是新版本的，那么所有的AK应该是也更新成新版本了。
-			glog.Error("Can't decrypted for encryptedkek %+v, using key %s", encrypted_kek, qkms_crypto.Base64Encoding(server.cache_key))
+			glog.Error(fmt.Sprintf("Can't decrypted for encryptedkek %+v, using key %s", encrypted_kek, qkms_crypto.Base64Encoding(server.cache_key)))
 			return QKMS_ERROR_CODE_KEK_VERSION_MISMATCH, nil, errors.New("kek version mismatch")
 		}
 		if version == encrypted_kek.Version {
 			plaintext_kek, err := DecryptedAESCtrBySrandTimeStamp(encrypted_kek.KEKCiphertext, encrypted_kek.Srand, encrypted_kek.TimeStamp, server.cache_key)
 			if err != nil {
-				glog.Error("Can't decrypted for encryptedkek %+v, using key %s", encrypted_kek, qkms_crypto.Base64Encoding(server.cache_key))
+				glog.Error(fmt.Sprintf("Can't decrypted for encryptedkek %+v, using key %s", encrypted_kek, qkms_crypto.Base64Encoding(server.cache_key)))
 				return QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
 			}
 			plain_cache_kek := PlainCacheKEK{
@@ -176,14 +177,14 @@ func (server *QkmsRealServer) ReadKEKByNamespaceAndVersion(ctx context.Context, 
 	//这里注意下encrypted_kek是*qkms_model.KeyEncryptionKey类型
 	encrypted_kek, err := qkms_dal.GetDal().AccquireKeyEncryptionKey(ctx, namespace, environment)
 	if err != nil {
-		glog.Error("Can't get kek from database, namespace: %s, environment: %s", namespace, environment)
+		glog.Error(fmt.Sprintf("Can't get kek from database, namespace: %s, environment: %s", namespace, environment))
 		return QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
 	}
 	//上面要么没查到，要么查到了但是版本很老,如果没查到那么cached_version为0，如果查到了但是比较老我们也还会插入到本地内存。
 	if encrypted_kek.Version > cached_version {
 		plaintext_kek, err := DecryptedAESCtrBySrandTimeStamp(encrypted_kek.KEKCiphertext, encrypted_kek.Srand, encrypted_kek.TimeStamp, server.root_key)
 		if err != nil {
-			glog.Error("Can't decrypted for encryptedkek %+v, using key %s", encrypted_kek, qkms_crypto.Base64Encoding(server.root_key))
+			glog.Error(fmt.Sprintf("Can't decrypted for encryptedkek %+v, using key %s", encrypted_kek, qkms_crypto.Base64Encoding(server.root_key)))
 			return QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
 		}
 		plain_cache_kek := PlainCacheKEK{
