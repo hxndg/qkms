@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 	qkms_crypto "qkms/crypto"
 	qkms_dal "qkms/dal"
@@ -77,9 +78,33 @@ func main() {
 		if err != nil {
 			glog.Error("Decode base64 failed")
 		} else {
-			glog.Error("Read ak success! Namespace:%s, Name:%s, KeyType:%s, Environment:%s, AKPlainText:%s", read_ak_reply.NameSpace, read_ak_reply.Name, read_ak_reply.KeyType, read_ak_reply.Environment, ak_plaintext)
-			os.Exit(1)
+			glog.Info(fmt.Sprintf("Read ak success! Namespace:%s, Name:%s, KeyType:%s, Environment:%s, AKPlainText:%s", read_ak_reply.NameSpace, read_ak_reply.Name, read_ak_reply.KeyType, read_ak_reply.Environment, ak_plaintext))
 		}
 	}
-	os.Exit(1)
+
+	update_ak_request := qkms_proto.UpdateAccessKeyRequest{
+		NameSpace:   "kek",
+		Name:        "new_ak",
+		AKPlaintext: qkms_crypto.Base64Encoding([]byte("hxn has a small dick")),
+		KeyType:     "opaque",
+		Environment: "test",
+		Version:     1,
+	}
+	_, err = server.UpdateAccessKey(context.Background(), &update_ak_request)
+	if err != nil {
+		glog.Error("Update ak failed!")
+		os.Exit(1)
+	}
+	read_ak_reply, err = server.ReadAccessKey(context.Background(), &read_ak_req)
+	if err != nil {
+		glog.Error("Read ak failed!")
+		os.Exit(1)
+	} else {
+		ak_plaintext, err := qkms_crypto.Base64Decoding(read_ak_reply.AKPlaintext)
+		if err != nil {
+			glog.Error("Decode base64 failed")
+		} else {
+			glog.Info(fmt.Sprintf("Read ak success! Namespace:%s, Name:%s, KeyType:%s, Environment:%s, AKPlainText:%s", read_ak_reply.NameSpace, read_ak_reply.Name, read_ak_reply.KeyType, read_ak_reply.Environment, ak_plaintext))
+		}
+	}
 }

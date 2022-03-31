@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	qkms_common "qkms/common"
 	qkms_crypto "qkms/crypto"
 	qkms_dal "qkms/dal"
 	qkms_model "qkms/model"
@@ -99,7 +100,7 @@ func (server *QkmsRealServer) ReadKEKByNamespace(ctx context.Context, namespace 
 		kek_plaintext, err := DecryptedAESCtrBySrandTimeStamp(encrypted_kek.KEKCiphertext, encrypted_kek.Srand, encrypted_kek.TimeStamp, server.cache_key)
 		if err != nil {
 			glog.Error(fmt.Sprintf("Can't decrypted for encryptedkek %+v, using key %s", encrypted_kek, qkms_crypto.Base64Encoding(server.cache_key)))
-			return QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
+			return qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
 		}
 		plain_cache_kek := PlainCacheKEK{
 			NameSpace:    encrypted_kek.NameSpace,
@@ -110,18 +111,18 @@ func (server *QkmsRealServer) ReadKEKByNamespace(ctx context.Context, namespace 
 			RKVersion:    encrypted_kek.RKVersion,
 			OwnerAppkey:  encrypted_kek.OwnerAppkey,
 		}
-		return QKMS_ERROR_CODE_KEK_FOUND, &plain_cache_kek, nil
+		return qkms_common.QKMS_ERROR_CODE_INTERNAL_KEK_FOUND, &plain_cache_kek, nil
 	} else {
 		//这里注意下encrypted_kek是*qkms_model.KeyEncryptionKey类型
 		encrypted_kek, err := qkms_dal.GetDal().AccquireKeyEncryptionKey(ctx, namespace, environment)
 		if err != nil {
 			glog.Error(fmt.Sprintf("Can't get kek from database, namespace: %s, environment: %s", namespace, environment))
-			return QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
+			return qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
 		}
 		kek_plaintext, err := DecryptedAESCtrBySrandTimeStamp(encrypted_kek.KEKCiphertext, encrypted_kek.Srand, encrypted_kek.TimeStamp, server.root_key)
 		if err != nil {
 			glog.Error(fmt.Sprintf("Can't decrypted for encryptedkek %+v, using key %s", encrypted_kek, qkms_crypto.Base64Encoding(server.root_key)))
-			return QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
+			return qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
 		}
 
 		plain_cache_kek := PlainCacheKEK{
@@ -139,7 +140,7 @@ func (server *QkmsRealServer) ReadKEKByNamespace(ctx context.Context, namespace 
 		} else {
 			server.kek_map.Set(cmap_key, *cached_kek)
 		}
-		return QKMS_ERROR_CODE_KEK_FOUND, &plain_cache_kek, nil
+		return qkms_common.QKMS_ERROR_CODE_INTERNAL_KEK_FOUND, &plain_cache_kek, nil
 	}
 }
 
@@ -153,13 +154,13 @@ func (server *QkmsRealServer) ReadKEKByNamespaceAndVersion(ctx context.Context, 
 		if version < encrypted_kek.Version {
 			// 请求老版本的kek，理论上不太可能。因为如果KEK是新版本的，那么所有的AK应该是也更新成新版本了。
 			glog.Error(fmt.Sprintf("Can't decrypted for encryptedkek %+v, using key %s", encrypted_kek, qkms_crypto.Base64Encoding(server.cache_key)))
-			return QKMS_ERROR_CODE_KEK_VERSION_MISMATCH, nil, errors.New("kek version mismatch")
+			return qkms_common.QKMS_ERROR_CODE_INTERNAL_KEK_VERSION_MISMATCH, nil, errors.New("kek version mismatch")
 		}
 		if version == encrypted_kek.Version {
 			plaintext_kek, err := DecryptedAESCtrBySrandTimeStamp(encrypted_kek.KEKCiphertext, encrypted_kek.Srand, encrypted_kek.TimeStamp, server.cache_key)
 			if err != nil {
 				glog.Error(fmt.Sprintf("Can't decrypted for encryptedkek %+v, using key %s", encrypted_kek, qkms_crypto.Base64Encoding(server.cache_key)))
-				return QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
+				return qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
 			}
 			plain_cache_kek := PlainCacheKEK{
 				NameSpace:    encrypted_kek.NameSpace,
@@ -170,7 +171,7 @@ func (server *QkmsRealServer) ReadKEKByNamespaceAndVersion(ctx context.Context, 
 				RKVersion:    encrypted_kek.RKVersion,
 				OwnerAppkey:  encrypted_kek.OwnerAppkey,
 			}
-			return QKMS_ERROR_CODE_KEK_FOUND, &plain_cache_kek, nil
+			return qkms_common.QKMS_ERROR_CODE_INTERNAL_KEK_FOUND, &plain_cache_kek, nil
 		}
 	}
 
@@ -178,14 +179,14 @@ func (server *QkmsRealServer) ReadKEKByNamespaceAndVersion(ctx context.Context, 
 	encrypted_kek, err := qkms_dal.GetDal().AccquireKeyEncryptionKey(ctx, namespace, environment)
 	if err != nil {
 		glog.Error(fmt.Sprintf("Can't get kek from database, namespace: %s, environment: %s", namespace, environment))
-		return QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
+		return qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
 	}
 	//上面要么没查到，要么查到了但是版本很老,如果没查到那么cached_version为0，如果查到了但是比较老我们也还会插入到本地内存。
 	if encrypted_kek.Version > cached_version {
 		plaintext_kek, err := DecryptedAESCtrBySrandTimeStamp(encrypted_kek.KEKCiphertext, encrypted_kek.Srand, encrypted_kek.TimeStamp, server.root_key)
 		if err != nil {
 			glog.Error(fmt.Sprintf("Can't decrypted for encryptedkek %+v, using key %s", encrypted_kek, qkms_crypto.Base64Encoding(server.root_key)))
-			return QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
+			return qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR, nil, err
 		}
 		plain_cache_kek := PlainCacheKEK{
 			NameSpace:    encrypted_kek.NameSpace,
@@ -203,10 +204,10 @@ func (server *QkmsRealServer) ReadKEKByNamespaceAndVersion(ctx context.Context, 
 			server.kek_map.Set(cmap_key, *cached_kek)
 		}
 		if version == encrypted_kek.Version {
-			return QKMS_ERROR_CODE_KEK_FOUND, &plain_cache_kek, nil
+			return qkms_common.QKMS_ERROR_CODE_INTERNAL_KEK_FOUND, &plain_cache_kek, nil
 		}
 	}
-	return QKMS_ERROR_CODE_KEK_VERSION_MISMATCH, nil, errors.New("kek version mismatch")
+	return qkms_common.QKMS_ERROR_CODE_INTERNAL_KEK_VERSION_MISMATCH, nil, errors.New("kek version mismatch")
 }
 
 func (server *QkmsRealServer) CreateKeyEncryptionKey(ctx context.Context, req *qkms_proto.CreateKeyEncryptionKeyRequest) (*qkms_proto.CreateKeyEncryptionKeyReply, error) {
@@ -223,7 +224,7 @@ func (server *QkmsRealServer) CreateKeyEncryptionKey(ctx context.Context, req *q
 	}
 	cipher_kek, err := PlainCacheKEK2ModelKEK(&plain_cache_kek, server.root_key)
 	if err != nil {
-		reply.ErrorCode = QKMS_ERROR_CODE_CREATE_KEK_FAILED
+		reply.ErrorCode = qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR
 		return &reply, err
 	} else {
 		error_code, err := qkms_dal.GetDal().CreateKeyEncryptionKey(ctx, cipher_kek)
@@ -239,7 +240,7 @@ func (server *QkmsRealServer) CreateKeyEncryptionKey(ctx context.Context, req *q
 	} else {
 		server.kek_map.Set(cmap_key, *cached_kek)
 	}
-	reply.ErrorCode = QKMS_ERROR_CODE_CREATE_KEK_SUCCESS
+	reply.ErrorCode = qkms_common.QKMS_ERROR_CODE_CREATE_KEK_SUCCESS
 	return &reply, nil
 
 }

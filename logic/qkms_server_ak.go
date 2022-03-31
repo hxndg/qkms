@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	qkms_common "qkms/common"
 	qkms_crypto "qkms/crypto"
 	qkms_dal "qkms/dal"
 	qkms_model "qkms/model"
@@ -72,12 +73,12 @@ func ModelAK2ProtoReadAKReply(in *qkms_model.AccessKey, key []byte) (*qkms_proto
 	ak_plaintext, err := DecryptedAESCtrBySrandTimeStamp(in.AKCiphertext, in.Srand, in.TimeStamp, key)
 	if err != nil {
 		glog.Error(fmt.Sprintf("Transfer ModelAK to ReadAccessKeyReply failed! %+v", *in))
-		out.ErrorCode = QKMS_ERROR_CODE_INTERNAL_ERROR
+		out.ErrorCode = qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR
 		return &out, err
 	}
 
 	out.AKPlaintext = qkms_crypto.Base64Encoding(ak_plaintext)
-	out.ErrorCode = QKMS_ERROR_CODE_AK_FOUND
+	out.ErrorCode = qkms_common.QKMS_ERROR_CODE_READ_AK_SUCCESS
 	return &out, nil
 }
 
@@ -145,10 +146,10 @@ func (server *QkmsRealServer) ReadAccessKey(ctx context.Context, req *qkms_proto
 		ak_plaintext, err := DecryptedAESCtrBySrandTimeStamp(cipher_cache_ak.AKCiphertext, cipher_cache_ak.Srand, cipher_cache_ak.TimeStamp, server.cache_key)
 		if err != nil {
 			glog.Error(fmt.Sprintf("Decrypt CipherCacheAK failed ! CipherCacheAK %+v, using key %s", cipher_cache_ak, qkms_crypto.Base64Encoding(server.cache_key)))
-			return &qkms_proto.ReadAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_INTERNAL_ERROR}, err
+			return &qkms_proto.ReadAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR}, err
 		}
 		var reply qkms_proto.ReadAccessKeyReply
-		reply.ErrorCode = QKMS_ERROR_CODE_AK_FOUND
+		reply.ErrorCode = qkms_common.QKMS_ERROR_CODE_READ_AK_SUCCESS
 		reply.NameSpace = cipher_cache_ak.NameSpace
 		reply.Name = cipher_cache_ak.Name
 		reply.AKPlaintext = qkms_crypto.Base64Encoding(ak_plaintext)
@@ -163,7 +164,7 @@ func (server *QkmsRealServer) ReadAccessKey(ctx context.Context, req *qkms_proto
 		encrypted_ak, err := qkms_dal.GetDal().AccquireAccessKey(ctx, req.NameSpace, req.Name, req.Environment)
 		if err != nil {
 			glog.Error(fmt.Sprintf("Can't get AK from database, request for namespace:%s name:%s, environment:%s", req.NameSpace, req.Name, req.Environment))
-			return &qkms_proto.ReadAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_AK_NOT_FOUND}, err
+			return &qkms_proto.ReadAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_READ_AK_NOT_EXIST}, err
 		}
 		error_code, plain_cache_kek, err := server.ReadKEKByNamespaceAndVersion(ctx, encrypted_ak.NameSpace, encrypted_ak.Environment, encrypted_ak.KEKVersion)
 		if err != nil {
@@ -173,11 +174,11 @@ func (server *QkmsRealServer) ReadAccessKey(ctx context.Context, req *qkms_proto
 		kek_plaintext, err := qkms_crypto.Base64Decoding(plain_cache_kek.KEKPlaintext)
 		if err != nil {
 			glog.Error(fmt.Sprintf("Can't Decoding plain kek %+v, ", *plain_cache_kek))
-			return &qkms_proto.ReadAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_INTERNAL_ERROR}, err
+			return &qkms_proto.ReadAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR}, err
 		}
 		cipher_cache_ak, err := ModelAK2CipherCacheAK(encrypted_ak, kek_plaintext, server.root_key)
 		if err != nil {
-			return &qkms_proto.ReadAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_INTERNAL_ERROR}, err
+			return &qkms_proto.ReadAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR}, err
 		} else {
 			server.ak_map.Set(cmap_key, *cipher_cache_ak)
 		}
@@ -192,7 +193,7 @@ func (server *QkmsRealServer) CreateAccessKey(ctx context.Context, req *qkms_pro
 	cmap_key := req.NameSpace + "#" + req.Environment
 	// 先检索内存当中有没有缓存AK，如果有了就直接报错返回
 	if _, ok := server.ak_map.Get(cmap_key); ok {
-		return &qkms_proto.CreateAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_AK_ALREADY_EXIST}, errors.New("ak already exist")
+		return &qkms_proto.CreateAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_CREATE_AK_ALREADY_EXIST}, errors.New("ak already exist")
 	} else {
 		//没有缓存，所以先从数据库当中取出来AK，再拿KEK读取再丢回去。
 		//encrypted_ak*qkms_model.AccessKey类型
@@ -204,7 +205,7 @@ func (server *QkmsRealServer) CreateAccessKey(ctx context.Context, req *qkms_pro
 		kek_plaintext, err := qkms_crypto.Base64Decoding(plain_cache_kek.KEKPlaintext)
 		if err != nil {
 			glog.Error(fmt.Sprintf("Create AK failed, can't decode plain kek. Request for namespace:%s name:%s, environment:%s, kek: %+v", req.NameSpace, req.Name, req.Environment, *plain_cache_kek))
-			return &qkms_proto.CreateAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_INTERNAL_ERROR}, err
+			return &qkms_proto.CreateAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR}, err
 		}
 		encrypted_ak := qkms_model.AccessKey{
 			NameSpace:   req.NameSpace,
@@ -219,7 +220,7 @@ func (server *QkmsRealServer) CreateAccessKey(ctx context.Context, req *qkms_pro
 		ak_ciphertext, err := EncryptAESCtrBySrandTimeStamp(req.AKPlaintext, encrypted_ak.Srand, encrypted_ak.TimeStamp, kek_plaintext)
 		if err != nil {
 			glog.Error(fmt.Sprintf("Create AK failed, can't encrypt ak, encrypted_ak:%+v, plain_cache_kek:%+v", encrypted_ak, *plain_cache_kek))
-			return &qkms_proto.CreateAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_INTERNAL_ERROR}, err
+			return &qkms_proto.CreateAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR}, err
 		}
 		encrypted_ak.AKCiphertext = qkms_crypto.Base64Encoding(ak_ciphertext)
 		error_code, err = qkms_dal.GetDal().CreateAccessKey(ctx, &encrypted_ak)
@@ -234,7 +235,7 @@ func (server *QkmsRealServer) CreateAccessKey(ctx context.Context, req *qkms_pro
 				server.ak_map.Set(cmap_key, *cipher_cache_ak)
 			}
 		}
-		return &qkms_proto.CreateAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_CREATE_AK_SUCCESS}, nil
+		return &qkms_proto.CreateAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_CREATE_AK_SUCCESS}, nil
 	}
 }
 
@@ -246,7 +247,7 @@ func (server *QkmsRealServer) UpdateAccessKey(ctx context.Context, req *qkms_pro
 		//这里注意下encrypted_ak是CipherCacheAK类型
 		cipher_cache_ak := check.(CipherCacheAK)
 		if req.Version <= cipher_cache_ak.Version {
-			return &qkms_proto.UpdateAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_UPDATE_AK_VERSION_TOO_OLD}, errors.New("ak already modified")
+			return &qkms_proto.UpdateAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_UPDATE_AK_INFO_MISMATCH}, errors.New("ak already modified")
 		}
 	}
 	//没有缓存，所以先从数据库当中取出来AK，再拿KEK读取再丢回去。
@@ -259,7 +260,7 @@ func (server *QkmsRealServer) UpdateAccessKey(ctx context.Context, req *qkms_pro
 	kek_plaintext, err := qkms_crypto.Base64Decoding(plain_cache_kek.KEKPlaintext)
 	if err != nil {
 		glog.Error(fmt.Sprintf("Create AK failed, can't decode plain kek. Request for namespace:%s name:%s, environment:%s, kek: %+v", req.NameSpace, req.Name, req.Environment, *plain_cache_kek))
-		return &qkms_proto.UpdateAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_INTERNAL_ERROR}, err
+		return &qkms_proto.UpdateAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR}, err
 	}
 	encrypted_ak := qkms_model.AccessKey{
 		NameSpace:   req.NameSpace,
@@ -274,7 +275,7 @@ func (server *QkmsRealServer) UpdateAccessKey(ctx context.Context, req *qkms_pro
 	ak_ciphertext, err := EncryptAESCtrBySrandTimeStamp(req.AKPlaintext, encrypted_ak.Srand, encrypted_ak.TimeStamp, kek_plaintext)
 	if err != nil {
 		glog.Error(fmt.Sprintf("Update AK failed, can't encrypt ak, encrypted_ak:%+v, plain_cache_kek:%+v", encrypted_ak, *plain_cache_kek))
-		return &qkms_proto.UpdateAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_INTERNAL_ERROR}, err
+		return &qkms_proto.UpdateAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR}, err
 	}
 	encrypted_ak.AKCiphertext = qkms_crypto.Base64Encoding(ak_ciphertext)
 	error_code, err = qkms_dal.GetDal().UpdateAccessKey(ctx, &encrypted_ak)
@@ -289,7 +290,7 @@ func (server *QkmsRealServer) UpdateAccessKey(ctx context.Context, req *qkms_pro
 			server.ak_map.Set(cmap_key, *cipher_cache_ak)
 		}
 	}
-	return &qkms_proto.UpdateAccessKeyReply{ErrorCode: QKMS_ERROR_CODE_UPDATE_AK_SUCCESS}, nil
+	return &qkms_proto.UpdateAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_UPDATE_AK_SUCCESS}, nil
 
 }
 func (server *QkmsRealServer) RotateAccessKey(ctx context.Context, req *qkms_proto.RotateAccessKeyRequest) (*qkms_proto.RotateAccessKeyReply, error) {
