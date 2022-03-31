@@ -18,6 +18,7 @@ type QkmsRealServer struct {
 	cache_key []byte
 	ak_map    cmap.ConcurrentMap
 	kek_map   cmap.ConcurrentMap
+	kar_map   cmap.ConcurrentMap
 }
 
 func (server *QkmsRealServer) Init(cert string, key string, db_config qkms_dal.DBConfig) error {
