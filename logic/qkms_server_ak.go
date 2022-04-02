@@ -296,6 +296,3 @@ func (server *QkmsRealServer) UpdateAccessKey(ctx context.Context, req *qkms_pro
 func (server *QkmsRealServer) RotateAccessKey(ctx context.Context, req *qkms_proto.RotateAccessKeyRequest) (*qkms_proto.RotateAccessKeyReply, error) {
 	return nil, nil
 }
-func (server *QkmsRealServer) GrantAccessKeyAuthorization(ctx context.Context, req *qkms_proto.GrantAccessKeyAuthorizationRequest) (*qkms_proto.GrantAccessKeyAuthorizationReply, error) {
-	return nil, nil
-}
