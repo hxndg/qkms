@@ -49,5 +49,6 @@ func (server *QkmsRealServer) Init(cert string, key string, db_config qkms_dal.D
 	}
 	server.ak_map = cmap.New()
 	server.kek_map = cmap.New()
+	server.kar_map = cmap.New()
 	return nil
 }

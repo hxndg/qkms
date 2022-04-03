@@ -50,7 +50,7 @@ func (server *QkmsRealServer) CreateAKInternal(ctx context.Context, namespace st
 	if _, ok := server.ak_map.Get(cmap_key); ok {
 		return nil, errors.New("ak already exist")
 	} else {
-		_, plain_cache_kek, err := server.ReadKEKByNamespace(ctx, namespace, name)
+		_, plain_cache_kek, err := server.ReadKEKByNamespace(ctx, namespace, environment)
 		if err != nil {
 			glog.Error(fmt.Sprintf("Create AK failed, no related kek for database. Request for namespace:%s name:%s, environment:%s", namespace, name, environment))
 			return nil, err
@@ -60,7 +60,7 @@ func (server *QkmsRealServer) CreateAKInternal(ctx context.Context, namespace st
 			glog.Error(fmt.Sprintf("Create AK failed, can't decode plain kek. Request for namespace:%s name:%s, environment:%s, kek: %+v", namespace, name, environment, *plain_cache_kek))
 			return nil, err
 		}
-		plain_cache_ak := PlainCacheAK{
+		plain_cache_ak := &PlainCacheAK{
 			NameSpace:   namespace,
 			Name:        name,
 			AKPlaintext: ak_plaintext,
@@ -70,7 +70,7 @@ func (server *QkmsRealServer) CreateAKInternal(ctx context.Context, namespace st
 			KEKVersion:  plain_cache_kek.Version,
 			OwnerAppkey: owner_appkey,
 		}
-		model_ak, err := PlainCacheAK2ModelAK(&plain_cache_ak, kek_plaintext)
+		model_ak, err := PlainCacheAK2ModelAK(plain_cache_ak, kek_plaintext)
 
 		if err != nil {
 			glog.Error(fmt.Sprintf("Create AK failed, can't encrypt ak, encrypted_ak:%+v, plain_cache_kek:%+v", *model_ak, *plain_cache_kek))
@@ -81,13 +81,13 @@ func (server *QkmsRealServer) CreateAKInternal(ctx context.Context, namespace st
 			glog.Error(fmt.Sprintf("Create AK failed, insert into database filed, encrypted_ak:%+v", model_ak))
 			return nil, err
 		}
-		cipher_cache_ak, err := PlainCacheAK2CipherCacheAK(&plain_cache_ak, server.cache_key)
+		cipher_cache_ak, err := PlainCacheAK2CipherCacheAK(plain_cache_ak, server.cache_key)
 		if err != nil {
 			glog.Error("Create encrypted success but cache failed")
 		}
 		server.ak_map.Set(cmap_key, cipher_cache_ak)
 
-		return &plain_cache_ak, nil
+		return plain_cache_ak, nil
 	}
 }
 
@@ -120,6 +120,10 @@ func (server *QkmsRealServer) UpdateAKInternal(ctx context.Context, namespace st
 		OwnerAppkey: owner_appkey,
 	}
 	model_ak, err := PlainCacheAK2ModelAK(plain_cache_ak, kek_plaintext)
+	if err != nil {
+		glog.Error(fmt.Sprintf("Update AK failed, transfer failed, encrypted_ak:%+v", *plain_cache_ak))
+		return nil, err
+	}
 
 	_, err = qkms_dal.GetDal().UpdateAccessKey(ctx, model_ak)
 	if err != nil {

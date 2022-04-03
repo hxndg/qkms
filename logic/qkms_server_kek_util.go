@@ -1,13 +1,9 @@
 package qkms_logic
 
 import (
-	"context"
 	"fmt"
-	qkms_common "qkms/common"
 	qkms_crypto "qkms/crypto"
-	qkms_dal "qkms/dal"
 	qkms_model "qkms/model"
-	qkms_proto "qkms/proto"
 
 	"github.com/golang/glog"
 )
@@ -86,38 +82,4 @@ func PlainCacheKEK2ModelKEK(in *PlainCacheKEK, key []byte) (*qkms_model.KeyEncry
 	}
 	out.KEKCiphertext = qkms_crypto.Base64Encoding(kek_ciphertext)
 	return &out, nil
-}
-
-func (server *QkmsRealServer) CreateKeyEncryptionKey(ctx context.Context, req *qkms_proto.CreateKeyEncryptionKeyRequest) (*qkms_proto.CreateKeyEncryptionKeyReply, error) {
-	cmap_key := req.NameSpace + "#" + req.Environment
-	var reply qkms_proto.CreateKeyEncryptionKeyReply
-	plain_cache_kek := PlainCacheKEK{
-		NameSpace:    req.NameSpace,
-		KEKPlaintext: qkms_crypto.Base64Encoding(qkms_crypto.GeneratePass(16)),
-		KeyType:      "AES",
-		Environment:  req.Environment,
-		Version:      0,
-		RKVersion:    0,
-		OwnerAppkey:  "hxntest",
-	}
-	cipher_kek, err := PlainCacheKEK2ModelKEK(&plain_cache_kek, server.root_key)
-	if err != nil {
-		reply.ErrorCode = qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR
-		return &reply, err
-	} else {
-		error_code, err := qkms_dal.GetDal().CreateKeyEncryptionKey(ctx, cipher_kek)
-		if err != nil {
-			reply.ErrorCode = uint64(error_code)
-			return &reply, err
-		}
-	}
-
-	cached_kek, err := PlainCacheKEK2CipherCacheKEK(&plain_cache_kek, server.cache_key)
-	if err != nil {
-		glog.Error("Can't Transfer!")
-	} else {
-		server.kek_map.Set(cmap_key, *cached_kek)
-	}
-	reply.ErrorCode = qkms_common.QKMS_ERROR_CODE_CREATE_KEK_SUCCESS
-	return &reply, nil
 }

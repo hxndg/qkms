@@ -59,6 +59,12 @@ func main() {
 		glog.Error("Creat kek failed!")
 		os.Exit(1)
 	}
+	create_kek_req.Environment = "doggy"
+	_, err = server.CreateKeyEncryptionKey(context.Background(), &create_kek_req)
+	if err != nil {
+		glog.Error("Creat kek failed!")
+		os.Exit(1)
+	}
 	_, err = server.CreateAccessKey(context.Background(), &create_ak_req)
 	if err != nil {
 		glog.Error("Creat ak failed!")
@@ -68,6 +74,43 @@ func main() {
 		NameSpace:   "kek",
 		Name:        "new_ak",
 		Environment: "test",
+	}
+	update_kar_req := qkms_proto.GrantAccessKeyAuthorizationRequest{
+		NameSpace:   "kek",
+		Name:        "new_ak",
+		Environment: "test",
+		Appkey:      "hxndg",
+		Behavior:    "read",
+	}
+	// _, err = server.GrantAccessKeyAuthorization(context.Background(), &update_kar_req)
+	// if err != nil {
+	// 	glog.Error("Update kar failed!")
+	// 	os.Exit(1)
+	// }
+	update_kar_req.Behavior = "write"
+	_, err = server.GrantAccessKeyAuthorization(context.Background(), &update_kar_req)
+	if err != nil {
+		glog.Error("Update kar failed!")
+		os.Exit(1)
+	}
+	_, err = server.ReadAccessKey(context.Background(), &read_ak_req)
+	if err != nil {
+		glog.Error("Read ak asexpected!")
+	}
+	_, err = server.ReadAccessKey(context.Background(), &read_ak_req)
+	if err != nil {
+		glog.Error("Read ak asexpected!")
+	}
+	_, err = server.GrantAccessKeyAuthorization(context.Background(), &update_kar_req)
+	if err != nil {
+		glog.Error("Update kar failed!")
+		os.Exit(1)
+	}
+	update_kar_req.Behavior = "read"
+	_, err = server.GrantAccessKeyAuthorization(context.Background(), &update_kar_req)
+	if err != nil {
+		glog.Error("Update kar failed!")
+		os.Exit(1)
 	}
 	read_ak_reply, err := server.ReadAccessKey(context.Background(), &read_ak_req)
 	if err != nil {

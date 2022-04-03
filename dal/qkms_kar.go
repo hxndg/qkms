@@ -14,11 +14,9 @@ import (
 func (d *Dal) CreateKeyAuthorizationRelation(ctx context.Context, kar *qkms_model.KeyAuthorizationRelation) (uint64, error) {
 	trans_error := d.Query(ctx).Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(kar).Error; err != nil {
-			glog.Error(fmt.Sprintf("Create KAR failed!, AK Info :%+v, Failed info: %s", *kar, err.Error()))
+			glog.Error(fmt.Sprintf("Create KAR failed!, KAR Info :%+v, Failed info: %s", *kar, err.Error()))
 			return err
 		}
-
-		// 返回 nil 提交事务
 		glog.Info(fmt.Sprintf("Create KAR success!, AK Info :%+v", *kar))
 		return nil
 	})
@@ -28,13 +26,13 @@ func (d *Dal) CreateKeyAuthorizationRelation(ctx context.Context, kar *qkms_mode
 	return qkms_common.QKMS_ERROR_CODE_CREATE_KAR_SUCCESS, nil
 }
 
-func (d *Dal) CheckKeyAuthorizationRelation(ctx context.Context, kar *qkms_model.KeyAuthorizationRelation) (uint64, error) {
-	var ak qkms_model.AccessKey
-	result := d.Query(ctx).Where("namespace = ? AND name = ? AND environment = ? AND ownerappkey = ? AND grantedappkey = ? And behavior = ?", kar.NameSpace, kar.Name, kar.Environment, kar.OwnerAppkey, kar.GrantedAppkey, kar.Behavior).First(&ak)
+func (d *Dal) CheckKeyAuthorizationRelation(ctx context.Context, namespace string, name string, environment string, ownerappkey string, grantedappkey string, behavior string) (*qkms_model.KeyAuthorizationRelation, error) {
+	var kar qkms_model.KeyAuthorizationRelation
+	result := d.Query(ctx).Where("namespace = ? AND name = ? AND environment = ? AND ownerappkey = ? AND grantedappkey = ? And behavior = ?", namespace, name, environment, ownerappkey, grantedappkey, behavior).First(&kar)
 	if result.Error != nil {
-		glog.Error(fmt.Sprintf("Check KAR failed!, KAR: %+v, Failed Info: %s", *kar, result.Error.Error()))
-		return qkms_common.QKMS_ERROR_CODE_KAR_NOT_FIND, result.Error
+		glog.Error(fmt.Sprintf("namespace:%s, name: %s,environment:%s,ownerappkey:%s,grantedappkey:%s,behavior:%s, error :%s", namespace, name, environment, ownerappkey, grantedappkey, behavior, result.Error.Error()))
+		return nil, result.Error
 	}
-	glog.Info(fmt.Sprintf("Accquire KAR success!, KAR Info :%+v", ak))
-	return qkms_common.QKMS_ERROR_CODE_KAR_FIND, nil
+	glog.Info(fmt.Sprintf("Accquire KAR success!, KAR Info :%+v", kar))
+	return &kar, nil
 }
