@@ -97,7 +97,7 @@ message CreateKeyEncryptionKeyReply {
 service qkms {
     rpc ReadAccessKey(ReadAccessKeyRequest) returns (ReadAccessKeyReply) {}
     rpc GenerateAccessKey(GenerateAccessKeyReply) returns (GenerateAccessKeyReply) {}
-    rpc CreateAccessKey(CreateAccessKeyRequest) returns (CreateAccessKeyRequest) {}
+    rpc CreateAccessKey(CreateAccessKeyRequest) returns (CreateAccessKeyReply) {}
     rpc CreateKeyEncryptionKey(CreateKeyEncryptionKeyRequest) returns (CreateKeyEncryptionKeyReply) {}
     rpc UpdateAccessKey(UpdateAccessKeyRequest) returns (UpdateAccessKeyReply) {}
     rpc RotateAccessKey(RotateAccessKeyRequest) returns (RotateAccessKeyReply) {}

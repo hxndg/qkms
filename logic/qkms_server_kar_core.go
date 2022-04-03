@@ -15,6 +15,7 @@ import (
 func (server *QkmsRealServer) CheckKAR(ctx context.Context, namespace string, name string, environment string, ownerappkey string, grantedappkey string, behavior string) (uint64, error) {
 	err := CheckBehaviorValid(behavior)
 	if err != nil {
+		glog.Info(fmt.Sprintf("Find invalid behavior! Namespace:%s, Name:%s,Environment:%s, owner:%s, granted:%s, behavior: %s", namespace, name, environment, ownerappkey, grantedappkey, behavior))
 		return qkms_common.QKMS_ERROR_CODE_INVALID_OPERATION, errors.New("invalid behavior")
 	}
 
@@ -27,7 +28,7 @@ func (server *QkmsRealServer) CheckKAR(ctx context.Context, namespace string, na
 		cache_kar = check.(*CacheKAR)
 		error_code, err := cache_kar.CheckCacheKARBehavior(grantedappkey, behavior)
 		if error_code != qkms_common.QKMS_ERROR_CODE_OPERATION_VALIDATION_UNKNOWN {
-			glog.Info(fmt.Sprintf("Check Cache KAR Not Exist! Namespace:%s, Name:%s,Environment:%s", namespace, name, environment))
+			glog.Info(fmt.Sprintf("Find cached KAR! Namespace:%s, Name:%s,Environment:%s, owner:%s, granted:%s, behavior: %s", namespace, name, environment, ownerappkey, grantedappkey, behavior))
 			return error_code, err
 		}
 	} else {
@@ -46,14 +47,18 @@ func (server *QkmsRealServer) CheckKAR(ctx context.Context, namespace string, na
 	cache_kar.UpdateCacheKARBehavior(grantedappkey, behavior, err == nil)
 	server.kar_map.SetIfAbsent(cmap_key, cache_kar)
 	if err != nil {
+		glog.Info(fmt.Sprintf("Can't find KAR, Namespace:%s, Name:%s,Environment:%s, owner:%s, granted:%s, behavior: %s", namespace, name, environment, ownerappkey, grantedappkey, behavior))
 		return qkms_common.QKMS_ERROR_CODE_KAR_NOT_FIND, err
+	} else {
+		glog.Info(fmt.Sprintf("Find KAR and cached, Namespace:%s, Name:%s,Environment:%s, owner:%s, granted:%s, behavior: %s", namespace, name, environment, ownerappkey, grantedappkey, behavior))
+		return qkms_common.QKMS_ERROR_CODE_KAR_FIND, nil
 	}
-	return qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR, errors.New("internal error")
 }
 
 func (server *QkmsRealServer) GrantKARInternal(ctx context.Context, namespace string, name string, environment string, ownerappkey string, grantedappkey string, behavior string) (uint64, error) {
 	err := CheckBehaviorValid(behavior)
 	if err != nil {
+		glog.Info(fmt.Sprintf("Find invalid behavior! Namespace:%s, Name:%s,Environment:%s, owner:%s, granted:%s, behavior: %s", namespace, name, environment, ownerappkey, grantedappkey, behavior))
 		return qkms_common.QKMS_ERROR_CODE_INVALID_OPERATION, errors.New("invalid behavior")
 	}
 
@@ -64,7 +69,6 @@ func (server *QkmsRealServer) GrantKARInternal(ctx context.Context, namespace st
 	var cache_kar *CacheKAR
 	if check, ok := server.kar_map.Get(cmap_key); ok {
 		cache_kar = check.(*CacheKAR)
-		//修正，这里如果先改了read，就不能再赋值write了
 		error_code, _ := cache_kar.CheckCacheKARBehavior(grantedappkey, behavior)
 		if error_code == qkms_common.QKMS_ERROR_CODE_READ_VALID || error_code == qkms_common.QKMS_ERROR_CODE_WRITE_VALID {
 			glog.Info(fmt.Sprintf("Granted Cache KAR Already! Namespace:%s, Name:%s,Environment:%s, Owner:%s, Granted:%s, Behavior:%s", namespace, name, environment, ownerappkey, grantedappkey, behavior))
@@ -94,10 +98,11 @@ func (server *QkmsRealServer) GrantKARInternal(ctx context.Context, namespace st
 	_, err = qkms_dal.GetDal().CreateKeyAuthorizationRelation(ctx, add_kar)
 
 	cache_kar.UpdateCacheKARBehavior(grantedappkey, behavior, err == nil)
-	if err == nil {
+	if err != nil {
+		glog.Info(fmt.Sprintf("Grant update KAR! Namespace:%s, Name:%s,Environment:%s, Owner:%s, Granted:%s, Behavior:%s, error: %s", namespace, name, environment, ownerappkey, grantedappkey, behavior, err.Error()))
+		return qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR, err
+	} else {
 		glog.Info(fmt.Sprintf("Grant Cache KAR Already! Namespace:%s, Name:%s,Environment:%s, Owner:%s, Granted:%s, Behavior:%s", namespace, name, environment, ownerappkey, grantedappkey, behavior))
 		return qkms_common.QKMS_ERROR_CODE_KAR_GRANTED, nil
 	}
-
-	return qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR, errors.New("internal error")
 }

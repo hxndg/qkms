@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type QkmsClient interface {
 	ReadAccessKey(ctx context.Context, in *ReadAccessKeyRequest, opts ...grpc.CallOption) (*ReadAccessKeyReply, error)
 	GenerateAccessKey(ctx context.Context, in *GenerateAccessKeyReply, opts ...grpc.CallOption) (*GenerateAccessKeyReply, error)
-	CreateAccessKey(ctx context.Context, in *CreateAccessKeyRequest, opts ...grpc.CallOption) (*CreateAccessKeyRequest, error)
+	CreateAccessKey(ctx context.Context, in *CreateAccessKeyRequest, opts ...grpc.CallOption) (*CreateAccessKeyReply, error)
 	CreateKeyEncryptionKey(ctx context.Context, in *CreateKeyEncryptionKeyRequest, opts ...grpc.CallOption) (*CreateKeyEncryptionKeyReply, error)
 	UpdateAccessKey(ctx context.Context, in *UpdateAccessKeyRequest, opts ...grpc.CallOption) (*UpdateAccessKeyReply, error)
 	RotateAccessKey(ctx context.Context, in *RotateAccessKeyRequest, opts ...grpc.CallOption) (*RotateAccessKeyReply, error)
@@ -57,8 +57,8 @@ func (c *qkmsClient) GenerateAccessKey(ctx context.Context, in *GenerateAccessKe
 	return out, nil
 }
 
-func (c *qkmsClient) CreateAccessKey(ctx context.Context, in *CreateAccessKeyRequest, opts ...grpc.CallOption) (*CreateAccessKeyRequest, error) {
-	out := new(CreateAccessKeyRequest)
+func (c *qkmsClient) CreateAccessKey(ctx context.Context, in *CreateAccessKeyRequest, opts ...grpc.CallOption) (*CreateAccessKeyReply, error) {
+	out := new(CreateAccessKeyReply)
 	err := c.cc.Invoke(ctx, "/qkms_proto.qkms/CreateAccessKey", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -108,7 +108,7 @@ func (c *qkmsClient) GrantAccessKeyAuthorization(ctx context.Context, in *GrantA
 type QkmsServer interface {
 	ReadAccessKey(context.Context, *ReadAccessKeyRequest) (*ReadAccessKeyReply, error)
 	GenerateAccessKey(context.Context, *GenerateAccessKeyReply) (*GenerateAccessKeyReply, error)
-	CreateAccessKey(context.Context, *CreateAccessKeyRequest) (*CreateAccessKeyRequest, error)
+	CreateAccessKey(context.Context, *CreateAccessKeyRequest) (*CreateAccessKeyReply, error)
 	CreateKeyEncryptionKey(context.Context, *CreateKeyEncryptionKeyRequest) (*CreateKeyEncryptionKeyReply, error)
 	UpdateAccessKey(context.Context, *UpdateAccessKeyRequest) (*UpdateAccessKeyReply, error)
 	RotateAccessKey(context.Context, *RotateAccessKeyRequest) (*RotateAccessKeyReply, error)
@@ -126,7 +126,7 @@ func (UnimplementedQkmsServer) ReadAccessKey(context.Context, *ReadAccessKeyRequ
 func (UnimplementedQkmsServer) GenerateAccessKey(context.Context, *GenerateAccessKeyReply) (*GenerateAccessKeyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateAccessKey not implemented")
 }
-func (UnimplementedQkmsServer) CreateAccessKey(context.Context, *CreateAccessKeyRequest) (*CreateAccessKeyRequest, error) {
+func (UnimplementedQkmsServer) CreateAccessKey(context.Context, *CreateAccessKeyRequest) (*CreateAccessKeyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAccessKey not implemented")
 }
 func (UnimplementedQkmsServer) CreateKeyEncryptionKey(context.Context, *CreateKeyEncryptionKeyRequest) (*CreateKeyEncryptionKeyReply, error) {
