@@ -39,10 +39,10 @@ func (kar *CacheKAR) CheckCacheKARBehavior(appkey string, behavior string) (uint
 
 	if behavior == "write" {
 		if _, ok := kar.WritableAppkeys.Get(appkey); ok {
-			return qkms_common.QKMS_ERROR_CODE_READ_VALID, nil
+			return qkms_common.QKMS_ERROR_CODE_WRITE_VALID, nil
 		}
 		if _, ok := kar.UnWritableAppkeys.Get(appkey); ok {
-			return qkms_common.QKMS_ERROR_CODE_READ_INVALID, errors.New("invalid write behavior")
+			return qkms_common.QKMS_ERROR_CODE_WRITE_INVALID, errors.New("invalid write behavior")
 		}
 	}
 	return qkms_common.QKMS_ERROR_CODE_OPERATION_VALIDATION_UNKNOWN, nil

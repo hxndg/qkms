@@ -66,8 +66,8 @@ func (server *QkmsRealServer) GrantKARInternal(ctx context.Context, namespace st
 		cache_kar = check.(*CacheKAR)
 		//修正，这里如果先改了read，就不能再赋值write了
 		error_code, _ := cache_kar.CheckCacheKARBehavior(grantedappkey, behavior)
-		if (behavior == read && error_code == qkms_common.QKMS_ERROR_CODE_READ_VALID)
-		if  || error_code == qkms_common.QKMS_ERROR_CODE_WRITE_VALID {
+		if error_code == qkms_common.QKMS_ERROR_CODE_READ_VALID || error_code == qkms_common.QKMS_ERROR_CODE_WRITE_VALID {
+			glog.Info(fmt.Sprintf("Granted Cache KAR Already! Namespace:%s, Name:%s,Environment:%s, Owner:%s, Granted:%s, Behavior:%s", namespace, name, environment, ownerappkey, grantedappkey, behavior))
 			return qkms_common.QKMS_ERROR_CODE_KAR_GRANTED, nil
 		}
 	} else {
@@ -95,6 +95,7 @@ func (server *QkmsRealServer) GrantKARInternal(ctx context.Context, namespace st
 
 	cache_kar.UpdateCacheKARBehavior(grantedappkey, behavior, err == nil)
 	if err == nil {
+		glog.Info(fmt.Sprintf("Grant Cache KAR Already! Namespace:%s, Name:%s,Environment:%s, Owner:%s, Granted:%s, Behavior:%s", namespace, name, environment, ownerappkey, grantedappkey, behavior))
 		return qkms_common.QKMS_ERROR_CODE_KAR_GRANTED, nil
 	}
 
