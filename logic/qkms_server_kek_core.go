@@ -145,10 +145,12 @@ func (server *QkmsRealServer) CreateKEKInternal(ctx context.Context, namespace s
 	}
 	cipher_kek, err := PlainCacheKEK2ModelKEK(&plain_cache_kek, server.root_key)
 	if err != nil {
+		glog.Error(fmt.Sprintf("Transfer plain cache kek to  model kek failed, plain cache kek %+v, using key %s", plain_cache_kek, qkms_crypto.Base64Encoding(server.root_key)))
 		return nil, err
 	}
 	_, err = qkms_dal.GetDal().CreateKeyEncryptionKey(ctx, cipher_kek)
 	if err != nil {
+		glog.Error(fmt.Sprintf("Create model kek failed, plain model kek %+v, using key %s", *cipher_kek, qkms_crypto.Base64Encoding(server.root_key)))
 		return nil, err
 	}
 

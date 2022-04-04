@@ -70,10 +70,3 @@ func (kar *CacheKAR) UpdateCacheKARBehavior(appkey string, behavior string, allo
 	}
 	return qkms_common.QKMS_ERROR_CODE_CACHE_KAR_UPDATE, nil
 }
-
-func CheckAKOwner(ak *PlainCacheAK, owner string) error {
-	if ak.OwnerAppkey != owner {
-		return errors.New("invalid owner")
-	}
-	return nil
-}

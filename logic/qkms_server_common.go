@@ -3,6 +3,7 @@ package qkms_logic
 import (
 	"fmt"
 	qkms_crypto "qkms/crypto"
+	"strings"
 
 	"github.com/golang/glog"
 )
@@ -35,4 +36,18 @@ func EncryptAESCtrBySrandTimeStamp(base64_plaintext string, srand uint64, timest
 		return nil, err
 	}
 	return ciphertext, nil
+}
+
+func Split2GetValue(in string, sep string, kv_sep string, key string) *string {
+	in_slice := strings.Split(in, sep)
+	for _, kv := range in_slice {
+		kv_slice := strings.Split(kv, kv_sep)
+		if len(kv_slice) != 2 {
+			continue
+		}
+		if kv_slice[0] == key {
+			return &kv_slice[1]
+		}
+	}
+	return nil
 }

@@ -1,0 +1,10 @@
+DB_CONFIG:
+  DB_NAME: "postgres"
+  DB_HOST: "127.0.0.1"
+  DB_PORT: 5432
+  DB_USERNAME: "xiaonan"
+  DB_PASSWORD: "12345678"
+
+SERVER_CERT_PATH: "credentials/server/server.pem"
+SERVER_KEY_PATH: "credentials/server/server.key"
+CA_CERT_PATH: "credentials/ca.pem"

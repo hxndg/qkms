@@ -3,6 +3,8 @@ package main
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"flag"
+	"fmt"
 	"io/ioutil"
 	"net"
 	qkms_dal "qkms/dal"
@@ -10,32 +12,45 @@ import (
 	qkms_proto "qkms/proto"
 
 	"github.com/golang/glog"
+	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
 )
 
 func main() {
-	var db_config qkms_dal.DBConfig
-	db_config.DbName = "postgres"
-	db_config.Host = "127.0.0.1"
-	db_config.Username = "xiaonan"
-	db_config.Port = 5432
-	db_config.Password = "12345678"
+	flag.Parse()
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("config/")
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(fmt.Errorf("fatal error config file: %w ", err))
+	}
+	db_config := qkms_dal.DBConfig{
+		DbName:   viper.GetString("DB_CONFIG.DB_NAME"),
+		Host:     viper.GetString("DB_CONFIG.DB_HOST"),
+		Port:     viper.GetInt("DB_CONFIG.DB_PORT"),
+		Username: viper.GetString("DB_CONFIG.DB_USERNAME"),
+		Password: viper.GetString("DB_CONFIG.DB_PASSWORD"),
+	}
+
 	var qkms_server qkms_logic.QkmsRealServer
-	err := qkms_server.Init("server.crt", "server.key", db_config)
+	err = qkms_server.Init(viper.GetString("SERVER_CERT_PATH"), viper.GetString("SERVER_KEY_PATH"), db_config)
 	if err != nil {
 		glog.Error("Can't Init QkmsRealServer for", err.Error())
 		panic(err)
+	} else {
+		glog.Error("QkmsRealServer init")
 	}
 
-	cert, err := tls.LoadX509KeyPair("credentials/server/server.pem", "credentials/server/server.key")
+	cert, err := tls.LoadX509KeyPair(viper.GetString("SERVER_CERT_PATH"), viper.GetString("SERVER_KEY_PATH"))
 	if err != nil {
 		panic(err)
 	}
 
 	certPool := x509.NewCertPool()
-	rootBuf, err := ioutil.ReadFile("credentials/ca.pem")
+	rootBuf, err := ioutil.ReadFile(viper.GetString("CA_CERT_PATH"))
 	if err != nil {
 		panic(err)
 	}
@@ -63,5 +78,7 @@ func main() {
 
 	if err := server.Serve(listener); err != nil {
 		panic(err)
+	} else {
+		glog.Error("QkmsRealServer start listen")
 	}
 }

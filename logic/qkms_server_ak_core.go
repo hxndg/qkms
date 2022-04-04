@@ -48,7 +48,7 @@ func (server *QkmsRealServer) CreateAKInternal(ctx context.Context, namespace st
 	cmap_key := namespace + "#" + name + "#" + environment
 	// 先检索内存当中有没有缓存AK，如果有了就直接报错返回
 	if _, ok := server.ak_map.Get(cmap_key); ok {
-		return nil, errors.New("ak already exist")
+		return nil, errors.New("AK already exist")
 	} else {
 		_, plain_cache_kek, err := server.ReadKEKByNamespace(ctx, namespace, environment)
 		if err != nil {
@@ -96,7 +96,7 @@ func (server *QkmsRealServer) UpdateAKInternal(ctx context.Context, namespace st
 	if check, ok := server.ak_map.Get(cmap_key); ok {
 		cipher_cache_ak := check.(*CipherCacheAK)
 		if version <= cipher_cache_ak.Version {
-			return nil, errors.New("ak already modified")
+			return nil, errors.New("AK already modified")
 		}
 	}
 	_, plain_cache_kek, err := server.ReadKEKByNamespace(ctx, namespace, environment)

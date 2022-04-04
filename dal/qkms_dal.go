@@ -18,7 +18,7 @@ type DBConfig struct {
 	Password string
 	DbName   string
 	Host     string
-	Port     int32
+	Port     int
 }
 
 type BaseDal struct {
