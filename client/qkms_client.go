@@ -58,7 +58,7 @@ func main() {
 	create_ak_req := qkms_proto.CreateAccessKeyRequest{
 		NameSpace:   "kek",
 		Name:        "new_ak",
-		AKPlaintext: qkms_crypto.Base64Encoding([]byte("hxn has a big dick")),
+		AKPlaintext: qkms_crypto.Base64Encoding([]byte("u got be joke")),
 		KeyType:     "opaque",
 		Environment: "test",
 	}

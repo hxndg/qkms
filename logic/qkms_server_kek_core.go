@@ -141,7 +141,7 @@ func (server *QkmsRealServer) CreateKEKInternal(ctx context.Context, namespace s
 		Environment:  environment,
 		Version:      0,
 		RKVersion:    0,
-		OwnerAppkey:  "hxndg",
+		OwnerAppkey:  "qube",
 	}
 	cipher_kek, err := PlainCacheKEK2ModelKEK(&plain_cache_kek, server.root_key)
 	if err != nil {
