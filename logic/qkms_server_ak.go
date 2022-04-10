@@ -33,10 +33,14 @@ func (server *QkmsRealServer) ReadAccessKey(ctx context.Context, req *qkms_proto
 		glog.Info(fmt.Sprintf("Read AK failed, req:%+v, ownerappkey: %s, error: %s", req.String(), *ownerappkey, err.Error()))
 		return &qkms_proto.ReadAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR}, err
 	}
-	error_code, err := server.CheckKAR(ctx, plain_cache_ak.NameSpace, plain_cache_ak.Name, plain_cache_ak.Environment, plain_cache_ak.OwnerAppkey, *ownerappkey, qkms_common.QKMS_BEHAVIOR_READ)
-	if err != nil {
-		glog.Info(fmt.Sprintf("Read AK failed, req:%+v, ownerappkey: %s, error: %s", req.String(), *ownerappkey, err.Error()))
-		return &qkms_proto.ReadAccessKeyReply{ErrorCode: error_code}, err
+	// if user is mainter of namespace, allow read
+	allow, err := server.CheckPolicyForUserInternal(ctx, *ownerappkey, plain_cache_ak.NameSpace, "read")
+	if err != nil || !allow {
+		error_code, err := server.CheckKAR(ctx, plain_cache_ak.NameSpace, plain_cache_ak.Name, plain_cache_ak.Environment, plain_cache_ak.OwnerAppkey, *ownerappkey, qkms_common.QKMS_BEHAVIOR_READ)
+		if err != nil {
+			glog.Info(fmt.Sprintf("Read AK failed, req:%+v, ownerappkey: %s, error: %s", req.String(), *ownerappkey, err.Error()))
+			return &qkms_proto.ReadAccessKeyReply{ErrorCode: error_code}, err
+		}
 	}
 	reply := &qkms_proto.ReadAccessKeyReply{
 		ErrorCode:   qkms_common.QKMS_ERROR_CODE_READ_AK_SUCCESS,
@@ -103,10 +107,13 @@ func (server *QkmsRealServer) UpdateAccessKey(ctx context.Context, req *qkms_pro
 		glog.Info(fmt.Sprintf("Update AK failed, req:%+v, ownerappkey: %s, error: %s", req.String(), *ownerappkey, "ak info mismatch"))
 		return &qkms_proto.UpdateAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_UPDATE_AK_INFO_MISMATCH}, errors.New("ak info mismatch")
 	}
-	error_code, err := server.CheckKAR(ctx, plain_cache_ak.NameSpace, plain_cache_ak.Name, plain_cache_ak.Environment, plain_cache_ak.OwnerAppkey, *ownerappkey, qkms_common.QKMS_BEHAVIOR_WRITE)
-	if err != nil {
-		glog.Info(fmt.Sprintf("Update AK failed, req:%+v, ownerappkey: %s, error: %s", req.String(), *ownerappkey, "no valid kar"))
-		return &qkms_proto.UpdateAccessKeyReply{ErrorCode: error_code}, err
+	allow, err := server.CheckPolicyForUserInternal(ctx, *ownerappkey, plain_cache_ak.NameSpace, "write")
+	if err != nil || !allow {
+		error_code, err := server.CheckKAR(ctx, plain_cache_ak.NameSpace, plain_cache_ak.Name, plain_cache_ak.Environment, plain_cache_ak.OwnerAppkey, *ownerappkey, qkms_common.QKMS_BEHAVIOR_WRITE)
+		if err != nil {
+			glog.Info(fmt.Sprintf("Update AK failed, req:%+v, ownerappkey: %s, error: %s", req.String(), *ownerappkey, "no valid kar"))
+			return &qkms_proto.UpdateAccessKeyReply{ErrorCode: error_code}, err
+		}
 	}
 	_, err = server.UpdateAKInternal(ctx, req.NameSpace, req.Name, req.AKPlaintext, req.KeyType, req.Environment, plain_cache_ak.OwnerAppkey, req.Version)
 	if err != nil {

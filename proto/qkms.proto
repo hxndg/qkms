@@ -94,6 +94,33 @@ message CreateKeyEncryptionKeyReply {
     uint64 ErrorCode = 1;
 }
 
+message CreateRoleRequest {
+    string Name =1;
+}
+
+message CreateRoleReply {
+    uint64 ErrorCode = 1;
+}
+
+message GrantNameSpaceForRoleRequest {
+    string Role = 1;
+    repeated string NameSpaces = 2;
+    string Behavior = 3;
+}
+
+message GrantNameSpaceForRoleReply {
+    uint64 ErrorCode = 1;
+}
+
+message GrantRoleForUserRequest {
+    string User = 1;
+    string Role = 2;
+}
+
+message GrantRoleForUserReply {
+    uint64 ErrorCode = 1;
+}
+
 service qkms {
     rpc ReadAccessKey(ReadAccessKeyRequest) returns (ReadAccessKeyReply) {}
     rpc GenerateAccessKey(GenerateAccessKeyReply) returns (GenerateAccessKeyReply) {}
@@ -102,4 +129,7 @@ service qkms {
     rpc UpdateAccessKey(UpdateAccessKeyRequest) returns (UpdateAccessKeyReply) {}
     rpc RotateAccessKey(RotateAccessKeyRequest) returns (RotateAccessKeyReply) {}
     rpc GrantAccessKeyAuthorization(GrantAccessKeyAuthorizationRequest) returns (GrantAccessKeyAuthorizationReply) {}
+    rpc CreateRole(CreateRoleRequest) returns (CreateRoleReply) {}
+    rpc GrantNameSpaceForRole(GrantNameSpaceForRoleRequest) returns (GrantNameSpaceForRoleReply) {}
+    rpc GrantRoleForUser(GrantRoleForUserRequest) returns (GrantRoleForUserReply) {}
 }

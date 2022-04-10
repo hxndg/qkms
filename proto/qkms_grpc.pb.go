@@ -29,6 +29,9 @@ type QkmsClient interface {
 	UpdateAccessKey(ctx context.Context, in *UpdateAccessKeyRequest, opts ...grpc.CallOption) (*UpdateAccessKeyReply, error)
 	RotateAccessKey(ctx context.Context, in *RotateAccessKeyRequest, opts ...grpc.CallOption) (*RotateAccessKeyReply, error)
 	GrantAccessKeyAuthorization(ctx context.Context, in *GrantAccessKeyAuthorizationRequest, opts ...grpc.CallOption) (*GrantAccessKeyAuthorizationReply, error)
+	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleReply, error)
+	GrantNameSpaceForRole(ctx context.Context, in *GrantNameSpaceForRoleRequest, opts ...grpc.CallOption) (*GrantNameSpaceForRoleReply, error)
+	GrantRoleForUser(ctx context.Context, in *GrantRoleForUserRequest, opts ...grpc.CallOption) (*GrantRoleForUserReply, error)
 }
 
 type qkmsClient struct {
@@ -102,6 +105,33 @@ func (c *qkmsClient) GrantAccessKeyAuthorization(ctx context.Context, in *GrantA
 	return out, nil
 }
 
+func (c *qkmsClient) CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleReply, error) {
+	out := new(CreateRoleReply)
+	err := c.cc.Invoke(ctx, "/qkms_proto.qkms/CreateRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *qkmsClient) GrantNameSpaceForRole(ctx context.Context, in *GrantNameSpaceForRoleRequest, opts ...grpc.CallOption) (*GrantNameSpaceForRoleReply, error) {
+	out := new(GrantNameSpaceForRoleReply)
+	err := c.cc.Invoke(ctx, "/qkms_proto.qkms/GrantNameSpaceForRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *qkmsClient) GrantRoleForUser(ctx context.Context, in *GrantRoleForUserRequest, opts ...grpc.CallOption) (*GrantRoleForUserReply, error) {
+	out := new(GrantRoleForUserReply)
+	err := c.cc.Invoke(ctx, "/qkms_proto.qkms/GrantRoleForUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QkmsServer is the server API for Qkms service.
 // All implementations must embed UnimplementedQkmsServer
 // for forward compatibility
@@ -113,6 +143,9 @@ type QkmsServer interface {
 	UpdateAccessKey(context.Context, *UpdateAccessKeyRequest) (*UpdateAccessKeyReply, error)
 	RotateAccessKey(context.Context, *RotateAccessKeyRequest) (*RotateAccessKeyReply, error)
 	GrantAccessKeyAuthorization(context.Context, *GrantAccessKeyAuthorizationRequest) (*GrantAccessKeyAuthorizationReply, error)
+	CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleReply, error)
+	GrantNameSpaceForRole(context.Context, *GrantNameSpaceForRoleRequest) (*GrantNameSpaceForRoleReply, error)
+	GrantRoleForUser(context.Context, *GrantRoleForUserRequest) (*GrantRoleForUserReply, error)
 	mustEmbedUnimplementedQkmsServer()
 }
 
@@ -140,6 +173,15 @@ func (UnimplementedQkmsServer) RotateAccessKey(context.Context, *RotateAccessKey
 }
 func (UnimplementedQkmsServer) GrantAccessKeyAuthorization(context.Context, *GrantAccessKeyAuthorizationRequest) (*GrantAccessKeyAuthorizationReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GrantAccessKeyAuthorization not implemented")
+}
+func (UnimplementedQkmsServer) CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateRole not implemented")
+}
+func (UnimplementedQkmsServer) GrantNameSpaceForRole(context.Context, *GrantNameSpaceForRoleRequest) (*GrantNameSpaceForRoleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GrantNameSpaceForRole not implemented")
+}
+func (UnimplementedQkmsServer) GrantRoleForUser(context.Context, *GrantRoleForUserRequest) (*GrantRoleForUserReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GrantRoleForUser not implemented")
 }
 func (UnimplementedQkmsServer) mustEmbedUnimplementedQkmsServer() {}
 
@@ -280,6 +322,60 @@ func _Qkms_GrantAccessKeyAuthorization_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Qkms_CreateRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QkmsServer).CreateRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/qkms_proto.qkms/CreateRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QkmsServer).CreateRole(ctx, req.(*CreateRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Qkms_GrantNameSpaceForRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GrantNameSpaceForRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QkmsServer).GrantNameSpaceForRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/qkms_proto.qkms/GrantNameSpaceForRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QkmsServer).GrantNameSpaceForRole(ctx, req.(*GrantNameSpaceForRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Qkms_GrantRoleForUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GrantRoleForUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QkmsServer).GrantRoleForUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/qkms_proto.qkms/GrantRoleForUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QkmsServer).GrantRoleForUser(ctx, req.(*GrantRoleForUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Qkms_ServiceDesc is the grpc.ServiceDesc for Qkms service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -314,6 +410,18 @@ var Qkms_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GrantAccessKeyAuthorization",
 			Handler:    _Qkms_GrantAccessKeyAuthorization_Handler,
+		},
+		{
+			MethodName: "CreateRole",
+			Handler:    _Qkms_CreateRole_Handler,
+		},
+		{
+			MethodName: "GrantNameSpaceForRole",
+			Handler:    _Qkms_GrantNameSpaceForRole_Handler,
+		},
+		{
+			MethodName: "GrantRoleForUser",
+			Handler:    _Qkms_GrantRoleForUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

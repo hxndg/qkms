@@ -31,8 +31,12 @@ func (server *QkmsRealServer) GrantAccessKeyAuthorization(ctx context.Context, r
 		glog.Info(fmt.Sprintf("Grant KAR failed, req:%+v, ownerappkey: %s, error: %s", req.String(), *ownerappkey, err.Error()))
 		return &qkms_proto.GrantAccessKeyAuthorizationReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_READ_INVALID}, err
 	}
-	if plain_cache_ak.OwnerAppkey != *ownerappkey {
-		glog.Info(fmt.Sprintf("Grant KAR failed, req:%+v, ownerappkey: %s, error: %s", req.String(), *ownerappkey, "requester is not key owner"))
+	// mainter can modify kar relation
+	allow, err := server.CheckPolicyForUserInternal(ctx, *ownerappkey, plain_cache_ak.NameSpace, "write")
+	if err != nil || !allow {
+		if plain_cache_ak.OwnerAppkey != *ownerappkey {
+			glog.Info(fmt.Sprintf("Grant KAR failed, req:%+v, ownerappkey: %s, error: %s", req.String(), *ownerappkey, "requester is not key owner"))
+		}
 	}
 	erro_code, err := server.GrantKARInternal(ctx, req.NameSpace, req.Name, req.Environment, plain_cache_ak.OwnerAppkey, req.Appkey, req.Behavior)
 	if err != nil {

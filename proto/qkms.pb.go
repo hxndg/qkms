@@ -908,6 +908,312 @@ func (x *CreateKeyEncryptionKeyReply) GetErrorCode() uint64 {
 	return 0
 }
 
+type CreateRoleRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name string `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
+}
+
+func (x *CreateRoleRequest) Reset() {
+	*x = CreateRoleRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_qkms_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRoleRequest) ProtoMessage() {}
+
+func (x *CreateRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_qkms_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRoleRequest.ProtoReflect.Descriptor instead.
+func (*CreateRoleRequest) Descriptor() ([]byte, []int) {
+	return file_qkms_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *CreateRoleRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type CreateRoleReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ErrorCode uint64 `protobuf:"varint,1,opt,name=ErrorCode,proto3" json:"ErrorCode,omitempty"`
+}
+
+func (x *CreateRoleReply) Reset() {
+	*x = CreateRoleReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_qkms_proto_msgTypes[15]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateRoleReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRoleReply) ProtoMessage() {}
+
+func (x *CreateRoleReply) ProtoReflect() protoreflect.Message {
+	mi := &file_qkms_proto_msgTypes[15]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRoleReply.ProtoReflect.Descriptor instead.
+func (*CreateRoleReply) Descriptor() ([]byte, []int) {
+	return file_qkms_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *CreateRoleReply) GetErrorCode() uint64 {
+	if x != nil {
+		return x.ErrorCode
+	}
+	return 0
+}
+
+type GrantNameSpaceForRoleRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Role       string   `protobuf:"bytes,1,opt,name=Role,proto3" json:"Role,omitempty"`
+	NameSpaces []string `protobuf:"bytes,2,rep,name=NameSpaces,proto3" json:"NameSpaces,omitempty"`
+	Behavior   string   `protobuf:"bytes,3,opt,name=Behavior,proto3" json:"Behavior,omitempty"`
+}
+
+func (x *GrantNameSpaceForRoleRequest) Reset() {
+	*x = GrantNameSpaceForRoleRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_qkms_proto_msgTypes[16]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GrantNameSpaceForRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GrantNameSpaceForRoleRequest) ProtoMessage() {}
+
+func (x *GrantNameSpaceForRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_qkms_proto_msgTypes[16]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GrantNameSpaceForRoleRequest.ProtoReflect.Descriptor instead.
+func (*GrantNameSpaceForRoleRequest) Descriptor() ([]byte, []int) {
+	return file_qkms_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *GrantNameSpaceForRoleRequest) GetRole() string {
+	if x != nil {
+		return x.Role
+	}
+	return ""
+}
+
+func (x *GrantNameSpaceForRoleRequest) GetNameSpaces() []string {
+	if x != nil {
+		return x.NameSpaces
+	}
+	return nil
+}
+
+func (x *GrantNameSpaceForRoleRequest) GetBehavior() string {
+	if x != nil {
+		return x.Behavior
+	}
+	return ""
+}
+
+type GrantNameSpaceForRoleReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ErrorCode uint64 `protobuf:"varint,1,opt,name=ErrorCode,proto3" json:"ErrorCode,omitempty"`
+}
+
+func (x *GrantNameSpaceForRoleReply) Reset() {
+	*x = GrantNameSpaceForRoleReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_qkms_proto_msgTypes[17]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GrantNameSpaceForRoleReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GrantNameSpaceForRoleReply) ProtoMessage() {}
+
+func (x *GrantNameSpaceForRoleReply) ProtoReflect() protoreflect.Message {
+	mi := &file_qkms_proto_msgTypes[17]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GrantNameSpaceForRoleReply.ProtoReflect.Descriptor instead.
+func (*GrantNameSpaceForRoleReply) Descriptor() ([]byte, []int) {
+	return file_qkms_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GrantNameSpaceForRoleReply) GetErrorCode() uint64 {
+	if x != nil {
+		return x.ErrorCode
+	}
+	return 0
+}
+
+type GrantRoleForUserRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	User string `protobuf:"bytes,1,opt,name=User,proto3" json:"User,omitempty"`
+	Role string `protobuf:"bytes,2,opt,name=Role,proto3" json:"Role,omitempty"`
+}
+
+func (x *GrantRoleForUserRequest) Reset() {
+	*x = GrantRoleForUserRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_qkms_proto_msgTypes[18]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GrantRoleForUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GrantRoleForUserRequest) ProtoMessage() {}
+
+func (x *GrantRoleForUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_qkms_proto_msgTypes[18]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GrantRoleForUserRequest.ProtoReflect.Descriptor instead.
+func (*GrantRoleForUserRequest) Descriptor() ([]byte, []int) {
+	return file_qkms_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *GrantRoleForUserRequest) GetUser() string {
+	if x != nil {
+		return x.User
+	}
+	return ""
+}
+
+func (x *GrantRoleForUserRequest) GetRole() string {
+	if x != nil {
+		return x.Role
+	}
+	return ""
+}
+
+type GrantRoleForUserReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ErrorCode uint64 `protobuf:"varint,1,opt,name=ErrorCode,proto3" json:"ErrorCode,omitempty"`
+}
+
+func (x *GrantRoleForUserReply) Reset() {
+	*x = GrantRoleForUserReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_qkms_proto_msgTypes[19]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GrantRoleForUserReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GrantRoleForUserReply) ProtoMessage() {}
+
+func (x *GrantRoleForUserReply) ProtoReflect() protoreflect.Message {
+	mi := &file_qkms_proto_msgTypes[19]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GrantRoleForUserReply.ProtoReflect.Descriptor instead.
+func (*GrantRoleForUserReply) Descriptor() ([]byte, []int) {
+	return file_qkms_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *GrantRoleForUserReply) GetErrorCode() uint64 {
+	if x != nil {
+		return x.ErrorCode
+	}
+	return 0
+}
+
 var File_qkms_proto protoreflect.FileDescriptor
 
 var file_qkms_proto_rawDesc = []byte{
@@ -1012,7 +1318,31 @@ var file_qkms_proto_rawDesc = []byte{
 	0x45, 0x6e, 0x63, 0x72, 0x79, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x4b, 0x65, 0x79, 0x52, 0x65, 0x70,
 	0x6c, 0x79, 0x12, 0x1c, 0x0a, 0x09, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x43, 0x6f, 0x64, 0x65, 0x18,
 	0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x09, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x43, 0x6f, 0x64, 0x65,
-	0x32, 0xba, 0x05, 0x0a, 0x04, 0x71, 0x6b, 0x6d, 0x73, 0x12, 0x53, 0x0a, 0x0d, 0x52, 0x65, 0x61,
+	0x22, 0x27, 0x0a, 0x11, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x6f, 0x6c, 0x65, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x04, 0x4e, 0x61, 0x6d, 0x65, 0x22, 0x2f, 0x0a, 0x0f, 0x43, 0x72, 0x65,
+	0x61, 0x74, 0x65, 0x52, 0x6f, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x1c, 0x0a, 0x09,
+	0x45, 0x72, 0x72, 0x6f, 0x72, 0x43, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52,
+	0x09, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x43, 0x6f, 0x64, 0x65, 0x22, 0x6e, 0x0a, 0x1c, 0x47, 0x72,
+	0x61, 0x6e, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x53, 0x70, 0x61, 0x63, 0x65, 0x46, 0x6f, 0x72, 0x52,
+	0x6f, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x52, 0x6f,
+	0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x52, 0x6f, 0x6c, 0x65, 0x12, 0x1e,
+	0x0a, 0x0a, 0x4e, 0x61, 0x6d, 0x65, 0x53, 0x70, 0x61, 0x63, 0x65, 0x73, 0x18, 0x02, 0x20, 0x03,
+	0x28, 0x09, 0x52, 0x0a, 0x4e, 0x61, 0x6d, 0x65, 0x53, 0x70, 0x61, 0x63, 0x65, 0x73, 0x12, 0x1a,
+	0x0a, 0x08, 0x42, 0x65, 0x68, 0x61, 0x76, 0x69, 0x6f, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x08, 0x42, 0x65, 0x68, 0x61, 0x76, 0x69, 0x6f, 0x72, 0x22, 0x3a, 0x0a, 0x1a, 0x47, 0x72,
+	0x61, 0x6e, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x53, 0x70, 0x61, 0x63, 0x65, 0x46, 0x6f, 0x72, 0x52,
+	0x6f, 0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x1c, 0x0a, 0x09, 0x45, 0x72, 0x72, 0x6f,
+	0x72, 0x43, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x09, 0x45, 0x72, 0x72,
+	0x6f, 0x72, 0x43, 0x6f, 0x64, 0x65, 0x22, 0x41, 0x0a, 0x17, 0x47, 0x72, 0x61, 0x6e, 0x74, 0x52,
+	0x6f, 0x6c, 0x65, 0x46, 0x6f, 0x72, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x12, 0x12, 0x0a, 0x04, 0x55, 0x73, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x04, 0x55, 0x73, 0x65, 0x72, 0x12, 0x12, 0x0a, 0x04, 0x52, 0x6f, 0x6c, 0x65, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x04, 0x52, 0x6f, 0x6c, 0x65, 0x22, 0x35, 0x0a, 0x15, 0x47, 0x72, 0x61,
+	0x6e, 0x74, 0x52, 0x6f, 0x6c, 0x65, 0x46, 0x6f, 0x72, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x70,
+	0x6c, 0x79, 0x12, 0x1c, 0x0a, 0x09, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x43, 0x6f, 0x64, 0x65, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x09, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x43, 0x6f, 0x64, 0x65,
+	0x32, 0xd1, 0x07, 0x0a, 0x04, 0x71, 0x6b, 0x6d, 0x73, 0x12, 0x53, 0x0a, 0x0d, 0x52, 0x65, 0x61,
 	0x64, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x4b, 0x65, 0x79, 0x12, 0x20, 0x2e, 0x71, 0x6b, 0x6d,
 	0x73, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x61, 0x64, 0x41, 0x63, 0x63, 0x65,
 	0x73, 0x73, 0x4b, 0x65, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1e, 0x2e, 0x71,
@@ -1055,9 +1385,26 @@ var file_qkms_proto_rawDesc = []byte{
 	0x7a, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2c, 0x2e,
 	0x71, 0x6b, 0x6d, 0x73, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x47, 0x72, 0x61, 0x6e, 0x74,
 	0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x4b, 0x65, 0x79, 0x41, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69,
-	0x7a, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x42, 0x0f, 0x5a,
-	0x0d, 0x2e, 0x2f, 0x3b, 0x71, 0x6b, 0x6d, 0x73, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x7a, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4a, 0x0a,
+	0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x6f, 0x6c, 0x65, 0x12, 0x1d, 0x2e, 0x71, 0x6b,
+	0x6d, 0x73, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52,
+	0x6f, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1b, 0x2e, 0x71, 0x6b, 0x6d,
+	0x73, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x6f,
+	0x6c, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x6b, 0x0a, 0x15, 0x47, 0x72, 0x61,
+	0x6e, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x53, 0x70, 0x61, 0x63, 0x65, 0x46, 0x6f, 0x72, 0x52, 0x6f,
+	0x6c, 0x65, 0x12, 0x28, 0x2e, 0x71, 0x6b, 0x6d, 0x73, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e,
+	0x47, 0x72, 0x61, 0x6e, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x53, 0x70, 0x61, 0x63, 0x65, 0x46, 0x6f,
+	0x72, 0x52, 0x6f, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x26, 0x2e, 0x71,
+	0x6b, 0x6d, 0x73, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x47, 0x72, 0x61, 0x6e, 0x74, 0x4e,
+	0x61, 0x6d, 0x65, 0x53, 0x70, 0x61, 0x63, 0x65, 0x46, 0x6f, 0x72, 0x52, 0x6f, 0x6c, 0x65, 0x52,
+	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x5c, 0x0a, 0x10, 0x47, 0x72, 0x61, 0x6e, 0x74, 0x52,
+	0x6f, 0x6c, 0x65, 0x46, 0x6f, 0x72, 0x55, 0x73, 0x65, 0x72, 0x12, 0x23, 0x2e, 0x71, 0x6b, 0x6d,
+	0x73, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x47, 0x72, 0x61, 0x6e, 0x74, 0x52, 0x6f, 0x6c,
+	0x65, 0x46, 0x6f, 0x72, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x21, 0x2e, 0x71, 0x6b, 0x6d, 0x73, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x47, 0x72, 0x61,
+	0x6e, 0x74, 0x52, 0x6f, 0x6c, 0x65, 0x46, 0x6f, 0x72, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x70,
+	0x6c, 0x79, 0x22, 0x00, 0x42, 0x0f, 0x5a, 0x0d, 0x2e, 0x2f, 0x3b, 0x71, 0x6b, 0x6d, 0x73, 0x5f,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1072,7 +1419,7 @@ func file_qkms_proto_rawDescGZIP() []byte {
 	return file_qkms_proto_rawDescData
 }
 
-var file_qkms_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_qkms_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_qkms_proto_goTypes = []interface{}{
 	(*ReadAccessKeyRequest)(nil),               // 0: qkms_proto.ReadAccessKeyRequest
 	(*ReadAccessKeyReply)(nil),                 // 1: qkms_proto.ReadAccessKeyReply
@@ -1088,6 +1435,12 @@ var file_qkms_proto_goTypes = []interface{}{
 	(*GrantAccessKeyAuthorizationReply)(nil),   // 11: qkms_proto.GrantAccessKeyAuthorizationReply
 	(*CreateKeyEncryptionKeyRequest)(nil),      // 12: qkms_proto.CreateKeyEncryptionKeyRequest
 	(*CreateKeyEncryptionKeyReply)(nil),        // 13: qkms_proto.CreateKeyEncryptionKeyReply
+	(*CreateRoleRequest)(nil),                  // 14: qkms_proto.CreateRoleRequest
+	(*CreateRoleReply)(nil),                    // 15: qkms_proto.CreateRoleReply
+	(*GrantNameSpaceForRoleRequest)(nil),       // 16: qkms_proto.GrantNameSpaceForRoleRequest
+	(*GrantNameSpaceForRoleReply)(nil),         // 17: qkms_proto.GrantNameSpaceForRoleReply
+	(*GrantRoleForUserRequest)(nil),            // 18: qkms_proto.GrantRoleForUserRequest
+	(*GrantRoleForUserReply)(nil),              // 19: qkms_proto.GrantRoleForUserReply
 }
 var file_qkms_proto_depIdxs = []int32{
 	0,  // 0: qkms_proto.qkms.ReadAccessKey:input_type -> qkms_proto.ReadAccessKeyRequest
@@ -1097,15 +1450,21 @@ var file_qkms_proto_depIdxs = []int32{
 	8,  // 4: qkms_proto.qkms.UpdateAccessKey:input_type -> qkms_proto.UpdateAccessKeyRequest
 	4,  // 5: qkms_proto.qkms.RotateAccessKey:input_type -> qkms_proto.RotateAccessKeyRequest
 	10, // 6: qkms_proto.qkms.GrantAccessKeyAuthorization:input_type -> qkms_proto.GrantAccessKeyAuthorizationRequest
-	1,  // 7: qkms_proto.qkms.ReadAccessKey:output_type -> qkms_proto.ReadAccessKeyReply
-	3,  // 8: qkms_proto.qkms.GenerateAccessKey:output_type -> qkms_proto.GenerateAccessKeyReply
-	7,  // 9: qkms_proto.qkms.CreateAccessKey:output_type -> qkms_proto.CreateAccessKeyReply
-	13, // 10: qkms_proto.qkms.CreateKeyEncryptionKey:output_type -> qkms_proto.CreateKeyEncryptionKeyReply
-	9,  // 11: qkms_proto.qkms.UpdateAccessKey:output_type -> qkms_proto.UpdateAccessKeyReply
-	5,  // 12: qkms_proto.qkms.RotateAccessKey:output_type -> qkms_proto.RotateAccessKeyReply
-	11, // 13: qkms_proto.qkms.GrantAccessKeyAuthorization:output_type -> qkms_proto.GrantAccessKeyAuthorizationReply
-	7,  // [7:14] is the sub-list for method output_type
-	0,  // [0:7] is the sub-list for method input_type
+	14, // 7: qkms_proto.qkms.CreateRole:input_type -> qkms_proto.CreateRoleRequest
+	16, // 8: qkms_proto.qkms.GrantNameSpaceForRole:input_type -> qkms_proto.GrantNameSpaceForRoleRequest
+	18, // 9: qkms_proto.qkms.GrantRoleForUser:input_type -> qkms_proto.GrantRoleForUserRequest
+	1,  // 10: qkms_proto.qkms.ReadAccessKey:output_type -> qkms_proto.ReadAccessKeyReply
+	3,  // 11: qkms_proto.qkms.GenerateAccessKey:output_type -> qkms_proto.GenerateAccessKeyReply
+	7,  // 12: qkms_proto.qkms.CreateAccessKey:output_type -> qkms_proto.CreateAccessKeyReply
+	13, // 13: qkms_proto.qkms.CreateKeyEncryptionKey:output_type -> qkms_proto.CreateKeyEncryptionKeyReply
+	9,  // 14: qkms_proto.qkms.UpdateAccessKey:output_type -> qkms_proto.UpdateAccessKeyReply
+	5,  // 15: qkms_proto.qkms.RotateAccessKey:output_type -> qkms_proto.RotateAccessKeyReply
+	11, // 16: qkms_proto.qkms.GrantAccessKeyAuthorization:output_type -> qkms_proto.GrantAccessKeyAuthorizationReply
+	15, // 17: qkms_proto.qkms.CreateRole:output_type -> qkms_proto.CreateRoleReply
+	17, // 18: qkms_proto.qkms.GrantNameSpaceForRole:output_type -> qkms_proto.GrantNameSpaceForRoleReply
+	19, // 19: qkms_proto.qkms.GrantRoleForUser:output_type -> qkms_proto.GrantRoleForUserReply
+	10, // [10:20] is the sub-list for method output_type
+	0,  // [0:10] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name
@@ -1285,6 +1644,78 @@ func file_qkms_proto_init() {
 				return nil
 			}
 		}
+		file_qkms_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CreateRoleRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_qkms_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CreateRoleReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_qkms_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GrantNameSpaceForRoleRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_qkms_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GrantNameSpaceForRoleReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_qkms_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GrantRoleForUserRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_qkms_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GrantRoleForUserReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -1292,7 +1723,7 @@ func file_qkms_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_qkms_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   20,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
