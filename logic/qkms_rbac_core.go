@@ -13,16 +13,19 @@ func (server *QkmsRealServer) CheckPolicyForUserInternal(ctx context.Context, us
 	// for root, allow each behavior
 	roles, err := server.enforcer.GetRolesForUser(user)
 	if err != nil {
+		glog.Info(fmt.Sprintf("check policy failed, user:%s, err:%s", user, err.Error()))
 		return false, err
 	}
 	for _, role := range roles {
 		if role == "root" {
+			glog.Info(fmt.Sprintf("%s user is root, allow for namespace: %s, behavior: %s", user, namespace, behavior))
 			return true, nil
 		}
 	}
 
 	res, err := server.enforcer.Enforce(user, namespace, behavior)
 	if err != nil {
+		glog.Info(fmt.Sprintf("check policy failed, user:%s, namespace:%s, behavior:%s, err:%s", user, namespace, behavior, err.Error()))
 		return false, err
 	}
 	return res, nil
@@ -34,6 +37,7 @@ func (server *QkmsRealServer) CreateRoleInternal(ctx context.Context, name strin
 	}
 	_, err := qkms_dal.GetDal().CreateRole(ctx, role)
 	if err != nil {
+		glog.Info(fmt.Sprintf("create role failed, role:%s, err:%s", name, err.Error()))
 		return err
 	}
 	return nil
@@ -42,6 +46,7 @@ func (server *QkmsRealServer) CreateRoleInternal(ctx context.Context, name strin
 func (server *QkmsRealServer) GrantNameSpaceForRoleInternal(ctx context.Context, role string, namespace string, behavior string) error {
 	_, err := server.enforcer.AddPolicy(role, namespace, behavior)
 	if err != nil {
+		glog.Info(fmt.Sprintf("grant role failed, role:%s, namespace:%s, behavior:%s, err : %s", role, namespace, behavior, err.Error()))
 		return err
 	}
 	return nil

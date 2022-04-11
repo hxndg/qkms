@@ -32,6 +32,7 @@ type QkmsClient interface {
 	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleReply, error)
 	GrantNameSpaceForRole(ctx context.Context, in *GrantNameSpaceForRoleRequest, opts ...grpc.CallOption) (*GrantNameSpaceForRoleReply, error)
 	GrantRoleForUser(ctx context.Context, in *GrantRoleForUserRequest, opts ...grpc.CallOption) (*GrantRoleForUserReply, error)
+	GetAccessKeyIndexs(ctx context.Context, in *GetAccessKeyIndexsRequest, opts ...grpc.CallOption) (*GetAccessKeyIndexsReply, error)
 }
 
 type qkmsClient struct {
@@ -132,6 +133,15 @@ func (c *qkmsClient) GrantRoleForUser(ctx context.Context, in *GrantRoleForUserR
 	return out, nil
 }
 
+func (c *qkmsClient) GetAccessKeyIndexs(ctx context.Context, in *GetAccessKeyIndexsRequest, opts ...grpc.CallOption) (*GetAccessKeyIndexsReply, error) {
+	out := new(GetAccessKeyIndexsReply)
+	err := c.cc.Invoke(ctx, "/qkms_proto.qkms/GetAccessKeyIndexs", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QkmsServer is the server API for Qkms service.
 // All implementations must embed UnimplementedQkmsServer
 // for forward compatibility
@@ -146,6 +156,7 @@ type QkmsServer interface {
 	CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleReply, error)
 	GrantNameSpaceForRole(context.Context, *GrantNameSpaceForRoleRequest) (*GrantNameSpaceForRoleReply, error)
 	GrantRoleForUser(context.Context, *GrantRoleForUserRequest) (*GrantRoleForUserReply, error)
+	GetAccessKeyIndexs(context.Context, *GetAccessKeyIndexsRequest) (*GetAccessKeyIndexsReply, error)
 	mustEmbedUnimplementedQkmsServer()
 }
 
@@ -182,6 +193,9 @@ func (UnimplementedQkmsServer) GrantNameSpaceForRole(context.Context, *GrantName
 }
 func (UnimplementedQkmsServer) GrantRoleForUser(context.Context, *GrantRoleForUserRequest) (*GrantRoleForUserReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GrantRoleForUser not implemented")
+}
+func (UnimplementedQkmsServer) GetAccessKeyIndexs(context.Context, *GetAccessKeyIndexsRequest) (*GetAccessKeyIndexsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAccessKeyIndexs not implemented")
 }
 func (UnimplementedQkmsServer) mustEmbedUnimplementedQkmsServer() {}
 
@@ -376,6 +390,24 @@ func _Qkms_GrantRoleForUser_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Qkms_GetAccessKeyIndexs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAccessKeyIndexsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QkmsServer).GetAccessKeyIndexs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/qkms_proto.qkms/GetAccessKeyIndexs",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QkmsServer).GetAccessKeyIndexs(ctx, req.(*GetAccessKeyIndexsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Qkms_ServiceDesc is the grpc.ServiceDesc for Qkms service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -422,6 +454,10 @@ var Qkms_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GrantRoleForUser",
 			Handler:    _Qkms_GrantRoleForUser_Handler,
+		},
+		{
+			MethodName: "GetAccessKeyIndexs",
+			Handler:    _Qkms_GetAccessKeyIndexs_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

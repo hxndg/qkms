@@ -121,6 +121,20 @@ message GrantRoleForUserReply {
     uint64 ErrorCode = 1;
 }
 
+message GetAccessKeyIndexsRequest {
+    string NameSpace = 1;
+}
+
+message GetAccessKeyIndexsReply {
+    message AccessKey {
+        string NameSpace = 1;
+        string Name = 2;
+        string Environment = 3;
+    }
+    repeated AccessKey AccessKeys = 1;
+    uint64 ErrorCode = 2;
+}
+
 service qkms {
     rpc ReadAccessKey(ReadAccessKeyRequest) returns (ReadAccessKeyReply) {}
     rpc GenerateAccessKey(GenerateAccessKeyReply) returns (GenerateAccessKeyReply) {}
@@ -132,4 +146,5 @@ service qkms {
     rpc CreateRole(CreateRoleRequest) returns (CreateRoleReply) {}
     rpc GrantNameSpaceForRole(GrantNameSpaceForRoleRequest) returns (GrantNameSpaceForRoleReply) {}
     rpc GrantRoleForUser(GrantRoleForUserRequest) returns (GrantRoleForUserReply) {}
+    rpc GetAccessKeyIndexs(GetAccessKeyIndexsRequest) returns (GetAccessKeyIndexsReply) {}
 }

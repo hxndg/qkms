@@ -72,3 +72,13 @@ func (d *Dal) AccquireAccessKey(ctx context.Context, namespace string, name stri
 	glog.Info(fmt.Sprintf("Accquire AK success!, AK Info :%+v", ak))
 	return &ak, nil
 }
+
+func (d *Dal) GetAccessKeyIndex(ctx context.Context, namespace string) (*[]qkms_model.AccessKey, error) {
+	var aks []qkms_model.AccessKey
+	if len(namespace) != 0 {
+		_ = d.Query(ctx).Where("namespace = ?", namespace).Find(&aks)
+	} else {
+		_ = d.Query(ctx).Find(&aks)
+	}
+	return &aks, nil
+}

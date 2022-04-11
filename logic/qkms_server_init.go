@@ -76,7 +76,7 @@ func (server *QkmsRealServer) Init(cert string, key string, db_config qkms_dal.D
 	}
 	if len(users) == 0 {
 		var default_root string
-		fmt.Printf("Please enter default root")
+		fmt.Printf("Please enter default root appkey")
 		fmt.Scanf("%s", &default_root)
 		grant, err := server.GrantRoleForUserInternal(context.Background(), default_root, "root")
 		if err != nil || !grant {

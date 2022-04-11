@@ -6,6 +6,7 @@ import (
 	"fmt"
 	qkms_crypto "qkms/crypto"
 	qkms_dal "qkms/dal"
+	qkms_proto "qkms/proto"
 
 	"github.com/golang/glog"
 )
@@ -140,4 +141,21 @@ func (server *QkmsRealServer) UpdateAKInternal(ctx context.Context, namespace st
 
 	return plain_cache_ak, nil
 
+}
+
+func (server *QkmsRealServer) GetAccessKeyIndexsInternal(ctx context.Context, namespace string) ([]*qkms_proto.GetAccessKeyIndexsReply_AccessKey, error) {
+	aks, err := qkms_dal.GetDal().GetAccessKeyIndex(ctx, namespace)
+	if err != nil {
+		return nil, err
+	}
+	var reply_aks []*qkms_proto.GetAccessKeyIndexsReply_AccessKey
+	for _, ak := range *aks {
+		reply_ak := &qkms_proto.GetAccessKeyIndexsReply_AccessKey{
+			NameSpace:   ak.NameSpace,
+			Name:        ak.Name,
+			Environment: ak.Environment,
+		}
+		reply_aks = append(reply_aks, reply_ak)
+	}
+	return reply_aks, nil
 }

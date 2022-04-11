@@ -127,3 +127,30 @@ func (server *QkmsRealServer) UpdateAccessKey(ctx context.Context, req *qkms_pro
 func (server *QkmsRealServer) RotateAccessKey(ctx context.Context, req *qkms_proto.RotateAccessKeyRequest) (*qkms_proto.RotateAccessKeyReply, error) {
 	return nil, nil
 }
+
+func (server *QkmsRealServer) GetAccessKeyIndexs(ctx context.Context, req *qkms_proto.GetAccessKeyIndexsRequest) (*qkms_proto.GetAccessKeyIndexsReply, error) {
+	var ownerappkey *string
+	p, ok := peer.FromContext(ctx)
+	if ok {
+		tlsInfo := p.AuthInfo.(credentials.TLSInfo)
+		subject := tlsInfo.State.VerifiedChains[0][0].Subject
+		ownerappkey = Split2GetValue(subject.CommonName, qkms_common.QKMS_CERT_CN_SEP, qkms_common.QKMS_CERT_CN_KV_SEP, qkms_common.QKMS_CERT_CN_APPKEY)
+		if ownerappkey == nil {
+			glog.Info(fmt.Sprintf("Update AK failed, received invalid grpc client cert, Client cert subject :%+v, ", subject))
+			return &qkms_proto.GetAccessKeyIndexsReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GET_AK_INDEX_FAILED}, errors.New("invalid cert")
+		} else {
+			glog.Info(fmt.Sprintf("Grpc client plan to update AK, Client cert subject :%+v", subject))
+		}
+	}
+	reply_aks, err := server.GetAccessKeyIndexsInternal(ctx, req.NameSpace)
+	if err != nil {
+		glog.Error(fmt.Sprintf("Get AK Index failed, Client appkey subject :%+v,err:%s", *ownerappkey, err.Error()))
+		return &qkms_proto.GetAccessKeyIndexsReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GET_AK_INDEX_FAILED}, err
+	}
+	reply := &qkms_proto.GetAccessKeyIndexsReply{
+		ErrorCode:  qkms_common.QKMS_ERROR_CODE_GET_AK_INDEX_SUCCESS,
+		AccessKeys: reply_aks,
+	}
+	glog.Info(fmt.Sprintf("Get AK Index Success, AK indexs :%+v,client appkey:%s", reply_aks, *ownerappkey))
+	return reply, nil
+}
