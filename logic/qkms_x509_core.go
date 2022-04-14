@@ -2,22 +2,18 @@ package qkms_logic
 
 import (
 	"context"
-	"crypto/rand"
-	"crypto/x509"
-	"crypto/x509/pkix"
 	"errors"
 	"fmt"
-	"math/big"
-	"net"
 	qkms_common "qkms/common"
-	"time"
+	qkms_crypto "qkms/crypto"
 
 	"github.com/golang/glog"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/peer"
 )
 
-func (server *QkmsRealServer) GenerateUsertCertInternal(ctx context.Context, name string) (*string, *string, error) {
+/* only allow root now */
+func (server *QkmsRealServer) GenerateUsertCertInternal(ctx context.Context, organization string, country string, province string, locality string, name string, key_type string) (*string, *string, error) {
 	var ownerappkey *string
 	p, ok := peer.FromContext(ctx)
 	if ok {
@@ -35,25 +31,11 @@ func (server *QkmsRealServer) GenerateUsertCertInternal(ctx context.Context, nam
 	if err != nil || !allow {
 		return nil, nil, err
 	}
-	cert := &x509.Certificate{
-		SerialNumber: big.NewInt(1658),
-		Subject: pkix.Name{
-			Organization:  []string{"Company, INC."},
-			Country:       []string{"US"},
-			Province:      []string{""},
-			Locality:      []string{"San Francisco"},
-			StreetAddress: []string{"Golden Gate Bridge"},
-			PostalCode:    []string{"94016"},
-		},
-		IPAddresses:  []net.IP{net.IPv4(127, 0, 0, 1), net.IPv6loopback},
-		NotBefore:    time.Now(),
-		NotAfter:     time.Now().AddDate(10, 0, 0),
-		SubjectKeyId: []byte{1, 2, 3, 4, 6},
-		ExtKeyUsage:  []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
-		KeyUsage:     x509.KeyUsageDigitalSignature,
-	}
-	certBytes, err := x509.CreateCertificate(rand.Reader, cert, ca, &certPrivKey.PublicKey, caPrivKey)
+	appkey := qkms_crypto.Base64Encoding(qkms_crypto.GeneratePass(40))
+	commonname := fmt.Sprintf("user=%s,appkey=%s", name, appkey)
+	cert, key, err := server.GenerateCert(ctx, organization, country, province, locality, commonname, key_type)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
+	return cert, key, nil
 }

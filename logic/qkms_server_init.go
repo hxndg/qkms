@@ -17,17 +17,18 @@ import (
 
 type QkmsRealServer struct {
 	qkms_proto.UnimplementedQkmsServer
-	x509_cert tls.Certificate
-	root_key  []byte
-	cache_key []byte
-	ak_map    cmap.ConcurrentMap
-	kek_map   cmap.ConcurrentMap
-	kar_map   cmap.ConcurrentMap
-	adapter   *pgadapter.Adapter
-	enforcer  *casbin.Enforcer
+	x509_cert    tls.Certificate
+	x509_ca_cert tls.Certificate
+	root_key     []byte
+	cache_key    []byte
+	ak_map       cmap.ConcurrentMap
+	kek_map      cmap.ConcurrentMap
+	kar_map      cmap.ConcurrentMap
+	adapter      *pgadapter.Adapter
+	enforcer     *casbin.Enforcer
 }
 
-func (server *QkmsRealServer) Init(cert string, key string, db_config qkms_dal.DBConfig, rbac string) error {
+func (server *QkmsRealServer) Init(cert string, key string, ca_cert string, ca_key string, db_config qkms_dal.DBConfig, rbac string) error {
 	qkms_dal.MustInit(db_config)
 	var err error
 	server.x509_cert, err = tls.LoadX509KeyPair(cert, key)
@@ -35,6 +36,12 @@ func (server *QkmsRealServer) Init(cert string, key string, db_config qkms_dal.D
 		glog.Error("Init QKMS Server Failed! Can't Load Cert & Key")
 		return err
 	}
+	server.x509_ca_cert, err = tls.LoadX509KeyPair(ca_cert, ca_key)
+	if err != nil {
+		glog.Error("Init QKMS Server Failed! Can't Load CA Cert & Key")
+		return err
+	}
+
 	x509_key, err := x509.MarshalPKCS8PrivateKey(server.x509_cert.PrivateKey)
 	if err != nil {
 		glog.Error("Init QKMS Server Failed! Can't x509.MarshalPKCS8PrivateKey Key")

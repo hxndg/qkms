@@ -36,7 +36,7 @@ func main() {
 	}
 
 	var qkms_server qkms_logic.QkmsRealServer
-	err = qkms_server.Init(viper.GetString("SERVER_CERT_PATH"), viper.GetString("SERVER_KEY_PATH"), db_config, "config/rbac_model.conf")
+	err = qkms_server.Init(viper.GetString("SERVER_CERT_PATH"), viper.GetString("SERVER_KEY_PATH"), viper.GetString("CA_CERT_PATH"), viper.GetString("CA_KEY_PATH"), db_config, "config/rbac_model.conf")
 	if err != nil {
 		glog.Error("Can't Init QkmsRealServer for", err.Error())
 		panic(err)
