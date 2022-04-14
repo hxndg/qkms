@@ -135,6 +135,17 @@ message GetAccessKeyIndexsReply {
     uint64 ErrorCode = 2;
 }
 
+message GenerateUsertCertRequest {
+    string UserName = 1;
+}
+
+message GenerateUsertCertReply {
+    uint64 ErrorCode = 1;
+    string UserName = 2;
+    string Cert = 3;
+    string key = 4;
+}
+
 service qkms {
     rpc ReadAccessKey(ReadAccessKeyRequest) returns (ReadAccessKeyReply) {}
     rpc GenerateAccessKey(GenerateAccessKeyReply) returns (GenerateAccessKeyReply) {}
