@@ -2,29 +2,17 @@ package qkms_logic
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	qkms_common "qkms/common"
 	qkms_proto "qkms/proto"
 
 	"github.com/golang/glog"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/peer"
 )
 
 func (server *QkmsRealServer) CreateRole(ctx context.Context, req *qkms_proto.CreateRoleRequest) (*qkms_proto.CreateRoleReply, error) {
-	var ownerappkey *string
-	p, ok := peer.FromContext(ctx)
-	if ok {
-		tlsInfo := p.AuthInfo.(credentials.TLSInfo)
-		subject := tlsInfo.State.VerifiedChains[0][0].Subject
-		ownerappkey = Split2GetValue(subject.CommonName, qkms_common.QKMS_CERT_CN_SEP, qkms_common.QKMS_CERT_CN_KV_SEP, qkms_common.QKMS_CERT_CN_APPKEY)
-		if ownerappkey == nil {
-			glog.Info(fmt.Sprintf("CreateRole failed, received invalid grpc client cert, Client cert subject :%+v, ", subject))
-			return &qkms_proto.CreateRoleReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INVALID_CREDENTIALS}, errors.New("invalid cert")
-		} else {
-			glog.Info(fmt.Sprintf("Grpc client plan to CreateRole, Client cert subject :%+v", subject))
-		}
+	ownerappkey, err := LoadAppKey(ctx)
+	if err != nil {
+		return &qkms_proto.CreateRoleReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_CREATE_ROLE_FAILED}, err
 	}
 	allow, err := server.CheckPolicyForUserInternal(ctx, *ownerappkey, "", "")
 	if err != nil || !allow {
@@ -37,18 +25,9 @@ func (server *QkmsRealServer) CreateRole(ctx context.Context, req *qkms_proto.Cr
 	return &qkms_proto.CreateRoleReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_CREATE_ROLE_SUCCESS}, nil
 }
 func (server *QkmsRealServer) GrantNameSpaceForRole(ctx context.Context, req *qkms_proto.GrantNameSpaceForRoleRequest) (*qkms_proto.GrantNameSpaceForRoleReply, error) {
-	var ownerappkey *string
-	p, ok := peer.FromContext(ctx)
-	if ok {
-		tlsInfo := p.AuthInfo.(credentials.TLSInfo)
-		subject := tlsInfo.State.VerifiedChains[0][0].Subject
-		ownerappkey = Split2GetValue(subject.CommonName, qkms_common.QKMS_CERT_CN_SEP, qkms_common.QKMS_CERT_CN_KV_SEP, qkms_common.QKMS_CERT_CN_APPKEY)
-		if ownerappkey == nil {
-			glog.Info(fmt.Sprintf("CreateRole failed, received invalid grpc client cert, Client cert subject :%+v, ", subject))
-			return &qkms_proto.GrantNameSpaceForRoleReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INVALID_CREDENTIALS}, errors.New("invalid cert")
-		} else {
-			glog.Info(fmt.Sprintf("Grpc client plan to CreateRole, Client cert subject :%+v", subject))
-		}
+	ownerappkey, err := LoadAppKey(ctx)
+	if err != nil {
+		return &qkms_proto.GrantNameSpaceForRoleReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GRANT_NAMESPACE_FOR_ROLE_FAILED}, err
 	}
 	allow, err := server.CheckPolicyForUserInternal(ctx, *ownerappkey, "", "")
 	if err != nil || !allow {
@@ -64,18 +43,9 @@ func (server *QkmsRealServer) GrantNameSpaceForRole(ctx context.Context, req *qk
 	return &qkms_proto.GrantNameSpaceForRoleReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GRANT_NAMESPACE_FOR_ROLE_SUCCESS}, nil
 }
 func (server *QkmsRealServer) GrantRoleForUser(ctx context.Context, req *qkms_proto.GrantRoleForUserRequest) (*qkms_proto.GrantRoleForUserReply, error) {
-	var ownerappkey *string
-	p, ok := peer.FromContext(ctx)
-	if ok {
-		tlsInfo := p.AuthInfo.(credentials.TLSInfo)
-		subject := tlsInfo.State.VerifiedChains[0][0].Subject
-		ownerappkey = Split2GetValue(subject.CommonName, qkms_common.QKMS_CERT_CN_SEP, qkms_common.QKMS_CERT_CN_KV_SEP, qkms_common.QKMS_CERT_CN_APPKEY)
-		if ownerappkey == nil {
-			glog.Info(fmt.Sprintf("CreateRole failed, received invalid grpc client cert, Client cert subject :%+v, ", subject))
-			return &qkms_proto.GrantRoleForUserReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INVALID_CREDENTIALS}, errors.New("invalid cert")
-		} else {
-			glog.Info(fmt.Sprintf("Grpc client plan to CreateRole, Client cert subject :%+v", subject))
-		}
+	ownerappkey, err := LoadAppKey(ctx)
+	if err != nil {
+		return &qkms_proto.GrantRoleForUserReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GRANT_NAMESPACE_FOR_ROLE_FAILED}, err
 	}
 	allow, err := server.CheckPolicyForUserInternal(ctx, *ownerappkey, "", "")
 	if err != nil || !allow {

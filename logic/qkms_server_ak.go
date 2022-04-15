@@ -8,26 +8,13 @@ import (
 	qkms_proto "qkms/proto"
 
 	"github.com/golang/glog"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/peer"
 )
 
 func (server *QkmsRealServer) ReadAccessKey(ctx context.Context, req *qkms_proto.ReadAccessKeyRequest) (*qkms_proto.ReadAccessKeyReply, error) {
-	var ownerappkey *string
-	p, ok := peer.FromContext(ctx)
-	if ok {
-		tlsInfo := p.AuthInfo.(credentials.TLSInfo)
-		subject := tlsInfo.State.VerifiedChains[0][0].Subject
-		ownerappkey = Split2GetValue(subject.CommonName, qkms_common.QKMS_CERT_CN_SEP, qkms_common.QKMS_CERT_CN_KV_SEP, qkms_common.QKMS_CERT_CN_APPKEY)
-		if ownerappkey == nil {
-			glog.Info(fmt.Sprintf("Read AK failed, received invalid grpc client cert, Client cert subject :%+v, ", subject))
-			return &qkms_proto.ReadAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INVALID_CREDENTIALS}, errors.New("invalid cert")
-		} else {
-			glog.Info(fmt.Sprintf("Grpc client plan to read accesskey, Client cert subject :%+v", subject))
-		}
+	ownerappkey, err := LoadAppKey(ctx)
+	if err != nil {
+		return &qkms_proto.ReadAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR}, err
 	}
-	// return &qkms_proto.ReadAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INVALID_CREDENTIALS}, errors.New("no auth info")
-
 	plain_cache_ak, err := server.ReadAKInternal(ctx, req.NameSpace, req.Name, req.Environment)
 	if err != nil {
 		glog.Info(fmt.Sprintf("Read AK failed, req:%+v, ownerappkey: %s, error: %s", req.String(), *ownerappkey, err.Error()))
@@ -60,21 +47,12 @@ func (server *QkmsRealServer) GenerateAccessKey(ctx context.Context, req *qkms_p
 }
 
 func (server *QkmsRealServer) CreateAccessKey(ctx context.Context, req *qkms_proto.CreateAccessKeyRequest) (*qkms_proto.CreateAccessKeyReply, error) {
-	var ownerappkey *string
-	p, ok := peer.FromContext(ctx)
-	if ok {
-		tlsInfo := p.AuthInfo.(credentials.TLSInfo)
-		subject := tlsInfo.State.VerifiedChains[0][0].Subject
-		ownerappkey = Split2GetValue(subject.CommonName, qkms_common.QKMS_CERT_CN_SEP, qkms_common.QKMS_CERT_CN_KV_SEP, qkms_common.QKMS_CERT_CN_APPKEY)
-		if ownerappkey == nil {
-			glog.Info(fmt.Sprintf("Create AK failed, received invalid grpc client cert, Client cert subject :%+v, ", subject))
-			return &qkms_proto.CreateAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INVALID_CREDENTIALS}, errors.New("invalid cert")
-		} else {
-			glog.Info(fmt.Sprintf("Grpc client plan to create new accesskey, Client cert subject :%+v", subject))
-		}
+	ownerappkey, err := LoadAppKey(ctx)
+	if err != nil {
+		return &qkms_proto.CreateAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_CREATE_AK_FAILED}, err
 	}
 
-	_, err := server.CreateAKInternal(ctx, req.NameSpace, req.Name, req.AKPlaintext, req.KeyType, req.Environment, *ownerappkey)
+	_, err = server.CreateAKInternal(ctx, req.NameSpace, req.Name, req.AKPlaintext, req.KeyType, req.Environment, *ownerappkey)
 	if err != nil {
 		glog.Info(fmt.Sprintf("Create AK failed, req:%+v, ownerappkey: %s, error: %s", req.String(), *ownerappkey, err.Error()))
 		return &qkms_proto.CreateAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_CREATE_AK_FAILED}, err
@@ -84,18 +62,9 @@ func (server *QkmsRealServer) CreateAccessKey(ctx context.Context, req *qkms_pro
 }
 
 func (server *QkmsRealServer) UpdateAccessKey(ctx context.Context, req *qkms_proto.UpdateAccessKeyRequest) (*qkms_proto.UpdateAccessKeyReply, error) {
-	var ownerappkey *string
-	p, ok := peer.FromContext(ctx)
-	if ok {
-		tlsInfo := p.AuthInfo.(credentials.TLSInfo)
-		subject := tlsInfo.State.VerifiedChains[0][0].Subject
-		ownerappkey = Split2GetValue(subject.CommonName, qkms_common.QKMS_CERT_CN_SEP, qkms_common.QKMS_CERT_CN_KV_SEP, qkms_common.QKMS_CERT_CN_APPKEY)
-		if ownerappkey == nil {
-			glog.Info(fmt.Sprintf("Update AK failed, received invalid grpc client cert, Client cert subject :%+v, ", subject))
-			return &qkms_proto.UpdateAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INVALID_CREDENTIALS}, errors.New("invalid cert")
-		} else {
-			glog.Info(fmt.Sprintf("Grpc client plan to update AK, Client cert subject :%+v", subject))
-		}
+	ownerappkey, err := LoadAppKey(ctx)
+	if err != nil {
+		return &qkms_proto.UpdateAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_UPDATE_AK_INFO_MISMATCH}, err
 	}
 
 	plain_cache_ak, err := server.ReadAKInternal(ctx, req.NameSpace, req.Name, req.Environment)
@@ -129,18 +98,9 @@ func (server *QkmsRealServer) RotateAccessKey(ctx context.Context, req *qkms_pro
 }
 
 func (server *QkmsRealServer) GetAccessKeyIndexs(ctx context.Context, req *qkms_proto.GetAccessKeyIndexsRequest) (*qkms_proto.GetAccessKeyIndexsReply, error) {
-	var ownerappkey *string
-	p, ok := peer.FromContext(ctx)
-	if ok {
-		tlsInfo := p.AuthInfo.(credentials.TLSInfo)
-		subject := tlsInfo.State.VerifiedChains[0][0].Subject
-		ownerappkey = Split2GetValue(subject.CommonName, qkms_common.QKMS_CERT_CN_SEP, qkms_common.QKMS_CERT_CN_KV_SEP, qkms_common.QKMS_CERT_CN_APPKEY)
-		if ownerappkey == nil {
-			glog.Info(fmt.Sprintf("Update AK failed, received invalid grpc client cert, Client cert subject :%+v, ", subject))
-			return &qkms_proto.GetAccessKeyIndexsReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GET_AK_INDEX_FAILED}, errors.New("invalid cert")
-		} else {
-			glog.Info(fmt.Sprintf("Grpc client plan to update AK, Client cert subject :%+v", subject))
-		}
+	ownerappkey, err := LoadAppKey(ctx)
+	if err != nil {
+		return &qkms_proto.GetAccessKeyIndexsReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GET_AK_INDEX_FAILED}, err
 	}
 	reply_aks, err := server.GetAccessKeyIndexsInternal(ctx, req.NameSpace)
 	if err != nil {

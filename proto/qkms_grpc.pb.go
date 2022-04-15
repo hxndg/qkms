@@ -33,6 +33,8 @@ type QkmsClient interface {
 	GrantNameSpaceForRole(ctx context.Context, in *GrantNameSpaceForRoleRequest, opts ...grpc.CallOption) (*GrantNameSpaceForRoleReply, error)
 	GrantRoleForUser(ctx context.Context, in *GrantRoleForUserRequest, opts ...grpc.CallOption) (*GrantRoleForUserReply, error)
 	GetAccessKeyIndexs(ctx context.Context, in *GetAccessKeyIndexsRequest, opts ...grpc.CallOption) (*GetAccessKeyIndexsReply, error)
+	GenerateCredential(ctx context.Context, in *GenerateCredentialRequest, opts ...grpc.CallOption) (*GenerateCredentialReply, error)
+	UpdateCredential(ctx context.Context, in *UpdateCredentialRequest, opts ...grpc.CallOption) (*UpdateCredentialReply, error)
 }
 
 type qkmsClient struct {
@@ -142,6 +144,24 @@ func (c *qkmsClient) GetAccessKeyIndexs(ctx context.Context, in *GetAccessKeyInd
 	return out, nil
 }
 
+func (c *qkmsClient) GenerateCredential(ctx context.Context, in *GenerateCredentialRequest, opts ...grpc.CallOption) (*GenerateCredentialReply, error) {
+	out := new(GenerateCredentialReply)
+	err := c.cc.Invoke(ctx, "/qkms_proto.qkms/GenerateCredential", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *qkmsClient) UpdateCredential(ctx context.Context, in *UpdateCredentialRequest, opts ...grpc.CallOption) (*UpdateCredentialReply, error) {
+	out := new(UpdateCredentialReply)
+	err := c.cc.Invoke(ctx, "/qkms_proto.qkms/UpdateCredential", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QkmsServer is the server API for Qkms service.
 // All implementations must embed UnimplementedQkmsServer
 // for forward compatibility
@@ -157,6 +177,8 @@ type QkmsServer interface {
 	GrantNameSpaceForRole(context.Context, *GrantNameSpaceForRoleRequest) (*GrantNameSpaceForRoleReply, error)
 	GrantRoleForUser(context.Context, *GrantRoleForUserRequest) (*GrantRoleForUserReply, error)
 	GetAccessKeyIndexs(context.Context, *GetAccessKeyIndexsRequest) (*GetAccessKeyIndexsReply, error)
+	GenerateCredential(context.Context, *GenerateCredentialRequest) (*GenerateCredentialReply, error)
+	UpdateCredential(context.Context, *UpdateCredentialRequest) (*UpdateCredentialReply, error)
 	mustEmbedUnimplementedQkmsServer()
 }
 
@@ -196,6 +218,12 @@ func (UnimplementedQkmsServer) GrantRoleForUser(context.Context, *GrantRoleForUs
 }
 func (UnimplementedQkmsServer) GetAccessKeyIndexs(context.Context, *GetAccessKeyIndexsRequest) (*GetAccessKeyIndexsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccessKeyIndexs not implemented")
+}
+func (UnimplementedQkmsServer) GenerateCredential(context.Context, *GenerateCredentialRequest) (*GenerateCredentialReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateCredential not implemented")
+}
+func (UnimplementedQkmsServer) UpdateCredential(context.Context, *UpdateCredentialRequest) (*UpdateCredentialReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCredential not implemented")
 }
 func (UnimplementedQkmsServer) mustEmbedUnimplementedQkmsServer() {}
 
@@ -408,6 +436,42 @@ func _Qkms_GetAccessKeyIndexs_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Qkms_GenerateCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateCredentialRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QkmsServer).GenerateCredential(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/qkms_proto.qkms/GenerateCredential",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QkmsServer).GenerateCredential(ctx, req.(*GenerateCredentialRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Qkms_UpdateCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCredentialRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QkmsServer).UpdateCredential(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/qkms_proto.qkms/UpdateCredential",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QkmsServer).UpdateCredential(ctx, req.(*UpdateCredentialRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Qkms_ServiceDesc is the grpc.ServiceDesc for Qkms service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -458,6 +522,14 @@ var Qkms_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAccessKeyIndexs",
 			Handler:    _Qkms_GetAccessKeyIndexs_Handler,
+		},
+		{
+			MethodName: "GenerateCredential",
+			Handler:    _Qkms_GenerateCredential_Handler,
+		},
+		{
+			MethodName: "UpdateCredential",
+			Handler:    _Qkms_UpdateCredential_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

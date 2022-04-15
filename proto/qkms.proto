@@ -135,18 +135,28 @@ message GetAccessKeyIndexsReply {
     uint64 ErrorCode = 2;
 }
 
-message GenerateUsertCertRequest {
-    string UserName = 1;
+message GenerateCredentialRequest {
+    string Name = 1;
 }
 
-message GenerateUsertCertReply {
+message GenerateCredentialReply {
     uint64 ErrorCode = 1;
-    string UserName = 2;
+    string AppKey = 2;
     string Cert = 3;
     string key = 4;
 }
 
+message UpdateCredentialRequest {
+}
+
+message UpdateCredentialReply {
+    uint64 ErrorCode = 1;
+    string Cert = 2;
+    string key = 3;
+}
+
 service qkms {
+    /* for all users */
     rpc ReadAccessKey(ReadAccessKeyRequest) returns (ReadAccessKeyReply) {}
     rpc GenerateAccessKey(GenerateAccessKeyReply) returns (GenerateAccessKeyReply) {}
     rpc CreateAccessKey(CreateAccessKeyRequest) returns (CreateAccessKeyReply) {}
@@ -154,8 +164,15 @@ service qkms {
     rpc UpdateAccessKey(UpdateAccessKeyRequest) returns (UpdateAccessKeyReply) {}
     rpc RotateAccessKey(RotateAccessKeyRequest) returns (RotateAccessKeyReply) {}
     rpc GrantAccessKeyAuthorization(GrantAccessKeyAuthorizationRequest) returns (GrantAccessKeyAuthorizationReply) {}
+
+    rpc UpdateCredential(UpdateCredentialRequest) returns (UpdateCredentialReply) {}
+
+    rpc GetAccessKeyIndexs(GetAccessKeyIndexsRequest) returns (GetAccessKeyIndexsReply) {}
+
+    /* only for roots */
     rpc CreateRole(CreateRoleRequest) returns (CreateRoleReply) {}
     rpc GrantNameSpaceForRole(GrantNameSpaceForRoleRequest) returns (GrantNameSpaceForRoleReply) {}
     rpc GrantRoleForUser(GrantRoleForUserRequest) returns (GrantRoleForUserReply) {}
-    rpc GetAccessKeyIndexs(GetAccessKeyIndexsRequest) returns (GetAccessKeyIndexsReply) {}
+
+    rpc GenerateCredential(GenerateCredentialRequest) returns (GenerateCredentialReply) {}
 }

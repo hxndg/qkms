@@ -1,11 +1,16 @@
 package qkms_logic
 
 import (
+	"context"
+	"errors"
 	"fmt"
+	qkms_common "qkms/common"
 	qkms_crypto "qkms/crypto"
 	"strings"
 
 	"github.com/golang/glog"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/peer"
 )
 
 func DecryptedAESCtrBySrandTimeStamp(base64_ciphertext string, srand uint64, timestamp uint64, key []byte) ([]byte, error) {
@@ -50,4 +55,52 @@ func Split2GetValue(in string, sep string, kv_sep string, key string) *string {
 		}
 	}
 	return nil
+}
+
+func LoadAppKey(ctx context.Context) (*string, error) {
+	var ownerappkey *string
+	p, ok := peer.FromContext(ctx)
+	if ok {
+		tlsInfo := p.AuthInfo.(credentials.TLSInfo)
+		subject := tlsInfo.State.VerifiedChains[0][0].Subject
+		ownerappkey = Split2GetValue(subject.CommonName, qkms_common.QKMS_CERT_CN_SEP, qkms_common.QKMS_CERT_CN_KV_SEP, qkms_common.QKMS_CERT_CN_APPKEY)
+		if ownerappkey == nil {
+			glog.Info(fmt.Sprintf("Load verion failed, received invalid grpc client cert, Client cert subject :%+v, ", subject))
+			return nil, errors.New("invalid cert")
+		}
+		return ownerappkey, nil
+	}
+	return nil, errors.New("missing auth info")
+}
+
+func LoadUser(ctx context.Context) (*string, error) {
+	var ownerappkey *string
+	p, ok := peer.FromContext(ctx)
+	if ok {
+		tlsInfo := p.AuthInfo.(credentials.TLSInfo)
+		subject := tlsInfo.State.VerifiedChains[0][0].Subject
+		ownerappkey = Split2GetValue(subject.CommonName, qkms_common.QKMS_CERT_CN_SEP, qkms_common.QKMS_CERT_CN_KV_SEP, qkms_common.QKMS_CERT_CN_USER)
+		if ownerappkey == nil {
+			glog.Info(fmt.Sprintf("Load verion failed, received invalid grpc client cert, Client cert subject :%+v, ", subject))
+			return nil, errors.New("invalid cert")
+		}
+		return ownerappkey, nil
+	}
+	return nil, errors.New("missing auth info")
+}
+
+func LoadVersion(ctx context.Context) (*string, error) {
+	var ownerappkey *string
+	p, ok := peer.FromContext(ctx)
+	if ok {
+		tlsInfo := p.AuthInfo.(credentials.TLSInfo)
+		subject := tlsInfo.State.VerifiedChains[0][0].Subject
+		ownerappkey = Split2GetValue(subject.CommonName, qkms_common.QKMS_CERT_CN_SEP, qkms_common.QKMS_CERT_CN_KV_SEP, qkms_common.QKMS_CERT_CN_VERSION)
+		if ownerappkey == nil {
+			glog.Info(fmt.Sprintf("Load verion failed, received invalid grpc client cert, Client cert subject :%+v, ", subject))
+			return nil, errors.New("invalid cert")
+		}
+		return ownerappkey, nil
+	}
+	return nil, errors.New("missing auth info")
 }

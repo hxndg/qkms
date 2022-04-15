@@ -28,8 +28,7 @@ type QkmsRealServer struct {
 	enforcer     *casbin.Enforcer
 }
 
-func (server *QkmsRealServer) Init(cert string, key string, ca_cert string, ca_key string, db_config qkms_dal.DBConfig, rbac string) error {
-	qkms_dal.MustInit(db_config)
+func (server *QkmsRealServer) InitServerCredentials(cert string, key string, ca_cert string, ca_key string) error {
 	var err error
 	server.x509_cert, err = tls.LoadX509KeyPair(cert, key)
 	if err != nil {
@@ -60,9 +59,18 @@ func (server *QkmsRealServer) Init(cert string, key string, ca_cert string, ca_k
 		glog.Error("Init QKMS Server Failed! Can't qkms_crypto.Sha256HKDF Server Root Key")
 		return err
 	}
-	server.ak_map = cmap.New()
-	server.kek_map = cmap.New()
-	server.kar_map = cmap.New()
+
+	_, err = server.CreateKEKInternal(context.Background(), "user", "production")
+	if err != nil {
+		glog.Error("Init QKMS Server Failed! Can't generate user namespace kek")
+		return err
+	}
+
+	return nil
+}
+
+func (server *QkmsRealServer) InitServerRBAC(db_config qkms_dal.DBConfig, rbac string) error {
+	var err error
 	server.adapter, err = pgadapter.NewAdapter(fmt.Sprintf("postgresql://%s:%s@%s:%d/%s?sslmode=disable",
 		db_config.Username, db_config.Password, db_config.Host, db_config.Port, db_config.DbName,
 	))
@@ -79,7 +87,7 @@ func (server *QkmsRealServer) Init(cert string, key string, ca_cert string, ca_k
 	// if root role empty, will ask for one
 	users, err := server.enforcer.GetUsersForRole("root")
 	if err != nil {
-		panic(err)
+		return err
 	}
 	if len(users) == 0 {
 		var default_root string
@@ -88,8 +96,39 @@ func (server *QkmsRealServer) Init(cert string, key string, ca_cert string, ca_k
 		grant, err := server.GrantRoleForUserInternal(context.Background(), default_root, "root")
 		if err != nil || !grant {
 			glog.Error("Create default root failed, user appkey", default_root)
-			panic(err)
+			return err
 		}
 	}
+	return nil
+}
+
+func (server *QkmsRealServer) InitServerCmap() error {
+	server.ak_map = cmap.New()
+	server.kek_map = cmap.New()
+	server.kar_map = cmap.New()
+	return nil
+}
+
+func (server *QkmsRealServer) Init(cert string, key string, ca_cert string, ca_key string, db_config qkms_dal.DBConfig, rbac string) error {
+	qkms_dal.MustInit(db_config)
+
+	err := server.InitServerCredentials(cert, key, ca_cert, ca_key)
+	if err != nil {
+		glog.Error("Init QKMS Server Failed! Can't Init Server Credentials")
+		return err
+	}
+
+	err = server.InitServerRBAC(db_config, rbac)
+	if err != nil {
+		glog.Error("Init QKMS Server Failed! Can't Init Server RBAC")
+		return err
+	}
+
+	err = server.InitServerCmap()
+	if err != nil {
+		glog.Error("Init QKMS Server Failed! Can't Init Server Concurrent map")
+		return err
+	}
+
 	return nil
 }

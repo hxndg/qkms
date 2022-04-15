@@ -13,8 +13,58 @@ import (
 	"fmt"
 	"math/big"
 	"os"
+	qkms_crypto "qkms/crypto"
+	qkms_model "qkms/model"
 	"time"
+
+	"github.com/golang/glog"
 )
+
+type PlainCacheUser struct {
+	Name         string
+	AppKey       string
+	Cert         string
+	KeyPlaintext string
+	KeyType      string
+	Version      uint64
+	KEKVersion   uint64
+}
+
+type CipherCacheUser struct {
+	Name         string
+	AppKey       string
+	Cert         string
+	KeyPlaintext string
+	KeyType      string
+	Version      uint64
+	KEKVersion   uint64
+}
+
+func PlainCacheUser2ModelUser(in *PlainCacheUser, key []byte) (*qkms_model.User, error) {
+	out := qkms_model.User{
+		Name:       in.Name,
+		AppKey:     in.AppKey,
+		Cert:       in.Cert,
+		KeyType:    in.KeyType,
+		Version:    in.Version,
+		KEKVersion: in.KEKVersion,
+	}
+	out.Srand, out.TimeStamp = qkms_crypto.GenerateSrandAndTimeStamp()
+	encrypt_iv := qkms_crypto.GenerateIVFromTwoNumber(out.Srand, out.TimeStamp)
+
+	key_plaintext, err := qkms_crypto.Base64Decoding(in.KeyPlaintext)
+	if err != nil {
+		glog.Error(fmt.Sprintf("Transfer PlainCacheCredential to model.user failed! Can't decode base64 from, %+v", in))
+		return nil, err
+	}
+	ciphertext_ak, err := qkms_crypto.AesCTREncrypt(key_plaintext, encrypt_iv, key)
+	if err != nil {
+		glog.Error(fmt.Sprintf("Transfer PlainCache to model.user failed! Can't Encrypt AKPlaintext from %+v, using key %s", *in, qkms_crypto.Base64Encoding(key)))
+		return nil, err
+	}
+	out.KeyCipherText = qkms_crypto.Base64Encoding(ciphertext_ak)
+	return &out, nil
+}
 
 func getPublicKey(priv interface{}) interface{} {
 	switch k := priv.(type) {
