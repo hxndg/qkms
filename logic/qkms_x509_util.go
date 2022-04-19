@@ -10,6 +10,7 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"math/big"
 	"os"
@@ -18,6 +19,8 @@ import (
 	"time"
 
 	"github.com/golang/glog"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/peer"
 )
 
 type PlainCacheUser struct {
@@ -135,4 +138,19 @@ func (server *QkmsRealServer) GenerateCert(ctx context.Context, organization str
 	pem.Encode(key_out, getPemPrivateKey(key))
 	key_pem := key_out.String()
 	return &cert_pem, &key_pem, nil
+}
+
+func (server *QkmsRealServer) CheckCertRevoke(ctx context.Context) error {
+	p, ok := peer.FromContext(ctx)
+	if ok {
+		tlsInfo := p.AuthInfo.(credentials.TLSInfo)
+		cert := tlsInfo.State.VerifiedChains[0][0]
+		for _, revokedCertificate := range server.crl.TBSCertList.RevokedCertificates {
+			if revokedCertificate.SerialNumber.Cmp(cert.SerialNumber) == 0 {
+				return errors.New("cert revoked")
+			}
+		}
+		return nil
+	}
+	return errors.New("lack cert auth info")
 }

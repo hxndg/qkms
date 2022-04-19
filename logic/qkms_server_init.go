@@ -4,10 +4,13 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"crypto/x509/pkix"
+	"errors"
 	"fmt"
 	qkms_crypto "qkms/crypto"
 	qkms_dal "qkms/dal"
 	qkms_proto "qkms/proto"
+	"time"
 
 	pgadapter "github.com/casbin/casbin-pg-adapter"
 	"github.com/casbin/casbin/v2"
@@ -19,6 +22,7 @@ type QkmsRealServer struct {
 	qkms_proto.UnimplementedQkmsServer
 	x509_cert    tls.Certificate
 	x509_ca_cert tls.Certificate
+	crl          *pkix.CertificateList
 	root_key     []byte
 	cache_key    []byte
 	ak_map       cmap.ConcurrentMap
@@ -28,7 +32,7 @@ type QkmsRealServer struct {
 	enforcer     *casbin.Enforcer
 }
 
-func (server *QkmsRealServer) InitServerCredentials(cert string, key string, ca_cert string, ca_key string) error {
+func (server *QkmsRealServer) InitServerCredentials(cert string, key string, ca_cert string, ca_key string, crl_file string) error {
 	var err error
 	server.x509_cert, err = tls.LoadX509KeyPair(cert, key)
 	if err != nil {
@@ -64,6 +68,20 @@ func (server *QkmsRealServer) InitServerCredentials(cert string, key string, ca_
 	if err != nil {
 		glog.Error("Init QKMS Server Failed! Can't generate user namespace kek")
 		return err
+	}
+
+	server.crl, err = x509.ParseCRL(raw_crl)
+	if err != nil {
+		glog.Error("Crl invalid, can't verify")
+		return err
+	}
+	err = server.x509_ca_cert.Leaf.CheckCRLSignature(server.crl)
+	if err != nil {
+		glog.Error("Crl invalid, can't verify")
+		return err
+	}
+	if server.crl.TBSCertList.NextUpdate.Before(time.Now()) {
+		return errors.New("crl need update")
 	}
 
 	return nil
