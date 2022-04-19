@@ -1,12 +1,21 @@
 package qkms_logic
 
 import (
+	"bytes"
 	"context"
+	"crypto"
+	"crypto/ecdsa"
+	"crypto/rand"
+	"crypto/rsa"
 	"crypto/tls"
 	"crypto/x509"
 	"crypto/x509/pkix"
+	"encoding/pem"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"math/big"
+	"os"
 	qkms_crypto "qkms/crypto"
 	qkms_dal "qkms/dal"
 	qkms_proto "qkms/proto"
@@ -30,6 +39,37 @@ type QkmsRealServer struct {
 	kar_map      cmap.ConcurrentMap
 	adapter      *pgadapter.Adapter
 	enforcer     *casbin.Enforcer
+}
+
+func getPrivateKey(priv interface{}) crypto.Signer {
+	switch k := priv.(type) {
+	case *rsa.PrivateKey:
+		return k
+	case *ecdsa.PrivateKey:
+		return k
+	default:
+		return nil
+	}
+}
+
+func (server *QkmsRealServer) CleanServer(crl_file string) error {
+	crl_pem := &pem.Block{
+		Type:    "X509 CRL",
+		Headers: nil,
+		Bytes:   server.crl.TBSCertList.Raw,
+	}
+
+	buf := new(bytes.Buffer)
+	if err := pem.Encode(buf, crl_pem); err != nil {
+		glog.Error("Pem transfer crl pem fail")
+		panic(err)
+	}
+	err := ioutil.WriteFile(crl_file, buf.Bytes(), 0644)
+	if err != nil {
+		glog.Error("Pem encode crl pem fail")
+		panic(err)
+	}
+	return nil
 }
 
 func (server *QkmsRealServer) InitServerCredentials(cert string, key string, ca_cert string, ca_key string, crl_file string) error {
@@ -70,7 +110,31 @@ func (server *QkmsRealServer) InitServerCredentials(cert string, key string, ca_
 		return err
 	}
 
-	server.crl, err = x509.ParseCRL(raw_crl)
+	_, err = os.Stat(crl_file)
+	var raw_crl *[]byte
+	if os.IsNotExist(err) {
+		template := &x509.RevocationList{
+			Number: big.NewInt(42),
+		}
+		*raw_crl, err = x509.CreateRevocationList(rand.Reader, template, server.x509_ca_cert.Leaf, getPrivateKey(server.x509_ca_cert.PrivateKey))
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		*raw_crl, err = ioutil.ReadFile(crl_file)
+		if err != nil {
+			glog.Error("Crl invalid, can't read cry file")
+			return err
+		}
+		block, _ := pem.Decode(*raw_crl)
+		if block != nil {
+			raw_crl = &block.Bytes
+		}
+	}
+
+	defer server.CleanServer(crl_file)
+
+	server.crl, err = x509.ParseCRL(*raw_crl)
 	if err != nil {
 		glog.Error("Crl invalid, can't verify")
 		return err
@@ -81,6 +145,7 @@ func (server *QkmsRealServer) InitServerCredentials(cert string, key string, ca_
 		return err
 	}
 	if server.crl.TBSCertList.NextUpdate.Before(time.Now()) {
+		glog.Error("Crl invalid, need update can't verify")
 		return errors.New("crl need update")
 	}
 
@@ -127,10 +192,10 @@ func (server *QkmsRealServer) InitServerCmap() error {
 	return nil
 }
 
-func (server *QkmsRealServer) Init(cert string, key string, ca_cert string, ca_key string, db_config qkms_dal.DBConfig, rbac string) error {
+func (server *QkmsRealServer) Init(cert string, key string, ca_cert string, ca_key string, crl_file string, db_config qkms_dal.DBConfig, rbac string) error {
 	qkms_dal.MustInit(db_config)
 
-	err := server.InitServerCredentials(cert, key, ca_cert, ca_key)
+	err := server.InitServerCredentials(cert, key, ca_cert, ca_key, crl_file)
 	if err != nil {
 		glog.Error("Init QKMS Server Failed! Can't Init Server Credentials")
 		return err
