@@ -12,7 +12,7 @@ import (
 func (d *Dal) CreateUser(ctx context.Context, user *qkms_model.User) (uint64, error) {
 	trans_error := d.Query(ctx).Transaction(func(tx *gorm.DB) error {
 		var kek qkms_model.KeyEncryptionKey
-		if err := tx.Model(&qkms_model.KeyEncryptionKey{}).Where("namespace = user AND environment = production AND version = ? ", user.KEKVersion).First(&kek).Error; err != nil {
+		if err := tx.Model(&qkms_model.KeyEncryptionKey{}).Where("namespace = ? AND environment = ? AND version = ? ", "user", "production", user.KEKVersion).First(&kek).Error; err != nil {
 			glog.Error(fmt.Sprintf("Create new user failed! Can't find original KEK Info: %+v, Failed Info: %s", *user, err.Error()))
 			return err
 		}

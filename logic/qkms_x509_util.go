@@ -55,11 +55,8 @@ func PlainCacheUser2ModelUser(in *PlainCacheUser, key []byte) (*qkms_model.User,
 	out.Srand, out.TimeStamp = qkms_crypto.GenerateSrandAndTimeStamp()
 	encrypt_iv := qkms_crypto.GenerateIVFromTwoNumber(out.Srand, out.TimeStamp)
 
-	key_plaintext, err := qkms_crypto.Base64Decoding(in.KeyPlaintext)
-	if err != nil {
-		glog.Error(fmt.Sprintf("Transfer PlainCacheCredential to model.user failed! Can't decode base64 from, %+v", in))
-		return nil, err
-	}
+	key_plaintext := []byte(in.KeyPlaintext)
+
 	ciphertext_ak, err := qkms_crypto.AesCTREncrypt(key_plaintext, encrypt_iv, key)
 	if err != nil {
 		glog.Error(fmt.Sprintf("Transfer PlainCache to model.user failed! Can't Encrypt AKPlaintext from %+v, using key %s", *in, qkms_crypto.Base64Encoding(key)))
@@ -125,7 +122,7 @@ func (server *QkmsRealServer) GenerateCert(ctx context.Context, organization str
 	if err != nil {
 		return nil, nil, err
 	}
-	cert_bytes, err := x509.CreateCertificate(rand.Reader, cert, server.x509_ca_cert.Leaf, getPublicKey(key), server.x509_ca_cert.PrivateKey)
+	cert_bytes, err := x509.CreateCertificate(rand.Reader, cert, server.ca_cert, getPublicKey(key), server.ca_credential.PrivateKey)
 	if err != nil {
 		return nil, nil, err
 	}

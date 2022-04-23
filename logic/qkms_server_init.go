@@ -29,25 +29,29 @@ import (
 
 type QkmsRealServer struct {
 	qkms_proto.UnimplementedQkmsServer
-	x509_cert    tls.Certificate
-	x509_ca_cert tls.Certificate
-	crl          *pkix.CertificateList
-	root_key     []byte
-	cache_key    []byte
-	ak_map       cmap.ConcurrentMap
-	kek_map      cmap.ConcurrentMap
-	kar_map      cmap.ConcurrentMap
-	adapter      *pgadapter.Adapter
-	enforcer     *casbin.Enforcer
+	credential    tls.Certificate
+	ca_credential tls.Certificate
+	ca_cert       *x509.Certificate
+	crl           *pkix.CertificateList
+	root_key      []byte
+	cache_key     []byte
+	ak_map        cmap.ConcurrentMap
+	kek_map       cmap.ConcurrentMap
+	kar_map       cmap.ConcurrentMap
+	adapter       *pgadapter.Adapter
+	enforcer      *casbin.Enforcer
 }
 
 func getPrivateKey(priv interface{}) crypto.Signer {
 	switch k := priv.(type) {
 	case *rsa.PrivateKey:
+		glog.Error("get private key return rsa")
 		return k
 	case *ecdsa.PrivateKey:
+		glog.Error("get private key return ecdsa")
 		return k
 	default:
+		glog.Error("get private key return nil")
 		return nil
 	}
 }
@@ -74,18 +78,22 @@ func (server *QkmsRealServer) CleanServer(crl_file string) error {
 
 func (server *QkmsRealServer) InitServerCredentials(cert string, key string, ca_cert string, ca_key string, crl_file string) error {
 	var err error
-	server.x509_cert, err = tls.LoadX509KeyPair(cert, key)
+	server.credential, err = tls.LoadX509KeyPair(cert, key)
 	if err != nil {
 		glog.Error("Init QKMS Server Failed! Can't Load Cert & Key")
 		return err
 	}
-	server.x509_ca_cert, err = tls.LoadX509KeyPair(ca_cert, ca_key)
+	server.ca_credential, err = tls.LoadX509KeyPair(ca_cert, ca_key)
 	if err != nil {
 		glog.Error("Init QKMS Server Failed! Can't Load CA Cert & Key")
 		return err
 	}
-
-	x509_key, err := x509.MarshalPKCS8PrivateKey(server.x509_cert.PrivateKey)
+	server.ca_cert, err = x509.ParseCertificate(server.ca_credential.Certificate[0])
+	if err != nil {
+		glog.Error("Init QKMS Server Failed! Can't extract x509 format cert")
+		return err
+	}
+	x509_key, err := x509.MarshalPKCS8PrivateKey(server.credential.PrivateKey)
 	if err != nil {
 		glog.Error("Init QKMS Server Failed! Can't x509.MarshalPKCS8PrivateKey Key")
 		return err
@@ -104,29 +112,36 @@ func (server *QkmsRealServer) InitServerCredentials(cert string, key string, ca_
 		return err
 	}
 
-	_, err = server.CreateKEKInternal(context.Background(), "user", "production")
+	/* no user kek, create one */
+	_, _, err = server.ReadKEKByNamespace(context.Background(), "user", "production")
 	if err != nil {
-		glog.Error("Init QKMS Server Failed! Can't generate user namespace kek")
-		return err
+		_, err = server.CreateKEKInternal(context.Background(), "user", "production")
+		if err != nil {
+			glog.Error("Init QKMS Server Failed! Can't generate user namespace kek")
+			return err
+		}
 	}
 
 	_, err = os.Stat(crl_file)
 	var raw_crl *[]byte
 	if os.IsNotExist(err) {
+		/* file not exist, just create new */
 		template := &x509.RevocationList{
 			Number: big.NewInt(42),
 		}
-		*raw_crl, err = x509.CreateRevocationList(rand.Reader, template, server.x509_ca_cert.Leaf, getPrivateKey(server.x509_ca_cert.PrivateKey))
+		raw_crl_bytes, err := x509.CreateRevocationList(rand.Reader, template, server.ca_cert, getPrivateKey(server.ca_credential.PrivateKey))
 		if err != nil {
 			panic(err)
 		}
+		raw_crl = &raw_crl_bytes
 	} else {
-		*raw_crl, err = ioutil.ReadFile(crl_file)
+		/* pem crl file exist, decode it */
+		raw_crl_bytes, err := ioutil.ReadFile(crl_file)
 		if err != nil {
 			glog.Error("Crl invalid, can't read cry file")
 			return err
 		}
-		block, _ := pem.Decode(*raw_crl)
+		block, _ := pem.Decode(raw_crl_bytes)
 		if block != nil {
 			raw_crl = &block.Bytes
 		}
@@ -136,10 +151,10 @@ func (server *QkmsRealServer) InitServerCredentials(cert string, key string, ca_
 
 	server.crl, err = x509.ParseCRL(*raw_crl)
 	if err != nil {
-		glog.Error("Crl invalid, can't verify")
+		glog.Error("Crl invalid, can't parse")
 		return err
 	}
-	err = server.x509_ca_cert.Leaf.CheckCRLSignature(server.crl)
+	err = server.ca_cert.CheckCRLSignature(server.crl)
 	if err != nil {
 		glog.Error("Crl invalid, can't verify")
 		return err
@@ -148,7 +163,6 @@ func (server *QkmsRealServer) InitServerCredentials(cert string, key string, ca_
 		glog.Error("Crl invalid, need update can't verify")
 		return errors.New("crl need update")
 	}
-
 	return nil
 }
 
@@ -181,6 +195,16 @@ func (server *QkmsRealServer) InitServerRBAC(db_config qkms_dal.DBConfig, rbac s
 			glog.Error("Create default root failed, user appkey", default_root)
 			return err
 		}
+		plain_root_credential, err := server.GenerateCredentialInternal(context.Background(), server.ca_cert.Issuer.Organization[0], server.ca_cert.Issuer.Country[0], server.ca_cert.Issuer.Province[0], server.ca_cert.Issuer.Locality[0], "qkms root user", "rsa_4096")
+		if err != nil {
+			return err
+		}
+		glog.Info("Please record root user's credentials")
+		glog.Info("Name:", plain_root_credential.Name)
+		glog.Info("AppKey:", plain_root_credential.AppKey)
+		glog.Info("Cert:", plain_root_credential.Cert)
+		glog.Info("Cert:", plain_root_credential.KeyPlaintext)
+
 	}
 	return nil
 }
@@ -195,7 +219,13 @@ func (server *QkmsRealServer) InitServerCmap() error {
 func (server *QkmsRealServer) Init(cert string, key string, ca_cert string, ca_key string, crl_file string, db_config qkms_dal.DBConfig, rbac string) error {
 	qkms_dal.MustInit(db_config)
 
-	err := server.InitServerCredentials(cert, key, ca_cert, ca_key, crl_file)
+	err := server.InitServerCmap()
+	if err != nil {
+		glog.Error("Init QKMS Server Failed! Can't Init Server Concurrent map")
+		return err
+	}
+
+	err = server.InitServerCredentials(cert, key, ca_cert, ca_key, crl_file)
 	if err != nil {
 		glog.Error("Init QKMS Server Failed! Can't Init Server Credentials")
 		return err
@@ -204,12 +234,6 @@ func (server *QkmsRealServer) Init(cert string, key string, ca_cert string, ca_k
 	err = server.InitServerRBAC(db_config, rbac)
 	if err != nil {
 		glog.Error("Init QKMS Server Failed! Can't Init Server RBAC")
-		return err
-	}
-
-	err = server.InitServerCmap()
-	if err != nil {
-		glog.Error("Init QKMS Server Failed! Can't Init Server Concurrent map")
 		return err
 	}
 

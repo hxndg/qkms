@@ -13,6 +13,7 @@ func (server *QkmsRealServer) GenerateCredentialInternal(ctx context.Context, or
 
 	appkey := qkms_crypto.Base64Encoding(qkms_crypto.GeneratePass(40))
 	commonname := fmt.Sprintf("user=%s,appkey=%s,version=0", name, appkey)
+	/* pem format key & cert, no need to base64 encoding */
 	cert, key, err := server.GenerateCert(ctx, organization, country, province, locality, commonname, key_type)
 	if err != nil {
 		return nil, err
@@ -32,7 +33,7 @@ func (server *QkmsRealServer) GenerateCredentialInternal(ctx context.Context, or
 		Name:         name,
 		AppKey:       appkey,
 		Cert:         *cert,
-		KeyPlaintext: qkms_crypto.Base64Encoding([]byte(*key)),
+		KeyPlaintext: *key,
 		KeyType:      key_type,
 		Version:      0,
 		KEKVersion:   plain_cache_kek.Version,
@@ -54,6 +55,7 @@ func (server *QkmsRealServer) GenerateCredentialInternal(ctx context.Context, or
 func (server *QkmsRealServer) UpdateCredentialInternal(ctx context.Context, organization string, country string, province string, locality string, name string, appkey string, key_type string, version uint64) (*PlainCacheUser, error) {
 
 	commonname := fmt.Sprintf("user=%s,appkey=%s,version=%d", name, appkey, version)
+	/* pem format key & cert, no need to base64 encoding */
 	cert, key, err := server.GenerateCert(ctx, organization, country, province, locality, commonname, key_type)
 	if err != nil {
 		return nil, err
@@ -73,7 +75,7 @@ func (server *QkmsRealServer) UpdateCredentialInternal(ctx context.Context, orga
 		Name:         name,
 		AppKey:       appkey,
 		Cert:         *cert,
-		KeyPlaintext: qkms_crypto.Base64Encoding([]byte(*key)),
+		KeyPlaintext: *key,
 		KeyType:      key_type,
 		Version:      version,
 		KEKVersion:   plain_cache_kek.Version,
