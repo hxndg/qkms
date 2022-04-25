@@ -21,7 +21,8 @@ func (server *QkmsRealServer) GenerateCredential(ctx context.Context, req *qkms_
 		glog.Error(fmt.Sprintf("Create User failed, unauthorized user appkey:%s", *ownerappkey))
 		return nil, err
 	}
-	plain_cache_user, err := server.GenerateCredentialInternal(ctx, "Qube", "CN", "BeiJing", "QubeTest", req.Name, "rsa_4096")
+
+	plain_cache_user, err := server.GenerateCredentialInternal(context.Background(), server.ca_cert.Issuer.Organization[0], server.ca_cert.Issuer.Country[0], server.ca_cert.Issuer.Province[0], server.ca_cert.Issuer.Locality[0], req.Name, "rsa_4096")
 	if err != nil {
 		glog.Error(fmt.Sprintf("Create User failed, name:%s, appkey:%s, err:%s", req.Name, *ownerappkey, err.Error()))
 		return &qkms_proto.GenerateCredentialReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GENERATE_CREDENTIALS_FAILED}, err

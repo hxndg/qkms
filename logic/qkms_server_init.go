@@ -23,6 +23,7 @@ import (
 
 	pgadapter "github.com/casbin/casbin-pg-adapter"
 	"github.com/casbin/casbin/v2"
+	"github.com/go-pg/pg/v10"
 	"github.com/golang/glog"
 	cmap "github.com/orcaman/concurrent-map"
 )
@@ -168,9 +169,14 @@ func (server *QkmsRealServer) InitServerCredentials(cert string, key string, ca_
 
 func (server *QkmsRealServer) InitServerRBAC(db_config qkms_dal.DBConfig, rbac string) error {
 	var err error
-	server.adapter, err = pgadapter.NewAdapter(fmt.Sprintf("postgresql://%s:%s@%s:%d/%s?sslmode=disable",
+	opts, _ := pg.ParseURL(fmt.Sprintf("postgresql://%s:%s@%s:%d/%s?sslmode=disable",
 		db_config.Username, db_config.Password, db_config.Host, db_config.Port, db_config.DbName,
 	))
+
+	db := pg.Connect(opts)
+	defer db.Close()
+
+	server.adapter, err = pgadapter.NewAdapterByDB(db, pgadapter.WithTableName("rbac_table"))
 	if err != nil {
 		glog.Error("Casbin can't connect to postgresql", err.Error())
 		return err
@@ -187,16 +193,17 @@ func (server *QkmsRealServer) InitServerRBAC(db_config qkms_dal.DBConfig, rbac s
 		return err
 	}
 	if len(users) == 0 {
-		var default_root string
-		fmt.Printf("Please enter default root appkey")
-		fmt.Scanf("%s", &default_root)
-		grant, err := server.GrantRoleForUserInternal(context.Background(), default_root, "root")
-		if err != nil || !grant {
-			glog.Error("Create default root failed, user appkey", default_root)
+		var name string
+		fmt.Printf("Please enter default root user name:\n")
+		fmt.Scanf("%s", &name)
+		plain_root_credential, err := server.GenerateCredentialInternal(context.Background(), server.ca_cert.Issuer.Organization[0], server.ca_cert.Issuer.Country[0], server.ca_cert.Issuer.Province[0], server.ca_cert.Issuer.Locality[0], name, "rsa_4096")
+		if err != nil {
+			glog.Error("Create default root failed, user name:", name)
 			return err
 		}
-		plain_root_credential, err := server.GenerateCredentialInternal(context.Background(), server.ca_cert.Issuer.Organization[0], server.ca_cert.Issuer.Country[0], server.ca_cert.Issuer.Province[0], server.ca_cert.Issuer.Locality[0], "qkms root user", "rsa_4096")
-		if err != nil {
+		grant, err := server.GrantRoleForUserInternal(context.Background(), plain_root_credential.AppKey, "root")
+		if err != nil || !grant {
+			glog.Error("Create default root failed, user appkey:", plain_root_credential.AppKey)
 			return err
 		}
 		glog.Info("Please record root user's credentials")
@@ -204,7 +211,6 @@ func (server *QkmsRealServer) InitServerRBAC(db_config qkms_dal.DBConfig, rbac s
 		glog.Info("AppKey:", plain_root_credential.AppKey)
 		glog.Info("Cert:", plain_root_credential.Cert)
 		glog.Info("Cert:", plain_root_credential.KeyPlaintext)
-
 	}
 	return nil
 }

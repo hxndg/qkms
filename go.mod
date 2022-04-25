@@ -11,6 +11,7 @@ require (
 require (
 	github.com/casbin/casbin-pg-adapter v1.0.4
 	github.com/casbin/casbin/v2 v2.43.2
+	github.com/go-pg/pg/v10 v10.9.1
 	github.com/orcaman/concurrent-map v1.0.0
 	github.com/spf13/viper v1.10.1
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
@@ -21,7 +22,6 @@ require (
 require (
 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
-	github.com/go-pg/pg/v10 v10.9.1 // indirect
 	github.com/go-pg/zerochecker v0.2.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
