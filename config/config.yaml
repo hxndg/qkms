@@ -8,4 +8,4 @@ DB_CONFIG:
 SERVER_CERT_PATH: "credentials/server/server.pem"
 SERVER_KEY_PATH: "credentials/server/server.key"
 CA_CERT_PATH: "credentials/ca.pem"
-CA_KEY_PATH: "credentials/ca.key"
+CA_KEY_PATH: "credentials/plain_ca.key"

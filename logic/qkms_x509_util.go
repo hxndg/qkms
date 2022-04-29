@@ -12,7 +12,6 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"math/big"
 	"os"
 	qkms_crypto "qkms/crypto"
 	qkms_dal "qkms/dal"
@@ -96,8 +95,15 @@ func getPemPrivateKey(priv interface{}) *pem.Block {
 
 /* only allow root now */
 func (server *QkmsRealServer) GenerateCert(ctx context.Context, organization string, country string, province string, locality string, commonname string, key_type string) (*string, *string, error) {
+
+	serial_number, err := qkms_crypto.GenerateRandomBigInt()
+	if err != nil {
+		glog.Error("Generate random serial number failed")
+		return nil, nil, err
+	}
+	glog.Info("create new seriable number:", *serial_number)
 	cert := &x509.Certificate{
-		SerialNumber: big.NewInt(1658),
+		SerialNumber: serial_number,
 		Subject: pkix.Name{
 			Organization: []string{organization},
 			Country:      []string{country},
@@ -111,7 +117,6 @@ func (server *QkmsRealServer) GenerateCert(ctx context.Context, organization str
 		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
 		KeyUsage:    x509.KeyUsageDigitalSignature,
 	}
-	var err error
 	var key interface{}
 	switch key_type {
 	case "ecdsa_521":
@@ -160,27 +165,31 @@ func CertToPEM(cert *x509.Certificate) string {
 	return cert_pem
 }
 
-func (server *QkmsRealServer) RevokeCert(ctx context.Context) error {
-	p, ok := peer.FromContext(ctx)
-	if ok {
-		tlsInfo := p.AuthInfo.(credentials.TLSInfo)
-		cert := tlsInfo.State.VerifiedChains[0][0]
+func (server *QkmsRealServer) RevokeCert(ctx context.Context, pem_cert string) error {
 
-		_, err := qkms_dal.GetDal().CreateRevokeCert(ctx, &qkms_model.RevokeCert{
-			SerialNumber: cert.SerialNumber.String(),
-			Cert:         CertToPEM(cert),
-		})
-		if err != nil {
-			glog.Error(fmt.Sprintf("Create revoke cert failed, cert serial number%s, cert %s", cert.SerialNumber.String(), CertToPEM(cert)))
-		}
-
-		revoke_cert := pkix.RevokedCertificate{
-			SerialNumber:   cert.SerialNumber,
-			RevocationTime: time.Now(),
-		}
-		server.crl.TBSCertList.RevokedCertificates = append(server.crl.TBSCertList.RevokedCertificates, revoke_cert)
-		glog.Info(fmt.Sprintf("Create revoke cert serial number %s, cert %s", cert.SerialNumber.String(), CertToPEM(cert)))
-		return nil
+	block, _ := pem.Decode([]byte(pem_cert))
+	if block == nil {
+		glog.Error("fail to parse %s", pem_cert)
+		return errors.New("can't parse pem")
 	}
-	return errors.New("lack cert auth info")
+	cert, err := x509.ParseCertificate(block.Bytes)
+	if err != nil {
+		panic("failed to parse certificate: " + err.Error())
+	}
+	_, err = qkms_dal.GetDal().CreateRevokeCert(ctx, &qkms_model.RevokeCert{
+		SerialNumber: cert.SerialNumber.String(),
+		Cert:         CertToPEM(cert),
+	})
+	if err != nil {
+		glog.Error(fmt.Sprintf("Create revoke cert failed, cert serial number%s, cert %s", cert.SerialNumber.String(), CertToPEM(cert)))
+	}
+
+	revoke_cert := pkix.RevokedCertificate{
+		SerialNumber:   cert.SerialNumber,
+		RevocationTime: time.Now(),
+	}
+	server.crl.TBSCertList.RevokedCertificates = append(server.crl.TBSCertList.RevokedCertificates, revoke_cert)
+	glog.Info(fmt.Sprintf("Create revoke cert serial number %s, cert %s", cert.SerialNumber.String(), CertToPEM(cert)))
+	return nil
+
 }

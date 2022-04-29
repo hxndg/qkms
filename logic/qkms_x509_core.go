@@ -12,8 +12,8 @@ import (
 
 func (server *QkmsRealServer) GenerateCredentialInternal(ctx context.Context, organization string, country string, province string, locality string, name string, key_type string) (*PlainCacheUser, error) {
 
-	appkey := qkms_crypto.Base64Encoding(qkms_crypto.GeneratePass(40))
-	commonname := fmt.Sprintf("user=%s,appkey=%s,version=0", name, appkey)
+	appkey := qkms_crypto.Base64Encoding(qkms_crypto.GeneratePass(48))
+	commonname := fmt.Sprintf("user:%s,appkey:%s", name, appkey)
 	/* pem format key & cert, no need to base64 encoding */
 	cert, key, err := server.GenerateCert(ctx, organization, country, province, locality, commonname, key_type)
 	if err != nil {
@@ -59,7 +59,7 @@ func (server *QkmsRealServer) RevokeCredentialInternal(ctx context.Context, appk
 		glog.Error("Remove user from database failed, err:%s", err.Error())
 		return nil, err
 	}
-	err = server.RevokeCert(ctx)
+	err = server.RevokeCert(ctx, user.Cert)
 	if err != nil {
 		glog.Error("Remove user credential when revoke cert, err:%s", err.Error())
 		return nil, err

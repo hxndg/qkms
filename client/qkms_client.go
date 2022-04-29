@@ -85,13 +85,24 @@ func main() {
 		}
 	*/
 	gen_credential_req := qkms_proto.GenerateCredentialRequest{
-		Name: "hxndg",
+		Name: "hxndg_test",
 	}
 	gen_credential_reply, err := qkms_client.GenerateCredential(context.Background(), &gen_credential_req)
 	if err != nil {
 		glog.Error("Generate credential failed!, err: %s", err.Error())
 		panic(err)
 	}
-	glog.Info("result:", gen_credential_reply.String())
-
+	glog.Info("user:", gen_credential_reply.String())
+	glog.Info("Please record user's credentials")
+	glog.Info("AppKey:", gen_credential_reply.AppKey)
+	glog.Info("Cert:\n", gen_credential_reply.Cert)
+	glog.Info("Key:\n", gen_credential_reply.Key)
+	revoke_credential_req := qkms_proto.RevokeCredentialRequest{
+		AppKey: gen_credential_reply.AppKey,
+	}
+	_, err = qkms_client.RevokeCredential(context.Background(), &revoke_credential_req)
+	if err != nil {
+		glog.Error("Revoke credential failed!, err: %s", err.Error())
+		panic(err)
+	}
 }

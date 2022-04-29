@@ -44,8 +44,10 @@ func EncryptAESCtrBySrandTimeStamp(base64_plaintext string, srand uint64, timest
 }
 
 func Split2GetValue(in string, sep string, kv_sep string, key string) *string {
+	glog.Info(in)
 	in_slice := strings.Split(in, sep)
 	for _, kv := range in_slice {
+		glog.Info(kv)
 		kv_slice := strings.Split(kv, kv_sep)
 		if len(kv_slice) != 2 {
 			continue
@@ -65,7 +67,7 @@ func LoadAppKey(ctx context.Context) (*string, error) {
 		subject := tlsInfo.State.VerifiedChains[0][0].Subject
 		ownerappkey = Split2GetValue(subject.CommonName, qkms_common.QKMS_CERT_CN_SEP, qkms_common.QKMS_CERT_CN_KV_SEP, qkms_common.QKMS_CERT_CN_APPKEY)
 		if ownerappkey == nil {
-			glog.Info(fmt.Sprintf("Load verion failed, received invalid grpc client cert, Client cert subject :%+v, ", subject))
+			glog.Info(fmt.Sprintf("Load appkey failed, received invalid grpc client cert, Client cert subject :%+v, ", subject))
 			return nil, errors.New("invalid cert")
 		}
 		return ownerappkey, nil
