@@ -26,14 +26,14 @@ func (d *Dal) CreateRevokeCert(ctx context.Context, cert *qkms_model.RevokeCert)
 	return 200, nil
 }
 
-func (d *Dal) AccquireRevokeCert(ctx context.Context, appkey string) (*qkms_model.RevokeCert, error) {
+func (d *Dal) AccquireRevokeCert(ctx context.Context, serial_number string) (*qkms_model.RevokeCert, error) {
 	var cert qkms_model.RevokeCert
-	result := d.Query(ctx).Where("appkey = ?", appkey).First(&cert)
+	result := d.Query(ctx).Where("serialnumber = ?", serial_number).First(&cert)
 	if result.Error != nil {
-		glog.Error(fmt.Sprintf("Accquire revoke cert failed!, appkey %s, Failed Info: %s", appkey, result.Error.Error()))
+		glog.Error(fmt.Sprintf("Accquire revoke cert failed!, serial number %s, Failed Info: %s", serial_number, result.Error.Error()))
 		return nil, result.Error
 	}
-	glog.Info(fmt.Sprintf("Accquire revoke cert success!, AK Info :%+v", cert))
+	glog.Info(fmt.Sprintf("Accquire revoke cert success!,  Info :%+v", cert))
 	return &cert, nil
 }
 
@@ -48,18 +48,18 @@ func (d *Dal) AccquireRevokeCerts(ctx context.Context) (*[]qkms_model.RevokeCert
 	return &certs, nil
 }
 
-func (d *Dal) RemoveRevokeCert(ctx context.Context, appkey string) error {
+func (d *Dal) RemoveRevokeCert(ctx context.Context, serial_number string) error {
 	var cert qkms_model.RevokeCert
-	result := d.Query(ctx).Where("appkey = ?", appkey).First(&cert)
+	result := d.Query(ctx).Where("serialnumber = ?", serial_number).First(&cert)
 	if result.Error != nil {
-		glog.Error(fmt.Sprintf("Remove revoke cert failed!, appkey %s, Failed Info: %s", appkey, result.Error.Error()))
+		glog.Error(fmt.Sprintf("Remove revoke cert failed!, serial number %s, Failed Info: %s", serial_number, result.Error.Error()))
 		return result.Error
 	}
 
 	glog.Info(fmt.Sprintf("Plan to remove revoke cert !, cert Info :%+v", cert))
-	result = d.Query(ctx).Where("appkey = ?", appkey).Delete(&cert)
+	result = d.Query(ctx).Where("serialnumber = ?", serial_number).Delete(&cert)
 	if result.Error != nil {
-		glog.Error(fmt.Sprintf("Remove revoke cert failed!, appkey %s, Failed Info: %s", appkey, result.Error.Error()))
+		glog.Error(fmt.Sprintf("Remove revoke cert failed!, serial number %s, Failed Info: %s", serial_number, result.Error.Error()))
 		return result.Error
 	}
 	glog.Info("Remove revoke cert success!")

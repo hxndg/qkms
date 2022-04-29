@@ -102,7 +102,7 @@ func (server *QkmsRealServer) InitServerCrl() error {
 	}
 	revoke_certs, err := qkms_dal.GetDal().AccquireRevokeCerts(context.Background())
 	if err != nil {
-		glog.Error("Can't lod revoke certs")
+		glog.Error("Can't lod revoke certs, err: %s", err.Error())
 	} else {
 		for _, cert := range *revoke_certs {
 			serial_number := new(big.Int)
