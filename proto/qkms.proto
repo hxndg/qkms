@@ -146,13 +146,12 @@ message GenerateCredentialReply {
     string key = 4;
 }
 
-message UpdateCredentialRequest {
+message RevokeCredentialRequest {
+    string AppKey = 1;
 }
 
-message UpdateCredentialReply {
+message RevokeCredentialReply {
     uint64 ErrorCode = 1;
-    string Cert = 2;
-    string key = 3;
 }
 
 service qkms {
@@ -165,7 +164,7 @@ service qkms {
     rpc RotateAccessKey(RotateAccessKeyRequest) returns (RotateAccessKeyReply) {}
     rpc GrantAccessKeyAuthorization(GrantAccessKeyAuthorizationRequest) returns (GrantAccessKeyAuthorizationReply) {}
 
-    rpc UpdateCredential(UpdateCredentialRequest) returns (UpdateCredentialReply) {}
+    rpc RevokeCredential(RevokeCredentialRequest) returns (RevokeCredentialReply) {}
 
     rpc GetAccessKeyIndexs(GetAccessKeyIndexsRequest) returns (GetAccessKeyIndexsReply) {}
 

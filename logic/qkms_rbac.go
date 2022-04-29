@@ -29,7 +29,7 @@ func (server *QkmsRealServer) GrantNameSpaceForRole(ctx context.Context, req *qk
 	if err != nil {
 		return &qkms_proto.GrantNameSpaceForRoleReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GRANT_NAMESPACE_FOR_ROLE_FAILED}, err
 	}
-	err = server.CheckCertRevoke(ctx)
+	err = server.CheckCertRevoked(ctx)
 	if err != nil {
 		return &qkms_proto.GrantNameSpaceForRoleReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GRANT_NAMESPACE_FOR_ROLE_FAILED}, err
 	}
@@ -51,7 +51,7 @@ func (server *QkmsRealServer) GrantRoleForUser(ctx context.Context, req *qkms_pr
 	if err != nil {
 		return &qkms_proto.GrantRoleForUserReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GRANT_NAMESPACE_FOR_ROLE_FAILED}, err
 	}
-	err = server.CheckCertRevoke(ctx)
+	err = server.CheckCertRevoked(ctx)
 	if err != nil {
 		return &qkms_proto.GrantRoleForUserReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GRANT_NAMESPACE_FOR_ROLE_FAILED}, err
 	}

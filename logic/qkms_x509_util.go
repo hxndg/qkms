@@ -15,6 +15,7 @@ import (
 	"math/big"
 	"os"
 	qkms_crypto "qkms/crypto"
+	qkms_dal "qkms/dal"
 	qkms_model "qkms/model"
 	"time"
 
@@ -137,7 +138,7 @@ func (server *QkmsRealServer) GenerateCert(ctx context.Context, organization str
 	return &cert_pem, &key_pem, nil
 }
 
-func (server *QkmsRealServer) CheckCertRevoke(ctx context.Context) error {
+func (server *QkmsRealServer) CheckCertRevoked(ctx context.Context) error {
 	p, ok := peer.FromContext(ctx)
 	if ok {
 		tlsInfo := p.AuthInfo.(credentials.TLSInfo)
@@ -147,6 +148,38 @@ func (server *QkmsRealServer) CheckCertRevoke(ctx context.Context) error {
 				return errors.New("cert revoked")
 			}
 		}
+		return nil
+	}
+	return errors.New("lack cert auth info")
+}
+
+func CertToPEM(cert *x509.Certificate) string {
+	cert_out := &bytes.Buffer{}
+	pem.Encode(cert_out, &pem.Block{Type: "CERTIFICATE", Bytes: cert.Raw})
+	cert_pem := cert_out.String()
+	return cert_pem
+}
+
+func (server *QkmsRealServer) RevokeCert(ctx context.Context) error {
+	p, ok := peer.FromContext(ctx)
+	if ok {
+		tlsInfo := p.AuthInfo.(credentials.TLSInfo)
+		cert := tlsInfo.State.VerifiedChains[0][0]
+
+		_, err := qkms_dal.GetDal().CreateRevokeCert(ctx, &qkms_model.RevokeCert{
+			SerialNumber: cert.SerialNumber.String(),
+			Cert:         CertToPEM(cert),
+		})
+		if err != nil {
+			glog.Error(fmt.Sprintf("Create revoke cert failed, cert serial number%s, cert %s", cert.SerialNumber.String(), CertToPEM(cert)))
+		}
+
+		revoke_cert := pkix.RevokedCertificate{
+			SerialNumber:   cert.SerialNumber,
+			RevocationTime: time.Now(),
+		}
+		server.crl.TBSCertList.RevokedCertificates = append(server.crl.TBSCertList.RevokedCertificates, revoke_cert)
+		glog.Info(fmt.Sprintf("Create revoke cert serial number %s, cert %s", cert.SerialNumber.String(), CertToPEM(cert)))
 		return nil
 	}
 	return errors.New("lack cert auth info")

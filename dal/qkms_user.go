@@ -68,3 +68,21 @@ func (d *Dal) AccquireUser(ctx context.Context, appkey string) (*qkms_model.User
 	glog.Info(fmt.Sprintf("Accquire User success!, AK Info :%+v", user))
 	return &user, nil
 }
+
+func (d *Dal) RemoveUser(ctx context.Context, appkey string) (*qkms_model.User, error) {
+	var user qkms_model.User
+	result := d.Query(ctx).Where("appkey = ?", appkey).First(&user)
+	if result.Error != nil {
+		glog.Error(fmt.Sprintf("Remove User failed!, appkey %s, Failed Info: %s", appkey, result.Error.Error()))
+		return nil, result.Error
+	}
+	var delete_user qkms_model.User
+	glog.Info(fmt.Sprintf("Plan to remove user !, user Info :%+v", delete_user))
+	result = d.Query(ctx).Where("appkey = ?", appkey).Delete(&user)
+	if result.Error != nil {
+		glog.Error(fmt.Sprintf("Remove User failed!, appkey %s, Failed Info: %s", appkey, result.Error.Error()))
+		return nil, result.Error
+	}
+	glog.Info("Remove User success!")
+	return &user, nil
+}

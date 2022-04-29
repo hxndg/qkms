@@ -15,7 +15,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"math/big"
-	"os"
 	qkms_crypto "qkms/crypto"
 	qkms_dal "qkms/dal"
 	qkms_proto "qkms/proto"
@@ -77,6 +76,52 @@ func (server *QkmsRealServer) CleanServer(crl_file string) error {
 	return nil
 }
 
+func (server *QkmsRealServer) InitServerCrl() error {
+
+	template := &x509.RevocationList{
+		Number: big.NewInt(42),
+	}
+	raw_crl_bytes, err := x509.CreateRevocationList(rand.Reader, template, server.ca_cert, getPrivateKey(server.ca_credential.PrivateKey))
+	if err != nil {
+		panic(err)
+	}
+
+	server.crl, err = x509.ParseCRL(raw_crl_bytes)
+	if err != nil {
+		glog.Error("Crl invalid, can't parse")
+		return err
+	}
+	err = server.ca_cert.CheckCRLSignature(server.crl)
+	if err != nil {
+		glog.Error("Crl invalid, can't verify")
+		return err
+	}
+	if server.crl.TBSCertList.NextUpdate.Before(time.Now()) {
+		glog.Error("Crl invalid, need update can't verify")
+		return errors.New("crl need update")
+	}
+	revoke_certs, err := qkms_dal.GetDal().AccquireRevokeCerts(context.Background())
+	if err != nil {
+		glog.Error("Can't lod revoke certs")
+	} else {
+		for _, cert := range *revoke_certs {
+			serial_number := new(big.Int)
+			serial_number, ok := serial_number.SetString(cert.SerialNumber, 10)
+			if !ok {
+				glog.Error("Transfer string to big int failed")
+				continue
+			}
+			revoke_cert := pkix.RevokedCertificate{
+				SerialNumber:   serial_number,
+				RevocationTime: time.Now(),
+			}
+			glog.Info("Crl append cert serialnumber:", cert.SerialNumber)
+			server.crl.TBSCertList.RevokedCertificates = append(server.crl.TBSCertList.RevokedCertificates, revoke_cert)
+		}
+	}
+	return nil
+}
+
 func (server *QkmsRealServer) InitServerCredentials(cert string, key string, ca_cert string, ca_key string, crl_file string) error {
 	var err error
 	server.credential, err = tls.LoadX509KeyPair(cert, key)
@@ -122,47 +167,10 @@ func (server *QkmsRealServer) InitServerCredentials(cert string, key string, ca_
 			return err
 		}
 	}
-
-	_, err = os.Stat(crl_file)
-	var raw_crl *[]byte
-	if os.IsNotExist(err) {
-		/* file not exist, just create new */
-		template := &x509.RevocationList{
-			Number: big.NewInt(42),
-		}
-		raw_crl_bytes, err := x509.CreateRevocationList(rand.Reader, template, server.ca_cert, getPrivateKey(server.ca_credential.PrivateKey))
-		if err != nil {
-			panic(err)
-		}
-		raw_crl = &raw_crl_bytes
-	} else {
-		/* pem crl file exist, decode it */
-		raw_crl_bytes, err := ioutil.ReadFile(crl_file)
-		if err != nil {
-			glog.Error("Crl invalid, can't read cry file")
-			return err
-		}
-		block, _ := pem.Decode(raw_crl_bytes)
-		if block != nil {
-			raw_crl = &block.Bytes
-		}
-	}
-
-	defer server.CleanServer(crl_file)
-
-	server.crl, err = x509.ParseCRL(*raw_crl)
+	err = server.InitServerCrl()
 	if err != nil {
-		glog.Error("Crl invalid, can't parse")
+		glog.Error("Init QKMS Server Failed! Can't generate crl")
 		return err
-	}
-	err = server.ca_cert.CheckCRLSignature(server.crl)
-	if err != nil {
-		glog.Error("Crl invalid, can't verify")
-		return err
-	}
-	if server.crl.TBSCertList.NextUpdate.Before(time.Now()) {
-		glog.Error("Crl invalid, need update can't verify")
-		return errors.New("crl need update")
 	}
 	return nil
 }
@@ -209,8 +217,8 @@ func (server *QkmsRealServer) InitServerRBAC(db_config qkms_dal.DBConfig, rbac s
 		glog.Info("Please record root user's credentials")
 		glog.Info("Name:", plain_root_credential.Name)
 		glog.Info("AppKey:", plain_root_credential.AppKey)
-		glog.Info("Cert:", plain_root_credential.Cert)
-		glog.Info("Cert:", plain_root_credential.KeyPlaintext)
+		glog.Info("Cert:\n", plain_root_credential.Cert)
+		glog.Info("Key:\n", plain_root_credential.KeyPlaintext)
 	}
 	return nil
 }
