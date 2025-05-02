@@ -3,7 +3,6 @@ package qkms_dal
 import (
 	"context"
 	"fmt"
-	qkms_crypto "qkms/crypto"
 	qkms_model "qkms/model"
 
 	"github.com/golang/glog"
@@ -11,11 +10,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func (d *Dal) AccquireKeyEncryptionKey(ctx context.Context, namespace string, environment string) (*qkms_model.KeyEncryptionKey, error) {
+func (d *Dal) AccquireKeyEncryptionKey(ctx context.Context, name string, environment string) (*qkms_model.KeyEncryptionKey, error) {
 	var kek qkms_model.KeyEncryptionKey
-	result := d.Query(ctx).Where("namespace = ? AND environment = ?", namespace, environment).First(&kek)
+	result := d.Query(ctx).Where("name = ? AND environment = ?", name, environment).First(&kek)
 	if result.Error != nil {
-		glog.Error(fmt.Sprintf("Accquire KEK failed!, Namespace: %s, Environment: %s, Failed Info: %s", namespace, environment, result.Error.Error()))
+		glog.Error(fmt.Sprintf("Accquire KEK failed!, Name: %s, Environment: %s, Failed Info: %s", name, environment, result.Error.Error()))
 		return nil, result.Error
 	}
 	glog.Info(fmt.Sprintf("Accquire KEK success!, KEK Info :%+v", kek))
@@ -33,61 +32,31 @@ func (d *Dal) CreateKeyEncryptionKey(ctx context.Context, key *qkms_model.KeyEnc
 	return 200, nil
 }
 
-func (d *Dal) UpdateKeyEncryptionKey(ctx context.Context, key *qkms_model.KeyEncryptionKey, plain_old_kek string, plain_new_kek string) (uint64, error) {
+func (d *Dal) CreateNameSpaceAndKeyEncryptionKey(ctx context.Context, namespace string, environment string, key *qkms_model.KeyEncryptionKey) (uint64, error) {
 	trans_error := d.Query(ctx).Transaction(func(tx *gorm.DB) error {
-		// 先读取，如果找不到就放弃了,借此尽量用读锁，放弃写锁的争用
-		var old_kek qkms_model.KeyEncryptionKey
-		if err := tx.Model(&qkms_model.KeyEncryptionKey{}).Where("namespace = ? AND keytype = ? AND environment = ? AND version = ? AND rkversion = ? AND ownerappkey = ?", key.NameSpace, key.KeyType, key.Environment, key.Version-1, key.RKVersion, key.OwnerAppkey).First(&old_kek).Error; err != nil {
-			glog.Error(fmt.Sprintf("Update new KEK failed! Can't find original KEK: %+v, Failed Info: %s", *key, err.Error()))
+		// 先把KEK写入到数据库，然后写Namepsace
+		if err := tx.Create(key).Error; err != nil {
+			glog.Error(fmt.Sprintf("Create new KEK failed! KEK Info: %+v, Failed Info: %s", *key, err.Error()))
 			return err
 		}
-		if err := tx.Model(&old_kek).Updates(key).Error; err != nil {
-			glog.Error(fmt.Sprintf("Update new KEK failed! Can't update finded original KEK. KEK Info: %+v, Failed Info: %s", *key, err.Error()))
+		new_namespace := qkms_model.NameSpace{
+			Name:        namespace,
+			KEK:         key.Name,
+			Environment: key.Environment,
+			OwnerAppkey: key.OwnerAppkey,
+		}
+		if err := tx.Create(&new_namespace).Error; err != nil {
+			glog.Error(fmt.Sprintf("Create new Namespace failed! Namespace Info: %+v, Failed Info: %s", new_namespace, err.Error()))
 			return err
 		}
-		glog.Info(fmt.Sprintf("Try lock update new KEK success! KEK Info: %+v", *key))
-		var aks []qkms_model.AccessKey
-		// 先获取所有使用这个kek的ak
-		if err := tx.Model(&qkms_model.AccessKey{}).Where("namespace = ? AND environment = ? AND kekversion = ?", key.NameSpace, key.Environment, key.Version-1).Find(&aks).Error; err != nil {
-			glog.Error(fmt.Sprintf("Update new KEK to find related AKs failed: KEK Info: %+v, Failed Info: %s", *key, err.Error()))
-			return err
-		}
 
-		for i := 0; i < len(aks); i++ {
-			old_enc_content, err := qkms_crypto.Base64Decoding(aks[i].AKCiphertext)
-			if err != nil {
-				glog.Error(fmt.Sprintf("Update new KEK to decode base64 related AK failed! KEK Info:%+v, AK Info: %+v, Failed Info: %s", *key, aks[i], err.Error()))
-				return err
-			}
-
-			plain_content, err := qkms_crypto.AesCBCDecrypt(old_enc_content, []byte(plain_old_kek))
-			if err != nil {
-				glog.Error(fmt.Sprintf("Update new KEK to decrypted related AK failed! KEK Info:%+v, AK Info: %+v, Failed Info: %s", *key, aks[i], err.Error()))
-				return err
-			}
-			new_enc_content, err := qkms_crypto.AesCBCEncrypt(plain_content, []byte(plain_new_kek))
-			if err != nil {
-				glog.Error(fmt.Sprintf("Update new KEK to encrypt related AK failed! KEK Info:%+v, AK Info: %+v, Failed Info: %s", *key, aks[i], err.Error()))
-				return err
-			}
-			base64_new_enc_content := qkms_crypto.Base64Encoding(new_enc_content)
-
-			new_ak := aks[i]
-			new_ak.AKCiphertext = base64_new_enc_content
-			new_ak.KEKVersion = key.Version
-			if err := tx.Model(&qkms_model.AccessKey{}).Where(aks[i]).Updates(new_ak).Error; err != nil {
-				glog.Error(fmt.Sprintf("Update new KEK related new AK failed! KEK Info:%+v, AK Info: %+v, Failed Info: %s", *key, aks[i], err.Error()))
-				return err
-			}
-			glog.Error(fmt.Sprintf("Update new KEK related AK success ! old AK : %+v, new AK : %+v", aks[i], new_ak))
-		}
-
-		glog.Info(fmt.Sprintf("Update new KEK success! KEK Info:%+v", *key))
+		glog.Info(fmt.Sprintf("Create KEK and namespace success! KEK Info:%+v, Namespace Info:%+v", *key, new_namespace))
 		return nil
 	})
 
 	if trans_error != nil {
 		return 500, trans_error
 	}
+
 	return 200, nil
 }

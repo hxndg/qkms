@@ -10,8 +10,8 @@ import (
 	"golang.org/x/crypto/hkdf"
 )
 
-//salt 需要和hash size一样长，info就随意了。secret为使用的master secret
-//len 为要生成的密钥的长度
+// salt 需要和hash size一样长，info就随意了。secret为使用的master secret
+// len 为要生成的密钥的长度
 func Sha256HKDF(secret []byte, info []byte, length int) ([]byte, error) {
 	hash := sha256.New
 	salt := make([]byte, hash().Size())
@@ -26,8 +26,8 @@ func Sha256HKDF(secret []byte, info []byte, length int) ([]byte, error) {
 	return key, nil
 }
 
-//salt 需要和hash size一样长，info就随意了。secret为使用的master secret
-//len 为要生成的密钥的长度
+// salt 需要和hash size一样长，info就随意了。secret为使用的master secret
+// len 为要生成的密钥的长度
 func HKDF(hash func() hash.Hash, secret []byte, salt []byte, info []byte, length int) ([]byte, error) {
 	if len(salt) != hash().Size() {
 		return nil, errors.New("HKDF Error: salt length mismatch hash size")

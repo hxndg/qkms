@@ -12,12 +12,7 @@ import (
 
 func (d *Dal) CreateAccessKey(ctx context.Context, key *qkms_model.AccessKey) (uint64, error) {
 	trans_error := d.Query(ctx).Transaction(func(tx *gorm.DB) error {
-		// 先根据accesskey的内容，使用共享锁锁住kek
-		var kek qkms_model.KeyEncryptionKey
-		if err := tx.Model(&qkms_model.KeyEncryptionKey{}).Where("namespace = ? AND environment = ? AND version = ? ", key.NameSpace, key.Environment, key.KEKVersion).First(&kek).Error; err != nil {
-			glog.Error(fmt.Sprintf("Create new AK failed! Can't find original KEK Info: %+v, Failed Info: %s", *key, err.Error()))
-			return err
-		}
+		// 因为我们现在kek新建，所以可以不需要使用共享锁锁住kek
 		// 现在尝试写入ak的内容
 		if err := tx.Create(key).Error; err != nil {
 			glog.Error(fmt.Sprintf("Create AK failed!, AK Info :%+v, Failed info: %s", *key, err.Error()))
@@ -36,15 +31,10 @@ func (d *Dal) CreateAccessKey(ctx context.Context, key *qkms_model.AccessKey) (u
 
 func (d *Dal) UpdateAccessKey(ctx context.Context, key *qkms_model.AccessKey) (uint64, error) {
 	trans_error := d.Query(ctx).Transaction(func(tx *gorm.DB) error {
-		// 先根据accesskey的内容，使用共享锁锁住kek
-		var kek qkms_model.KeyEncryptionKey
-		if err := tx.Model(&qkms_model.KeyEncryptionKey{}).Where("namespace = ? AND environment = ? AND version = ? ", key.NameSpace, key.Environment, key.KEKVersion).First(&kek).Error; err != nil {
-			glog.Error(fmt.Sprintf("Update new AK failed! Can't find original KEK Info: %+v, Failed Info: %s", *key, err.Error()))
-			return err
-		}
-		// 现在尝试写入ak的内容
+		// 因为我们现在kek新建，所以可以不需要使用共享锁锁住kek
+		// 现在尝试写入ak的内容，先读取旧的ak
 		var old_ak qkms_model.AccessKey
-		if err := tx.Model(&qkms_model.AccessKey{}).Where("namespace = ? AND name = ? AND keytype = ? AND environment = ? AND version = ? AND kekversion = ? AND ownerappkey = ?", key.NameSpace, key.Name, key.KeyType, key.Environment, key.Version-1, key.KEKVersion, key.OwnerAppkey).First(&old_ak).Error; err != nil {
+		if err := tx.Model(&qkms_model.AccessKey{}).Where("namespace = ? AND name = ? AND keytype = ? AND environment = ? AND version = ? AND ownerappkey = ?", key.NameSpace, key.Name, key.KeyType, key.Environment, key.Version-1, key.OwnerAppkey).First(&old_ak).Error; err != nil {
 			glog.Error(fmt.Sprintf("Update AK failed, Can't find original AK! AK Info :%+v, Failed info: %s", *key, err.Error()))
 			return err
 		}
@@ -80,5 +70,12 @@ func (d *Dal) GetAccessKeyIndex(ctx context.Context, namespace string) (*[]qkms_
 	} else {
 		_ = d.Query(ctx).Find(&aks)
 	}
+	return &aks, nil
+}
+
+func (d *Dal) GetAutoRotateAccessKeys(ctx context.Context) (*[]qkms_model.AccessKey, error) {
+	var aks []qkms_model.AccessKey
+	_ = d.Query(ctx).Not("rotateduration = ?", 0).Find(&aks)
+
 	return &aks, nil
 }

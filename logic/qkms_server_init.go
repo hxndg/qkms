@@ -18,6 +18,7 @@ import (
 
 	pgadapter "github.com/casbin/casbin-pg-adapter"
 	"github.com/casbin/casbin/v2"
+	"github.com/go-co-op/gocron"
 	"github.com/go-pg/pg/v10"
 	"github.com/golang/glog"
 	cmap "github.com/orcaman/concurrent-map"
@@ -25,17 +26,19 @@ import (
 
 type QkmsRealServer struct {
 	qkms_proto.UnimplementedQkmsServer
-	credential    tls.Certificate
-	ca_credential tls.Certificate
-	ca_cert       *x509.Certificate
-	crl           *pkix.CertificateList
-	root_key      []byte
-	cache_key     []byte
-	ak_map        cmap.ConcurrentMap
-	kek_map       cmap.ConcurrentMap
-	kar_map       cmap.ConcurrentMap
-	adapter       *pgadapter.Adapter
-	enforcer      *casbin.Enforcer
+	credential         tls.Certificate
+	ca_credential      tls.Certificate
+	ca_cert            *x509.Certificate
+	crl                *pkix.CertificateList
+	root_key           []byte
+	cache_key          []byte
+	ak_map             cmap.ConcurrentMap
+	kek_map            cmap.ConcurrentMap
+	kar_map            cmap.ConcurrentMap
+	cipher_key_len_map cmap.ConcurrentMap
+	adapter            *pgadapter.Adapter
+	enforcer           *casbin.Enforcer
+	scheduler          *gocron.Scheduler
 }
 
 func getPrivateKey(priv interface{}) crypto.Signer {
@@ -50,6 +53,31 @@ func getPrivateKey(priv interface{}) crypto.Signer {
 		glog.Error("get private key return nil")
 		return nil
 	}
+}
+
+func (server *QkmsRealServer) InitScheduler() error {
+	server.scheduler = gocron.NewScheduler(time.UTC)
+	server.scheduler.StartAsync()
+
+	rotate_aks, err := qkms_dal.GetDal().GetAutoRotateAccessKeys(context.Background())
+	if err != nil {
+		glog.Error("Get rotate aks failed: ", err.Error())
+		return err
+	}
+	for _, rotate_ak := range *rotate_aks {
+		glog.Info("Register rotate AK: %+v ", rotate_ak)
+		_, err := server.scheduler.Every(int(rotate_ak.RotateDuration)).Tag(rotate_ak.NameSpace + "-" + rotate_ak.Environment + "-" + rotate_ak.Name).Do(func() {
+			err := server.RotateAccessKeyInternal(rotate_ak.NameSpace, rotate_ak.Name, rotate_ak.KeyType, rotate_ak.Environment)
+			if err != nil {
+				glog.Error("Rotate AK failed: ", err.Error())
+			}
+		})
+		if err != nil {
+			glog.Error("Schedule Rotate AK failed: ", err.Error())
+		}
+	}
+	glog.Error("Schedule Rotate AK success, let's go")
+	return nil
 }
 
 func (server *QkmsRealServer) InitServerCrl() error {
@@ -137,20 +165,12 @@ func (server *QkmsRealServer) InitServerCredentials(cert string, key string, ca_
 		return err
 	}
 
-	/* no user kek, create one */
-	_, _, err = server.ReadKEKByNamespace(context.Background(), "user", "production")
-	if err != nil {
-		_, err = server.CreateKEKInternal(context.Background(), "user", "production")
-		if err != nil {
-			glog.Error("Init QKMS Server Failed! Can't generate user namespace kek")
-			return err
-		}
-	}
 	err = server.InitServerCrl()
 	if err != nil {
 		glog.Error("Init QKMS Server Failed! Can't generate crl")
 		return err
 	}
+
 	return nil
 }
 
@@ -180,12 +200,18 @@ func (server *QkmsRealServer) InitServerRBAC(db_config qkms_dal.DBConfig, rbac s
 		return err
 	}
 	if len(users) == 0 {
-		var name string
+		var name, key_type string
 		fmt.Printf("Please enter default root user name:\n")
 		fmt.Scanf("%s", &name)
-		plain_root_credential, err := server.GenerateCredentialInternal(context.Background(), server.ca_cert.Issuer.Organization[0], server.ca_cert.Issuer.Country[0], server.ca_cert.Issuer.Province[0], server.ca_cert.Issuer.Locality[0], name, "rsa_4096")
+		fmt.Printf("Use default root key type rsa_4096:\n")
+		// here we generate a root user with default name and appkey
+		// but it depends on production user table, so generate first and insert later
+		plain_root_credential, err := server.GenerateCredentialOnly(context.Background(), server.ca_cert.Issuer.Organization[0], server.ca_cert.Issuer.Country[0], server.ca_cert.Issuer.Province[0], server.ca_cert.Issuer.Locality[0], name, "rsa_4096", 0, "unknown")
 		if err != nil {
-			glog.Error("Create default root failed, user name:", name)
+			glog.Error(fmt.Sprintf(
+				"Create default root failed, user name:%s, key_type:%s",
+				name, key_type))
+
 			return err
 		}
 		grant, err := server.GrantRoleForUserInternal(context.Background(), plain_root_credential.AppKey, "root")
@@ -193,11 +219,27 @@ func (server *QkmsRealServer) InitServerRBAC(db_config qkms_dal.DBConfig, rbac s
 			glog.Error("Create default root failed, user appkey:", plain_root_credential.AppKey)
 			return err
 		}
-		glog.Info("Please record root user's credentials")
-		glog.Info("Name:", plain_root_credential.Name)
-		glog.Info("AppKey:", plain_root_credential.AppKey)
-		glog.Info("Cert:\n", plain_root_credential.Cert)
-		glog.Info("Key:\n", plain_root_credential.KeyPlaintext)
+		glog.Error("Please record root user's credentials")
+		glog.Error("Name:", plain_root_credential.Name)
+		glog.Error("AppKey:", plain_root_credential.AppKey)
+		glog.Error("\nCert:\n", plain_root_credential.Cert)
+		glog.Error("\nKey:\n", plain_root_credential.KeyPlaintext)
+
+		/* if no user kek, create one */
+		_, user_table_kek, err := server.ReadKEKByNamespace(context.Background(), "user", "production")
+		if err != nil {
+			user_table_kek, err = server.CreateNameSpaceInternal(context.Background(), "user", "production", plain_root_credential.AppKey)
+			if err != nil {
+				glog.Error("Init QKMS Server Failed! Can't generate user namespace kek")
+				return err
+			}
+		}
+		plain_root_credential.KEK = user_table_kek.Name
+		_, err = server.InsertCacheUser2DB(context.Background(), plain_root_credential)
+		if err != nil {
+			glog.Error("Init QKMS Server Failed! Can't insert root creadential namespace")
+			return err
+		}
 	}
 	return nil
 }
@@ -206,6 +248,12 @@ func (server *QkmsRealServer) InitServerCmap() error {
 	server.ak_map = cmap.New()
 	server.kek_map = cmap.New()
 	server.kar_map = cmap.New()
+	server.cipher_key_len_map = cmap.New()
+	server.cipher_key_len_map.Set("AES-CTR-128", 16)
+	server.cipher_key_len_map.Set("AES-CTR-256", 32)
+	server.cipher_key_len_map.Set("AES-CTR-512", 64)
+	server.cipher_key_len_map.Set("RSA-2048", 256)
+	server.cipher_key_len_map.Set("RSA-4096", 512)
 	return nil
 }
 
@@ -229,6 +277,7 @@ func (server *QkmsRealServer) Init(cert string, key string, ca_cert string, ca_k
 		glog.Error("Init QKMS Server Failed! Can't Init Server RBAC")
 		return err
 	}
+	_ = server.InitScheduler()
 
 	return nil
 }

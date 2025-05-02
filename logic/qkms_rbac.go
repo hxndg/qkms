@@ -22,7 +22,7 @@ func (server *QkmsRealServer) CreateRole(ctx context.Context, req *qkms_proto.Cr
 	if err != nil {
 		return &qkms_proto.CreateRoleReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_CREATE_ROLE_FAILED}, err
 	}
-	return &qkms_proto.CreateRoleReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_CREATE_ROLE_SUCCESS}, nil
+	return &qkms_proto.CreateRoleReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_CREATE_ROLE_SUCCESS, ErrorMsg: "success"}, nil
 }
 func (server *QkmsRealServer) GrantNameSpaceForRole(ctx context.Context, req *qkms_proto.GrantNameSpaceForRoleRequest) (*qkms_proto.GrantNameSpaceForRoleReply, error) {
 	ownerappkey, err := LoadAppKey(ctx)
@@ -44,7 +44,7 @@ func (server *QkmsRealServer) GrantNameSpaceForRole(ctx context.Context, req *qk
 			return &qkms_proto.GrantNameSpaceForRoleReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GRANT_NAMESPACE_FOR_ROLE_FAILED}, err
 		}
 	}
-	return &qkms_proto.GrantNameSpaceForRoleReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GRANT_NAMESPACE_FOR_ROLE_SUCCESS}, nil
+	return &qkms_proto.GrantNameSpaceForRoleReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GRANT_NAMESPACE_FOR_ROLE_SUCCESS, ErrorMsg: "success"}, nil
 }
 func (server *QkmsRealServer) GrantRoleForUser(ctx context.Context, req *qkms_proto.GrantRoleForUserRequest) (*qkms_proto.GrantRoleForUserReply, error) {
 	ownerappkey, err := LoadAppKey(ctx)
@@ -64,5 +64,5 @@ func (server *QkmsRealServer) GrantRoleForUser(ctx context.Context, req *qkms_pr
 		glog.Error(fmt.Sprintf("Grant role %s for user %s failed, err: %s", req.Role, req.User, err.Error()))
 		return &qkms_proto.GrantRoleForUserReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GRANT_NAMESPACE_FOR_ROLE_FAILED}, err
 	}
-	return &qkms_proto.GrantRoleForUserReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GRANT_NAMESPACE_FOR_ROLE_SUCCESS}, nil
+	return &qkms_proto.GrantRoleForUserReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GRANT_NAMESPACE_FOR_ROLE_SUCCESS, ErrorMsg: "success"}, nil
 }

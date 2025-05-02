@@ -32,5 +32,5 @@ func (server *QkmsRealServer) GrantAccessKeyAuthorization(ctx context.Context, r
 		return &qkms_proto.GrantAccessKeyAuthorizationReply{ErrorCode: erro_code}, err
 	}
 	glog.Info(fmt.Sprintf("Grant KAR success, req:%+v, ownerappkey: %s", req.String(), *ownerappkey))
-	return &qkms_proto.GrantAccessKeyAuthorizationReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_KAR_GRANTED}, nil
+	return &qkms_proto.GrantAccessKeyAuthorizationReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_KAR_GRANTED, ErrorMsg: "success"}, nil
 }

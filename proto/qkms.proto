@@ -15,12 +15,30 @@ message ReadAccessKeyRequest {
 
 message ReadAccessKeyReply {
     uint64 ErrorCode = 1;
-    string NameSpace = 2;
-    string Name = 3;
-    string AKPlaintext = 4;
-    string KeyType = 5;
-    string Environment = 6;
-    uint64 Version = 7;
+    string ErrorMsg = 2;
+    string NameSpace = 3;
+    string Name = 4;
+    string AKPlaintext = 5;
+    string KeyType = 6;
+    string Environment = 7;
+    uint64 Version = 8;
+}
+
+message ReadReadableAccessKeyRequest {
+    string NameSpace = 1;
+    string Name = 2;
+    string Environment = 3;
+}
+
+message ReadReadableAccessKeyReply {
+    uint64 ErrorCode = 1;
+    string ErrorMsg = 2;
+    string NameSpace = 3;
+    string Name = 4;
+    string AKPlaintext = 5;
+    string KeyType = 6;
+    string Environment = 7;
+    uint64 Version = 8;
 }
 
 message GenerateAccessKeyRequest {
@@ -28,14 +46,16 @@ message GenerateAccessKeyRequest {
     string Name = 2;
     string KeyType = 3;
     string Environment = 4;
+    uint64 LifeTime = 5;
+    uint64 RotateDuration = 6;
 }
 
 message GenerateAccessKeyReply {
     uint64 ErrorCode = 1;
+    string ErrorMsg = 2;
 }
 
 // 首先key_type需要和数据库里面的key_type一致。
-// 其次，这个是自动rotate，如果类型的key_type不是opquae那么会出错
 message RotateAccessKeyRequest {
     string NameSpace = 1;
     string Name = 2;
@@ -45,6 +65,7 @@ message RotateAccessKeyRequest {
 
 message RotateAccessKeyReply {
     uint64 ErrorCode = 1;
+    string ErrorMsg = 2;
 }
 
 message CreateAccessKeyRequest {
@@ -53,10 +74,28 @@ message CreateAccessKeyRequest {
     string AKPlaintext = 3;
     string KeyType = 4;
     string Environment = 5;
+    uint64 LifeTime = 6;
+    uint64 RotateDuration = 7;
 }
 
 message CreateAccessKeyReply {
     uint64 ErrorCode = 1;
+    string ErrorMsg = 2;
+}
+
+message CreateReadableAccessKeyRequest {
+    string NameSpace = 1;
+    string Name = 2;
+    string AKPlaintext = 3;
+    string KeyType = 4;
+    string Environment = 5;
+    uint64 LifeTime = 6;
+    uint64 RotateDuration = 7;
+}
+
+message CreateReadableAccessKeyReply {
+    uint64 ErrorCode = 1;
+    string ErrorMsg = 2;
 }
 
 // 首先key_type需要和数据库里面的key_type一致。
@@ -71,6 +110,7 @@ message UpdateAccessKeyRequest {
 
 message UpdateAccessKeyReply {
     uint64 ErrorCode = 1;
+    string ErrorMsg = 2;
 }
 
 message GrantAccessKeyAuthorizationRequest {
@@ -83,23 +123,73 @@ message GrantAccessKeyAuthorizationRequest {
 
 message GrantAccessKeyAuthorizationReply {
     uint64 ErrorCode = 1;
+    string ErrorMsg = 2;
 }
 
-message CreateKeyEncryptionKeyRequest {
+message CreateNameSpaceRequest {
+    string Name = 1;
+    string Environment = 2;
+}
+
+message CreateNameSpaceReply {
+    uint64 ErrorCode = 1;
+    string ErrorMsg = 2;
+}
+
+message RotateNameSpaceKeyEncryptionKeyRequest {
     string NameSpace = 1;
     string Environment = 2;
 }
 
+message RotateNameSpaceKeyEncryptionKeyReply {
+    uint64 ErrorCode = 1;
+    string ErrorMsg = 2;
+}
+
+message CreateKeyEncryptionKeyRequest {
+    string Name = 1;
+    string Environment = 2;
+    string KeyType = 3;
+}
+
 message CreateKeyEncryptionKeyReply {
     uint64 ErrorCode = 1;
+    string ErrorMsg = 2;
+ }
+
+message ReadNameSpaceRequest {
+    string Name = 1;
+    string Environment = 2;
+}
+
+message ReadNameSpaceReply {
+    uint64 ErrorCode = 1;
+    string ErrorMsg = 2;
+	string Name = 3;
+	string KEK = 4;
+	string Environment = 5;
+	string OwnerAppkey = 6;
+}
+
+message UpdateNameSpaceInfoRequest {
+    string Name = 1;
+    string Environment = 2;
+	string KEK = 3;
+	string OwnerAppkey = 4;
+}
+
+message UpdateNameSpaceInfoReply {
+    uint64 ErrorCode = 1;
+    string ErrorMsg = 2;
 }
 
 message CreateRoleRequest {
-    string Name =1;
+    string Name = 1;
 }
 
 message CreateRoleReply {
     uint64 ErrorCode = 1;
+    string ErrorMsg = 2;
 }
 
 message GrantNameSpaceForRoleRequest {
@@ -110,6 +200,7 @@ message GrantNameSpaceForRoleRequest {
 
 message GrantNameSpaceForRoleReply {
     uint64 ErrorCode = 1;
+    string ErrorMsg = 2;
 }
 
 message GrantRoleForUserRequest {
@@ -119,6 +210,7 @@ message GrantRoleForUserRequest {
 
 message GrantRoleForUserReply {
     uint64 ErrorCode = 1;
+    string ErrorMsg = 2;
 }
 
 message GetAccessKeyIndexsRequest {
@@ -133,6 +225,7 @@ message GetAccessKeyIndexsReply {
     }
     repeated AccessKey AccessKeys = 1;
     uint64 ErrorCode = 2;
+    string ErrorMsg = 3;
 }
 
 message GenerateCredentialRequest {
@@ -141,9 +234,10 @@ message GenerateCredentialRequest {
 
 message GenerateCredentialReply {
     uint64 ErrorCode = 1;
-    string AppKey = 2;
-    string Cert = 3;
-    string key = 4;
+    string ErrorMsg = 2;
+    string AppKey = 3;
+    string Cert = 4;
+    string key = 5;
 }
 
 message RevokeCredentialRequest {
@@ -152,19 +246,22 @@ message RevokeCredentialRequest {
 
 message RevokeCredentialReply {
     uint64 ErrorCode = 1;
+    string ErrorMsg = 2;
 }
 
 service qkms {
     /* for all users */
     rpc ReadAccessKey(ReadAccessKeyRequest) returns (ReadAccessKeyReply) {}
-    rpc GenerateAccessKey(GenerateAccessKeyReply) returns (GenerateAccessKeyReply) {}
+    rpc ReadReadableAccessKey(ReadReadableAccessKeyRequest) returns (ReadReadableAccessKeyReply) {}
+    /* access key can configure to auto ratate */
+    rpc GenerateAccessKey(GenerateAccessKeyRequest) returns (GenerateAccessKeyReply) {}
+    rpc CreateReadableAccessKey(CreateReadableAccessKeyRequest) returns (CreateReadableAccessKeyReply) {}
     rpc CreateAccessKey(CreateAccessKeyRequest) returns (CreateAccessKeyReply) {}
-    rpc CreateKeyEncryptionKey(CreateKeyEncryptionKeyRequest) returns (CreateKeyEncryptionKeyReply) {}
+    rpc CreateNameSpace(CreateNameSpaceRequest) returns (CreateNameSpaceReply) {}
+    rpc ReadNameSpace(ReadNameSpaceRequest) returns (ReadNameSpaceReply) {}
     rpc UpdateAccessKey(UpdateAccessKeyRequest) returns (UpdateAccessKeyReply) {}
-    rpc RotateAccessKey(RotateAccessKeyRequest) returns (RotateAccessKeyReply) {}
     rpc GrantAccessKeyAuthorization(GrantAccessKeyAuthorizationRequest) returns (GrantAccessKeyAuthorizationReply) {}
 
-    rpc RevokeCredential(RevokeCredentialRequest) returns (RevokeCredentialReply) {}
 
     rpc GetAccessKeyIndexs(GetAccessKeyIndexsRequest) returns (GetAccessKeyIndexsReply) {}
 
@@ -172,6 +269,12 @@ service qkms {
     rpc CreateRole(CreateRoleRequest) returns (CreateRoleReply) {}
     rpc GrantNameSpaceForRole(GrantNameSpaceForRoleRequest) returns (GrantNameSpaceForRoleReply) {}
     rpc GrantRoleForUser(GrantRoleForUserRequest) returns (GrantRoleForUserReply) {}
-
+    /* Any form rotation should only be perform by root */
+    rpc RotateNameSpaceKeyEncryptionKey(RotateNameSpaceKeyEncryptionKeyRequest) returns (RotateNameSpaceKeyEncryptionKeyReply) {}
+    rpc RotateAccessKey(RotateAccessKeyRequest) returns (RotateAccessKeyReply) {}
+    /* root can update namespace owner app keys */
+    rpc UpdateNameSpaceInfo(UpdateNameSpaceInfoRequest) returns (UpdateNameSpaceInfoReply) {}
+    rpc CreateKeyEncryptionKey(CreateKeyEncryptionKeyRequest) returns (CreateKeyEncryptionKeyReply) {}
     rpc GenerateCredential(GenerateCredentialRequest) returns (GenerateCredentialReply) {}
+    rpc RevokeCredential(RevokeCredentialRequest) returns (RevokeCredentialReply) {}
 }

@@ -10,7 +10,7 @@ type User struct {
 	Srand         uint64 `gorm:"column:srand;type:numeric"`
 	TimeStamp     uint64 `gorm:"column:timestamp;type:numeric"`
 	Version       uint64 `gorm:"column:version;type:numeric"`
-	KEKVersion    uint64 `gorm:"column:kekversion;type:numeric"`
+	KEK           string `gorm:"column:kek"`
 }
 
 func (User) TableName() string {

@@ -11,12 +11,6 @@ import (
 
 func (d *Dal) CreateUser(ctx context.Context, user *qkms_model.User) (uint64, error) {
 	trans_error := d.Query(ctx).Transaction(func(tx *gorm.DB) error {
-		var kek qkms_model.KeyEncryptionKey
-		if err := tx.Model(&qkms_model.KeyEncryptionKey{}).Where("namespace = ? AND environment = ? AND version = ? ", "user", "production", user.KEKVersion).First(&kek).Error; err != nil {
-			glog.Error(fmt.Sprintf("Create new user failed! Can't find original KEK Info: %+v, Failed Info: %s", *user, err.Error()))
-			return err
-		}
-		// 现在尝试写入ak的内容
 		if err := tx.Create(user).Error; err != nil {
 			glog.Error(fmt.Sprintf("Create user failed!, user Info :%+v, Failed info: %s", *user, err.Error()))
 			return err
@@ -34,13 +28,8 @@ func (d *Dal) CreateUser(ctx context.Context, user *qkms_model.User) (uint64, er
 
 func (d *Dal) UpdateUser(ctx context.Context, user *qkms_model.User) (uint64, error) {
 	trans_error := d.Query(ctx).Transaction(func(tx *gorm.DB) error {
-		var kek qkms_model.KeyEncryptionKey
-		if err := tx.Model(&qkms_model.KeyEncryptionKey{}).Where("namespace = user AND environment = production AND version = ? ", user.KEKVersion).First(&kek).Error; err != nil {
-			glog.Error(fmt.Sprintf("Create new user failed! Can't find original KEK Info: %+v, Failed Info: %s", *user, err.Error()))
-			return err
-		}
 		var old_user qkms_model.User
-		if err := tx.Model(&qkms_model.User{}).Where("name = ? AND appkey = ? AND keytype = ? AND version = ? AND kekversion = ?", user.Name, user.AppKey, user.KeyType, user.Version-1, user.KEKVersion).First(&old_user).Error; err != nil {
+		if err := tx.Model(&qkms_model.User{}).Where("name = ? AND appkey = ? AND keytype = ? AND version = ? AND kek = ?", user.Name, user.AppKey, user.KeyType, user.Version-1, user.KEK).First(&old_user).Error; err != nil {
 			glog.Error(fmt.Sprintf("Update User failed, Can't find original User! User Info :%+v, Failed info: %s", *user, err.Error()))
 			return err
 		}

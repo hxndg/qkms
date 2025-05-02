@@ -30,7 +30,7 @@ type PlainCacheUser struct {
 	KeyPlaintext string
 	KeyType      string
 	Version      uint64
-	KEKVersion   uint64
+	KEK          string
 }
 
 type CipherCacheUser struct {
@@ -40,17 +40,17 @@ type CipherCacheUser struct {
 	KeyPlaintext string
 	KeyType      string
 	Version      uint64
-	KEKVersion   uint64
+	KEK          string
 }
 
 func PlainCacheUser2ModelUser(in *PlainCacheUser, key []byte) (*qkms_model.User, error) {
 	out := qkms_model.User{
-		Name:       in.Name,
-		AppKey:     in.AppKey,
-		Cert:       in.Cert,
-		KeyType:    in.KeyType,
-		Version:    in.Version,
-		KEKVersion: in.KEKVersion,
+		Name:    in.Name,
+		AppKey:  in.AppKey,
+		Cert:    in.Cert,
+		KeyType: in.KeyType,
+		Version: in.Version,
+		KEK:     in.KEK,
 	}
 	out.Srand, out.TimeStamp = qkms_crypto.GenerateSrandAndTimeStamp()
 	encrypt_iv := qkms_crypto.GenerateIVFromTwoNumber(out.Srand, out.TimeStamp)

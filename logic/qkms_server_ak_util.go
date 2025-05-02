@@ -11,27 +11,31 @@ import (
 )
 
 type PlainCacheAK struct {
-	NameSpace   string
-	Name        string
-	AKPlaintext string
-	KeyType     string
-	Environment string
-	Version     uint64
-	KEKVersion  uint64
-	OwnerAppkey string
+	NameSpace      string
+	Name           string
+	AKPlaintext    string
+	KeyType        string
+	Environment    string
+	Version        uint64
+	KEK            string
+	LifeTime       uint64
+	RotateDuration uint64
+	OwnerAppkey    string
 }
 
 type CipherCacheAK struct {
-	NameSpace    string
-	Name         string
-	AKCiphertext string
-	KeyType      string
-	Srand        uint64
-	TimeStamp    uint64
-	Environment  string
-	Version      uint64
-	KEKVersion   uint64
-	OwnerAppkey  string
+	NameSpace      string
+	Name           string
+	AKCiphertext   string
+	KeyType        string
+	Srand          uint64
+	TimeStamp      uint64
+	Environment    string
+	Version        uint64
+	KEK            string
+	LifeTime       uint64
+	RotateDuration uint64
+	OwnerAppkey    string
 }
 
 func ModelAK2CipherCacheAK(in *qkms_model.AccessKey, decypt_key []byte, encrypt_key []byte) (*CipherCacheAK, error) {
@@ -41,13 +45,15 @@ func ModelAK2CipherCacheAK(in *qkms_model.AccessKey, decypt_key []byte, encrypt_
 		return nil, err
 	}
 	out := CipherCacheAK{
-		NameSpace:   in.NameSpace,
-		Name:        in.Name,
-		KeyType:     in.KeyType,
-		Environment: in.Environment,
-		Version:     in.Version,
-		KEKVersion:  in.KEKVersion,
-		OwnerAppkey: in.OwnerAppkey,
+		NameSpace:      in.NameSpace,
+		Name:           in.Name,
+		KeyType:        in.KeyType,
+		Environment:    in.Environment,
+		Version:        in.Version,
+		KEK:            in.KEK,
+		OwnerAppkey:    in.OwnerAppkey,
+		LifeTime:       in.LifeTime,
+		RotateDuration: in.RotateDuration,
 	}
 	out.Srand, out.TimeStamp = qkms_crypto.GenerateSrandAndTimeStamp()
 	ak_ciphertext, err := EncryptAESCtrBySrandTimeStamp(qkms_crypto.Base64Encoding(ak_plaintext), out.Srand, out.TimeStamp, encrypt_key)
@@ -81,13 +87,15 @@ func ModelAK2ProtoReadAKReply(in *qkms_model.AccessKey, key []byte) (*qkms_proto
 
 func PlainCacheAK2CipherCacheAK(in *PlainCacheAK, key []byte) (*CipherCacheAK, error) {
 	out := CipherCacheAK{
-		NameSpace:   in.NameSpace,
-		Name:        in.Name,
-		KeyType:     in.KeyType,
-		Environment: in.Environment,
-		Version:     in.Version,
-		KEKVersion:  in.KEKVersion,
-		OwnerAppkey: in.OwnerAppkey,
+		NameSpace:      in.NameSpace,
+		Name:           in.Name,
+		KeyType:        in.KeyType,
+		Environment:    in.Environment,
+		Version:        in.Version,
+		KEK:            in.KEK,
+		OwnerAppkey:    in.OwnerAppkey,
+		LifeTime:       in.LifeTime,
+		RotateDuration: in.RotateDuration,
 	}
 	out.Srand, out.TimeStamp = qkms_crypto.GenerateSrandAndTimeStamp()
 	encrypt_iv := qkms_crypto.GenerateIVFromTwoNumber(out.Srand, out.TimeStamp)
@@ -108,13 +116,15 @@ func PlainCacheAK2CipherCacheAK(in *PlainCacheAK, key []byte) (*CipherCacheAK, e
 
 func CipherCacheAK2PlainCacheAK(in *CipherCacheAK, key []byte) (*PlainCacheAK, error) {
 	out := PlainCacheAK{
-		NameSpace:   in.NameSpace,
-		Name:        in.Name,
-		KeyType:     in.KeyType,
-		Environment: in.Environment,
-		Version:     in.Version,
-		KEKVersion:  in.KEKVersion,
-		OwnerAppkey: in.OwnerAppkey,
+		NameSpace:      in.NameSpace,
+		Name:           in.Name,
+		KeyType:        in.KeyType,
+		Environment:    in.Environment,
+		Version:        in.Version,
+		KEK:            in.KEK,
+		OwnerAppkey:    in.OwnerAppkey,
+		LifeTime:       in.LifeTime,
+		RotateDuration: in.RotateDuration,
 	}
 	ak_plaintext, err := DecryptedAESCtrBySrandTimeStamp(in.AKCiphertext, in.Srand, in.TimeStamp, key)
 	if err != nil {
@@ -127,13 +137,15 @@ func CipherCacheAK2PlainCacheAK(in *CipherCacheAK, key []byte) (*PlainCacheAK, e
 
 func PlainCacheAK2ModelAK(in *PlainCacheAK, key []byte) (*qkms_model.AccessKey, error) {
 	out := qkms_model.AccessKey{
-		NameSpace:   in.NameSpace,
-		Name:        in.Name,
-		KeyType:     in.KeyType,
-		Environment: in.Environment,
-		Version:     in.Version,
-		KEKVersion:  in.KEKVersion,
-		OwnerAppkey: in.OwnerAppkey,
+		NameSpace:      in.NameSpace,
+		Name:           in.Name,
+		KeyType:        in.KeyType,
+		Environment:    in.Environment,
+		Version:        in.Version,
+		KEK:            in.KEK,
+		OwnerAppkey:    in.OwnerAppkey,
+		LifeTime:       in.LifeTime,
+		RotateDuration: in.RotateDuration,
 	}
 	out.Srand, out.TimeStamp = qkms_crypto.GenerateSrandAndTimeStamp()
 	encrypt_iv := qkms_crypto.GenerateIVFromTwoNumber(out.Srand, out.TimeStamp)

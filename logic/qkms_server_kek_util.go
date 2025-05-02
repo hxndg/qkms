@@ -10,35 +10,32 @@ import (
 
 // KEKPlaintext是经过base64编码的明文密钥
 type PlainCacheKEK struct {
-	NameSpace    string
+	Name         string
 	KEKPlaintext string
 	KeyType      string
 	Environment  string
-	Version      uint64
-	RKVersion    uint64
+	RK           string
 	OwnerAppkey  string
 }
 
 // KEKCiphertext是经过base64编码的密文密钥
 type CipherCacheKEK struct {
-	NameSpace     string
+	Name          string
 	KEKCiphertext string
 	KeyType       string
 	Srand         uint64
 	TimeStamp     uint64
 	Environment   string
-	Version       uint64
-	RKVersion     uint64
+	RK            string
 	OwnerAppkey   string
 }
 
 func PlainCacheKEK2CipherCacheKEK(in *PlainCacheKEK, key []byte) (*CipherCacheKEK, error) {
 	out := CipherCacheKEK{
-		NameSpace:   in.NameSpace,
+		Name:        in.Name,
 		KeyType:     in.KeyType,
 		Environment: in.Environment,
-		Version:     in.Version,
-		RKVersion:   in.RKVersion,
+		RK:          in.RK,
 		OwnerAppkey: in.OwnerAppkey,
 	}
 	out.Srand, out.TimeStamp = qkms_crypto.GenerateSrandAndTimeStamp()
@@ -60,11 +57,10 @@ func PlainCacheKEK2CipherCacheKEK(in *PlainCacheKEK, key []byte) (*CipherCacheKE
 
 func PlainCacheKEK2ModelKEK(in *PlainCacheKEK, key []byte) (*qkms_model.KeyEncryptionKey, error) {
 	out := qkms_model.KeyEncryptionKey{
-		NameSpace:   in.NameSpace,
+		Name:        in.Name,
 		KeyType:     in.KeyType,
 		Environment: in.Environment,
-		Version:     in.Version,
-		RKVersion:   in.RKVersion,
+		RK:          in.RK,
 		OwnerAppkey: in.OwnerAppkey,
 	}
 	out.Srand, out.TimeStamp = qkms_crypto.GenerateSrandAndTimeStamp()

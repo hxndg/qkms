@@ -45,7 +45,7 @@ func (d *BaseDal) Init(cfg DBConfig) error {
 	}
 	d.DB = db
 	//自动迁移，如果表已经存在不会重新创建。
-	d.DB.AutoMigrate(&qkms_model.AccessKey{}, &qkms_model.KeyEncryptionKey{}, &qkms_model.KeyAuthorizationRelation{}, &qkms_model.User{}, &qkms_model.Role{}, &qkms_model.RevokeCert{})
+	d.DB.AutoMigrate(&qkms_model.AccessKey{}, &qkms_model.KeyEncryptionKey{}, &qkms_model.KeyAuthorizationRelation{}, &qkms_model.User{}, &qkms_model.Role{}, &qkms_model.RevokeCert{}, &qkms_model.NameSpace{})
 	return err
 }
 
