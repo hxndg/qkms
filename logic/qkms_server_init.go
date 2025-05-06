@@ -14,6 +14,7 @@ import (
 	qkms_crypto "qkms/crypto"
 	qkms_dal "qkms/dal"
 	qkms_proto "qkms/proto"
+	"sync"
 	"time"
 
 	pgadapter "github.com/casbin/casbin-pg-adapter"
@@ -21,8 +22,15 @@ import (
 	"github.com/go-co-op/gocron"
 	"github.com/go-pg/pg/v10"
 	"github.com/golang/glog"
+	"github.com/open-policy-agent/opa/v1/rego"
 	cmap "github.com/orcaman/concurrent-map"
 )
+
+type OPAManager struct {
+	preparedQuery rego.PreparedEvalQuery
+	policyMu      sync.RWMutex
+	lastHash      string
+}
 
 type QkmsRealServer struct {
 	qkms_proto.UnimplementedQkmsServer
@@ -39,6 +47,7 @@ type QkmsRealServer struct {
 	adapter            *pgadapter.Adapter
 	enforcer           *casbin.Enforcer
 	scheduler          *gocron.Scheduler
+	opa                *OPAManager
 }
 
 func getPrivateKey(priv interface{}) crypto.Signer {
@@ -240,6 +249,11 @@ func (server *QkmsRealServer) InitServerRBAC(db_config qkms_dal.DBConfig, rbac s
 			glog.Error("Init QKMS Server Failed! Can't insert root creadential namespace")
 			return err
 		}
+		environments := [6]string{"test", "production", "dev", "staging", "uat", "unknown"}
+		for _, env := range environments {
+			server.GrantKAPInternal(context.Background(), "*", "*", env, plain_root_credential.AppKey, "read", "allow")
+			server.GrantKAPInternal(context.Background(), "*", "*", env, plain_root_credential.AppKey, "write", "allow")
+		}
 	}
 	return nil
 }
@@ -278,6 +292,12 @@ func (server *QkmsRealServer) Init(cert string, key string, ca_cert string, ca_k
 		return err
 	}
 	_ = server.InitScheduler()
+
+	server.opa = &OPAManager{
+		policyMu:      sync.RWMutex{},
+		preparedQuery: rego.PreparedEvalQuery{},
+		lastHash:      "",
+	}
 
 	return nil
 }

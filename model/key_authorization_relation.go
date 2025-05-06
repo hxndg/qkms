@@ -1,15 +1,15 @@
 package qkms_model
 
-type KeyAuthorizationRelation struct {
+type KeyAuthorizationPolicy struct {
 	ID            uint64 `gorm:"primaryKey;column:id;type:bigserial"`
+	UserAppkey    string `gorm:"index:idx_kar;column:userappkey"`
 	NameSpace     string `gorm:"index:idx_kar;column:namespace"`
-	Name          string `gorm:"index:idx_kar;column:name"`
-	Environment   string `gorm:"column:environment"`
-	OwnerAppkey   string `gorm:"column:ownerappkey"`
-	GrantedAppkey string `gorm:"column:grantedappkey"`
-	Behavior      string `gorm:"column:behavior"`
+	KeyName       string `gorm:"index:idx_kar;column:keyname"`
+	Environment   string `gorm:"index:idx_kar;column:environment"`
+	OperationType string `gorm:"index:idx_kar;column:operationtype"`
+	Effect        string `gorm:"column:effect"`
 }
 
-func (KeyAuthorizationRelation) TableName() string {
-	return "KeyAuthorizationRelations"
+func (KeyAuthorizationPolicy) TableName() string {
+	return "KeyAuthorizationPolicy"
 }
