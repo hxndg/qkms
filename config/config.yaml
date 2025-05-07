@@ -5,7 +5,7 @@ DB_CONFIG:
   DB_USERNAME: "postgres"
   DB_PASSWORD: "12345678"
 
-SERVER_CERT_PATH: "credentials/server/server.pem"
-SERVER_KEY_PATH: "credentials/server/server.key"
-CA_CERT_PATH: "credentials/ca.pem"
-CA_KEY_PATH: "credentials/plain_ca.key"
+SERVER_CERT_PATH: "credentials/server/server.pem.example"
+SERVER_KEY_PATH: "credentials/server/server.key.example"
+CA_CERT_PATH: "credentials/ca.pem.example"
+CA_KEY_PATH: "credentials/plain_ca.key.example"

@@ -16,6 +16,16 @@ func (server *QkmsRealServer) CreateKeyEncryptionKey(ctx context.Context, req *q
 		glog.Info(fmt.Sprintf("CreateKeyEncryptionKey failed, req:%+v, ower app key %s, error: %s", req.String(), *ownerappkey, err.Error()))
 		return &qkms_proto.CreateKeyEncryptionKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_CREATE_KEK_FAILED}, err
 	}
+
+	isAdmin, err := server.IsAdmin(ctx, *ownerappkey)
+	if err != nil {
+		return &qkms_proto.CreateKeyEncryptionKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR}, err
+	}
+	if !isAdmin {
+		glog.Warning(fmt.Sprintf("GrantAdmin failed, ownerappkey: %s, isAdmin: %t", *ownerappkey, isAdmin))
+		return &qkms_proto.CreateKeyEncryptionKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_NOT_AUTHORIZED}, nil
+	}
+
 	plain_cache_kek, err := server.CreateKEKInternal(ctx, req.Name, req.Environment, req.KeyType, *ownerappkey)
 	if err != nil {
 		glog.Info(fmt.Sprintf("Create KEK failed, req:%+v, error: %s", req.String(), err.Error()))

@@ -15,10 +15,13 @@ func (server *QkmsRealServer) GenerateCredential(ctx context.Context, req *qkms_
 	if err != nil {
 		return &qkms_proto.GenerateCredentialReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GENERATE_CREDENTIALS_FAILED}, err
 	}
-	allow, err := server.CheckPolicyForUserInternal(ctx, *ownerappkey, "user", "write")
-	if err != nil || !allow {
-		glog.Error(fmt.Sprintf("Create User failed, unauthorized user appkey:%s", *ownerappkey))
-		return nil, err
+	isAdmin, err := server.IsAdmin(ctx, *ownerappkey)
+	if err != nil {
+		return &qkms_proto.GenerateCredentialReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR}, err
+	}
+	if !isAdmin {
+		glog.Warning(fmt.Sprintf("GrantAdmin failed, ownerappkey: %s, isAdmin: %t", *ownerappkey, isAdmin))
+		return &qkms_proto.GenerateCredentialReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_NOT_AUTHORIZED}, nil
 	}
 
 	plain_cache_user, err := server.GenerateCredentialAndInsertDB(context.Background(), server.ca_cert.Issuer.Organization[0], server.ca_cert.Issuer.Country[0], server.ca_cert.Issuer.Province[0], server.ca_cert.Issuer.Locality[0], req.Name, "rsa_4096")
@@ -43,10 +46,14 @@ func (server *QkmsRealServer) RevokeCredential(ctx context.Context, req *qkms_pr
 	if err != nil {
 		return &qkms_proto.RevokeCredentialReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_REVOKE_CREDENTIALS_FAILED}, err
 	}
-	allow, err := server.CheckPolicyForUserInternal(ctx, *ownerappkey, "user", "write")
-	if err != nil || !allow {
-		glog.Error(fmt.Sprintf("Remove User failed, unauthorized user appkey:%s", *ownerappkey))
-		return nil, err
+
+	isAdmin, err := server.IsAdmin(ctx, *ownerappkey)
+	if err != nil {
+		return &qkms_proto.RevokeCredentialReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR}, err
+	}
+	if !isAdmin {
+		glog.Warning(fmt.Sprintf("GrantAdmin failed, ownerappkey: %s, isAdmin: %t", *ownerappkey, isAdmin))
+		return &qkms_proto.RevokeCredentialReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_NOT_AUTHORIZED}, nil
 	}
 	_, err = server.RevokeCredentialInternal(ctx, req.AppKey)
 	if err != nil {

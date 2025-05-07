@@ -9,28 +9,32 @@ import (
 	"github.com/golang/glog"
 )
 
-func (server *QkmsRealServer) GrantAccessKeyAuthorization(ctx context.Context, req *qkms_proto.GrantAccessKeyAuthorizationRequest) (*qkms_proto.GrantAccessKeyAuthorizationReply, error) {
+func (server *QkmsRealServer) CreateOrUpdateKeyAuthorizationPolicy(ctx context.Context, req *qkms_proto.CreateOrUpdateKeyAuthorizationPolicyRequest) (*qkms_proto.CreateOrUpdateKeyAuthorizationPolicyReply, error) {
 	ownerappkey, err := LoadAppKey(ctx)
 	if err != nil {
-		return &qkms_proto.GrantAccessKeyAuthorizationReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_READ_INVALID}, err
+		return &qkms_proto.CreateOrUpdateKeyAuthorizationPolicyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_READ_INVALID}, err
 	}
-	// plain_cache_ak, err := server.ReadAKInternal(ctx, req.NameSpace, req.Name, req.Environment)
-	// if err != nil {
-	// 	glog.Info(fmt.Sprintf("Grant KAR failed, req:%+v, ownerappkey: %s, error: %s", req.String(), *ownerappkey, err.Error()))
-	// 	return &qkms_proto.GrantAccessKeyAuthorizationReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_READ_INVALID}, err
-	// }
-	// // mainter can modify kar relation
-	// allow, err := server.CheckPolicyForUserInternal(ctx, *ownerappkey, plain_cache_ak.NameSpace, "write")
-	// if err != nil || !allow {
-	// 	if plain_cache_ak.OwnerAppkey != *ownerappkey {
-	// 		glog.Info(fmt.Sprintf("Grant KAR failed, req:%+v, ownerappkey: %s, error: %s", req.String(), *ownerappkey, "requester is not key owner"))
-	// 	}
-	// }
-	// erro_code, err := server.GrantKARInternal(ctx, req.NameSpace, req.Name, req.Environment, plain_cache_ak.OwnerAppkey, req.Appkey, req.Behavior)
-	// if err != nil {
-	// 	glog.Info(fmt.Sprintf("Grant KAR failed, req:%+v, ownerappkey: %s, error: %s", req.String(), *ownerappkey, err.Error()))
-	// 	return &qkms_proto.GrantAccessKeyAuthorizationReply{ErrorCode: erro_code}, err
-	// }
-	glog.Info(fmt.Sprintf("Grant KAR success, req:%+v, ownerappkey: %s", req.String(), *ownerappkey))
-	return &qkms_proto.GrantAccessKeyAuthorizationReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_KAR_GRANTED, ErrorMsg: "success"}, nil
+
+	isAdmin, err := server.IsAdmin(ctx, *ownerappkey)
+	if err != nil {
+		return &qkms_proto.CreateOrUpdateKeyAuthorizationPolicyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR}, err
+	}
+	if !isAdmin {
+		glog.Warning(fmt.Sprintf("GrantAdmin failed, ownerappkey: %s, isAdmin: %t", *ownerappkey, isAdmin))
+		return &qkms_proto.CreateOrUpdateKeyAuthorizationPolicyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_NOT_AUTHORIZED}, nil
+	}
+
+	_, err = server.CreateOrUpdateKeyAuthorizationPolicyInternal(ctx, req.NameSpace, req.Name, req.Environment, req.UserAppkey, req.Action, req.Effect)
+	if err != nil {
+		glog.Error(fmt.Sprintf("CreateOrUpdateKeyAuthorizationPolicyInternal failed, req is %+v, error: %s", req.String(), err.Error()))
+		return &qkms_proto.CreateOrUpdateKeyAuthorizationPolicyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_CHANGE_KAP_FAILED}, err
+	}
+
+	glog.Info(fmt.Sprintf("Update KAP success, req:%+v, ownerappkey: %s", req.String(), *ownerappkey))
+
+	// Reload the KAP
+	if err := server.LoadKAP(); err != nil {
+		glog.Error(fmt.Sprintf("LoadKAP failed, error: %s", err.Error()))
+	}
+	return &qkms_proto.CreateOrUpdateKeyAuthorizationPolicyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_CHANGE_KAP_SUCCESS, ErrorMsg: "success"}, nil
 }

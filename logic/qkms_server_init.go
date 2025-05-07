@@ -17,10 +17,7 @@ import (
 	"sync"
 	"time"
 
-	pgadapter "github.com/casbin/casbin-pg-adapter"
-	"github.com/casbin/casbin/v2"
 	"github.com/go-co-op/gocron"
-	"github.com/go-pg/pg/v10"
 	"github.com/golang/glog"
 	"github.com/open-policy-agent/opa/v1/rego"
 	cmap "github.com/orcaman/concurrent-map"
@@ -44,8 +41,6 @@ type QkmsRealServer struct {
 	kek_map            cmap.ConcurrentMap
 	kar_map            cmap.ConcurrentMap
 	cipher_key_len_map cmap.ConcurrentMap
-	adapter            *pgadapter.Adapter
-	enforcer           *casbin.Enforcer
 	scheduler          *gocron.Scheduler
 	opa                *OPAManager
 }
@@ -183,32 +178,13 @@ func (server *QkmsRealServer) InitServerCredentials(cert string, key string, ca_
 	return nil
 }
 
-func (server *QkmsRealServer) InitServerRBAC(db_config qkms_dal.DBConfig, rbac string) error {
-	var err error
-	opts, _ := pg.ParseURL(fmt.Sprintf("postgresql://%s:%s@%s:%d/%s?sslmode=disable",
-		db_config.Username, db_config.Password, db_config.Host, db_config.Port, db_config.DbName,
-	))
-
-	db := pg.Connect(opts)
-	defer db.Close()
-
-	server.adapter, err = pgadapter.NewAdapterByDB(db, pgadapter.WithTableName("rbac_table"))
+func (server *QkmsRealServer) InitServerAdministrator() error {
+	admins, err := server.GetAdminsInternal(context.Background())
 	if err != nil {
-		glog.Error("Casbin can't connect to postgresql", err.Error())
+		glog.Error(fmt.Sprintf("GetAdmin failed, error: %s", err.Error()))
 		return err
 	}
-	server.enforcer, err = casbin.NewEnforcer(rbac, server.adapter)
-	if err != nil {
-		glog.Error("Can't create enforcer", err.Error())
-		return err
-	}
-	server.enforcer.LoadPolicy()
-	// if root role empty, will ask for one
-	users, err := server.enforcer.GetUsersForRole("root")
-	if err != nil {
-		return err
-	}
-	if len(users) == 0 {
+	if len(*admins) == 0 {
 		var name, key_type string
 		fmt.Printf("Please enter default root user name:\n")
 		fmt.Scanf("%s", &name)
@@ -223,11 +199,7 @@ func (server *QkmsRealServer) InitServerRBAC(db_config qkms_dal.DBConfig, rbac s
 
 			return err
 		}
-		grant, err := server.GrantRoleForUserInternal(context.Background(), plain_root_credential.AppKey, "root")
-		if err != nil || !grant {
-			glog.Error("Create default root failed, user appkey:", plain_root_credential.AppKey)
-			return err
-		}
+
 		glog.Error("Please record root user's credentials")
 		glog.Error("Name:", plain_root_credential.Name)
 		glog.Error("AppKey:", plain_root_credential.AppKey)
@@ -243,16 +215,22 @@ func (server *QkmsRealServer) InitServerRBAC(db_config qkms_dal.DBConfig, rbac s
 				return err
 			}
 		}
+
 		plain_root_credential.KEK = user_table_kek.Name
 		_, err = server.InsertCacheUser2DB(context.Background(), plain_root_credential)
 		if err != nil {
 			glog.Error("Init QKMS Server Failed! Can't insert root creadential namespace")
 			return err
 		}
-		environments := [6]string{"test", "production", "dev", "staging", "uat", "unknown"}
-		for _, env := range environments {
-			server.GrantKAPInternal(context.Background(), "*", "*", env, plain_root_credential.AppKey, "read", "allow")
-			server.GrantKAPInternal(context.Background(), "*", "*", env, plain_root_credential.AppKey, "write", "allow")
+
+		// grant admin and update kap
+		server.GrantAdminInternal(context.Background(), plain_root_credential.AppKey)
+		server.CreateOrUpdateKeyAuthorizationPolicyInternal(context.Background(), "*", "*", "*", plain_root_credential.AppKey, "read", "allow")
+		server.CreateOrUpdateKeyAuthorizationPolicyInternal(context.Background(), "*", "*", "*", plain_root_credential.AppKey, "write", "allow")
+
+		// every kap updated, we need to load it
+		if err := server.LoadKAP(); err != nil {
+			glog.Error(fmt.Sprintf("LoadKAP failed, error: %s", err.Error()))
 		}
 	}
 	return nil
@@ -271,6 +249,15 @@ func (server *QkmsRealServer) InitServerCmap() error {
 	return nil
 }
 
+func (server *QkmsRealServer) InitOpa() error {
+	server.opa = &OPAManager{
+		policyMu:      sync.RWMutex{},
+		preparedQuery: rego.PreparedEvalQuery{},
+		lastHash:      "",
+	}
+	return nil
+}
+
 func (server *QkmsRealServer) Init(cert string, key string, ca_cert string, ca_key string, db_config qkms_dal.DBConfig, rbac string) error {
 	qkms_dal.MustInit(db_config)
 
@@ -286,18 +273,14 @@ func (server *QkmsRealServer) Init(cert string, key string, ca_cert string, ca_k
 		return err
 	}
 
-	err = server.InitServerRBAC(db_config, rbac)
+	_ = server.InitOpa()
+
+	err = server.InitServerAdministrator()
 	if err != nil {
-		glog.Error("Init QKMS Server Failed! Can't Init Server RBAC")
+		glog.Error("Init QKMS Server Failed! Can't Init Server admin")
 		return err
 	}
 	_ = server.InitScheduler()
-
-	server.opa = &OPAManager{
-		policyMu:      sync.RWMutex{},
-		preparedQuery: rego.PreparedEvalQuery{},
-		lastHash:      "",
-	}
 
 	return nil
 }

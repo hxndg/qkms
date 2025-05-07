@@ -22,25 +22,23 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Qkms_ReadAccessKey_FullMethodName                   = "/qkms_proto.qkms/ReadAccessKey"
-	Qkms_ReadReadableAccessKey_FullMethodName           = "/qkms_proto.qkms/ReadReadableAccessKey"
-	Qkms_GenerateAccessKey_FullMethodName               = "/qkms_proto.qkms/GenerateAccessKey"
-	Qkms_CreateReadableAccessKey_FullMethodName         = "/qkms_proto.qkms/CreateReadableAccessKey"
-	Qkms_CreateAccessKey_FullMethodName                 = "/qkms_proto.qkms/CreateAccessKey"
-	Qkms_CreateNameSpace_FullMethodName                 = "/qkms_proto.qkms/CreateNameSpace"
-	Qkms_ReadNameSpace_FullMethodName                   = "/qkms_proto.qkms/ReadNameSpace"
-	Qkms_UpdateAccessKey_FullMethodName                 = "/qkms_proto.qkms/UpdateAccessKey"
-	Qkms_GrantAccessKeyAuthorization_FullMethodName     = "/qkms_proto.qkms/GrantAccessKeyAuthorization"
-	Qkms_GetAccessKeyIndexs_FullMethodName              = "/qkms_proto.qkms/GetAccessKeyIndexs"
-	Qkms_CreateRole_FullMethodName                      = "/qkms_proto.qkms/CreateRole"
-	Qkms_GrantNameSpaceForRole_FullMethodName           = "/qkms_proto.qkms/GrantNameSpaceForRole"
-	Qkms_GrantRoleForUser_FullMethodName                = "/qkms_proto.qkms/GrantRoleForUser"
-	Qkms_RotateNameSpaceKeyEncryptionKey_FullMethodName = "/qkms_proto.qkms/RotateNameSpaceKeyEncryptionKey"
-	Qkms_RotateAccessKey_FullMethodName                 = "/qkms_proto.qkms/RotateAccessKey"
-	Qkms_UpdateNameSpaceInfo_FullMethodName             = "/qkms_proto.qkms/UpdateNameSpaceInfo"
-	Qkms_CreateKeyEncryptionKey_FullMethodName          = "/qkms_proto.qkms/CreateKeyEncryptionKey"
-	Qkms_GenerateCredential_FullMethodName              = "/qkms_proto.qkms/GenerateCredential"
-	Qkms_RevokeCredential_FullMethodName                = "/qkms_proto.qkms/RevokeCredential"
+	Qkms_ReadAccessKey_FullMethodName                        = "/qkms_proto.qkms/ReadAccessKey"
+	Qkms_ReadReadableAccessKey_FullMethodName                = "/qkms_proto.qkms/ReadReadableAccessKey"
+	Qkms_GenerateAccessKey_FullMethodName                    = "/qkms_proto.qkms/GenerateAccessKey"
+	Qkms_CreateReadableAccessKey_FullMethodName              = "/qkms_proto.qkms/CreateReadableAccessKey"
+	Qkms_CreateAccessKey_FullMethodName                      = "/qkms_proto.qkms/CreateAccessKey"
+	Qkms_CreateNameSpace_FullMethodName                      = "/qkms_proto.qkms/CreateNameSpace"
+	Qkms_ReadNameSpace_FullMethodName                        = "/qkms_proto.qkms/ReadNameSpace"
+	Qkms_UpdateAccessKey_FullMethodName                      = "/qkms_proto.qkms/UpdateAccessKey"
+	Qkms_CreateOrUpdateKeyAuthorizationPolicy_FullMethodName = "/qkms_proto.qkms/CreateOrUpdateKeyAuthorizationPolicy"
+	Qkms_GetAccessKeyIndexs_FullMethodName                   = "/qkms_proto.qkms/GetAccessKeyIndexs"
+	Qkms_GenerateCredential_FullMethodName                   = "/qkms_proto.qkms/GenerateCredential"
+	Qkms_RevokeCredential_FullMethodName                     = "/qkms_proto.qkms/RevokeCredential"
+	Qkms_GrantAdmin_FullMethodName                           = "/qkms_proto.qkms/GrantAdmin"
+	Qkms_RotateNameSpaceKeyEncryptionKey_FullMethodName      = "/qkms_proto.qkms/RotateNameSpaceKeyEncryptionKey"
+	Qkms_RotateAccessKey_FullMethodName                      = "/qkms_proto.qkms/RotateAccessKey"
+	Qkms_UpdateNameSpaceInfo_FullMethodName                  = "/qkms_proto.qkms/UpdateNameSpaceInfo"
+	Qkms_CreateKeyEncryptionKey_FullMethodName               = "/qkms_proto.qkms/CreateKeyEncryptionKey"
 )
 
 // QkmsClient is the client API for Qkms service.
@@ -57,20 +55,18 @@ type QkmsClient interface {
 	CreateNameSpace(ctx context.Context, in *CreateNameSpaceRequest, opts ...grpc.CallOption) (*CreateNameSpaceReply, error)
 	ReadNameSpace(ctx context.Context, in *ReadNameSpaceRequest, opts ...grpc.CallOption) (*ReadNameSpaceReply, error)
 	UpdateAccessKey(ctx context.Context, in *UpdateAccessKeyRequest, opts ...grpc.CallOption) (*UpdateAccessKeyReply, error)
-	GrantAccessKeyAuthorization(ctx context.Context, in *GrantAccessKeyAuthorizationRequest, opts ...grpc.CallOption) (*GrantAccessKeyAuthorizationReply, error)
+	CreateOrUpdateKeyAuthorizationPolicy(ctx context.Context, in *CreateOrUpdateKeyAuthorizationPolicyRequest, opts ...grpc.CallOption) (*CreateOrUpdateKeyAuthorizationPolicyReply, error)
 	GetAccessKeyIndexs(ctx context.Context, in *GetAccessKeyIndexsRequest, opts ...grpc.CallOption) (*GetAccessKeyIndexsReply, error)
 	// only for roots
-	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleReply, error)
-	GrantNameSpaceForRole(ctx context.Context, in *GrantNameSpaceForRoleRequest, opts ...grpc.CallOption) (*GrantNameSpaceForRoleReply, error)
-	GrantRoleForUser(ctx context.Context, in *GrantRoleForUserRequest, opts ...grpc.CallOption) (*GrantRoleForUserReply, error)
+	GenerateCredential(ctx context.Context, in *GenerateCredentialRequest, opts ...grpc.CallOption) (*GenerateCredentialReply, error)
+	RevokeCredential(ctx context.Context, in *RevokeCredentialRequest, opts ...grpc.CallOption) (*RevokeCredentialReply, error)
+	GrantAdmin(ctx context.Context, in *GrantAdminRequest, opts ...grpc.CallOption) (*GrantAdminReply, error)
 	// Any form rotation should only be perform by root
 	RotateNameSpaceKeyEncryptionKey(ctx context.Context, in *RotateNameSpaceKeyEncryptionKeyRequest, opts ...grpc.CallOption) (*RotateNameSpaceKeyEncryptionKeyReply, error)
 	RotateAccessKey(ctx context.Context, in *RotateAccessKeyRequest, opts ...grpc.CallOption) (*RotateAccessKeyReply, error)
 	// root can update namespace owner app keys
 	UpdateNameSpaceInfo(ctx context.Context, in *UpdateNameSpaceInfoRequest, opts ...grpc.CallOption) (*UpdateNameSpaceInfoReply, error)
 	CreateKeyEncryptionKey(ctx context.Context, in *CreateKeyEncryptionKeyRequest, opts ...grpc.CallOption) (*CreateKeyEncryptionKeyReply, error)
-	GenerateCredential(ctx context.Context, in *GenerateCredentialRequest, opts ...grpc.CallOption) (*GenerateCredentialReply, error)
-	RevokeCredential(ctx context.Context, in *RevokeCredentialRequest, opts ...grpc.CallOption) (*RevokeCredentialReply, error)
 }
 
 type qkmsClient struct {
@@ -161,10 +157,10 @@ func (c *qkmsClient) UpdateAccessKey(ctx context.Context, in *UpdateAccessKeyReq
 	return out, nil
 }
 
-func (c *qkmsClient) GrantAccessKeyAuthorization(ctx context.Context, in *GrantAccessKeyAuthorizationRequest, opts ...grpc.CallOption) (*GrantAccessKeyAuthorizationReply, error) {
+func (c *qkmsClient) CreateOrUpdateKeyAuthorizationPolicy(ctx context.Context, in *CreateOrUpdateKeyAuthorizationPolicyRequest, opts ...grpc.CallOption) (*CreateOrUpdateKeyAuthorizationPolicyReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GrantAccessKeyAuthorizationReply)
-	err := c.cc.Invoke(ctx, Qkms_GrantAccessKeyAuthorization_FullMethodName, in, out, cOpts...)
+	out := new(CreateOrUpdateKeyAuthorizationPolicyReply)
+	err := c.cc.Invoke(ctx, Qkms_CreateOrUpdateKeyAuthorizationPolicy_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -181,30 +177,30 @@ func (c *qkmsClient) GetAccessKeyIndexs(ctx context.Context, in *GetAccessKeyInd
 	return out, nil
 }
 
-func (c *qkmsClient) CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleReply, error) {
+func (c *qkmsClient) GenerateCredential(ctx context.Context, in *GenerateCredentialRequest, opts ...grpc.CallOption) (*GenerateCredentialReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateRoleReply)
-	err := c.cc.Invoke(ctx, Qkms_CreateRole_FullMethodName, in, out, cOpts...)
+	out := new(GenerateCredentialReply)
+	err := c.cc.Invoke(ctx, Qkms_GenerateCredential_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *qkmsClient) GrantNameSpaceForRole(ctx context.Context, in *GrantNameSpaceForRoleRequest, opts ...grpc.CallOption) (*GrantNameSpaceForRoleReply, error) {
+func (c *qkmsClient) RevokeCredential(ctx context.Context, in *RevokeCredentialRequest, opts ...grpc.CallOption) (*RevokeCredentialReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GrantNameSpaceForRoleReply)
-	err := c.cc.Invoke(ctx, Qkms_GrantNameSpaceForRole_FullMethodName, in, out, cOpts...)
+	out := new(RevokeCredentialReply)
+	err := c.cc.Invoke(ctx, Qkms_RevokeCredential_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *qkmsClient) GrantRoleForUser(ctx context.Context, in *GrantRoleForUserRequest, opts ...grpc.CallOption) (*GrantRoleForUserReply, error) {
+func (c *qkmsClient) GrantAdmin(ctx context.Context, in *GrantAdminRequest, opts ...grpc.CallOption) (*GrantAdminReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GrantRoleForUserReply)
-	err := c.cc.Invoke(ctx, Qkms_GrantRoleForUser_FullMethodName, in, out, cOpts...)
+	out := new(GrantAdminReply)
+	err := c.cc.Invoke(ctx, Qkms_GrantAdmin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -251,26 +247,6 @@ func (c *qkmsClient) CreateKeyEncryptionKey(ctx context.Context, in *CreateKeyEn
 	return out, nil
 }
 
-func (c *qkmsClient) GenerateCredential(ctx context.Context, in *GenerateCredentialRequest, opts ...grpc.CallOption) (*GenerateCredentialReply, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GenerateCredentialReply)
-	err := c.cc.Invoke(ctx, Qkms_GenerateCredential_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *qkmsClient) RevokeCredential(ctx context.Context, in *RevokeCredentialRequest, opts ...grpc.CallOption) (*RevokeCredentialReply, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RevokeCredentialReply)
-	err := c.cc.Invoke(ctx, Qkms_RevokeCredential_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // QkmsServer is the server API for Qkms service.
 // All implementations must embed UnimplementedQkmsServer
 // for forward compatibility.
@@ -285,20 +261,18 @@ type QkmsServer interface {
 	CreateNameSpace(context.Context, *CreateNameSpaceRequest) (*CreateNameSpaceReply, error)
 	ReadNameSpace(context.Context, *ReadNameSpaceRequest) (*ReadNameSpaceReply, error)
 	UpdateAccessKey(context.Context, *UpdateAccessKeyRequest) (*UpdateAccessKeyReply, error)
-	GrantAccessKeyAuthorization(context.Context, *GrantAccessKeyAuthorizationRequest) (*GrantAccessKeyAuthorizationReply, error)
+	CreateOrUpdateKeyAuthorizationPolicy(context.Context, *CreateOrUpdateKeyAuthorizationPolicyRequest) (*CreateOrUpdateKeyAuthorizationPolicyReply, error)
 	GetAccessKeyIndexs(context.Context, *GetAccessKeyIndexsRequest) (*GetAccessKeyIndexsReply, error)
 	// only for roots
-	CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleReply, error)
-	GrantNameSpaceForRole(context.Context, *GrantNameSpaceForRoleRequest) (*GrantNameSpaceForRoleReply, error)
-	GrantRoleForUser(context.Context, *GrantRoleForUserRequest) (*GrantRoleForUserReply, error)
+	GenerateCredential(context.Context, *GenerateCredentialRequest) (*GenerateCredentialReply, error)
+	RevokeCredential(context.Context, *RevokeCredentialRequest) (*RevokeCredentialReply, error)
+	GrantAdmin(context.Context, *GrantAdminRequest) (*GrantAdminReply, error)
 	// Any form rotation should only be perform by root
 	RotateNameSpaceKeyEncryptionKey(context.Context, *RotateNameSpaceKeyEncryptionKeyRequest) (*RotateNameSpaceKeyEncryptionKeyReply, error)
 	RotateAccessKey(context.Context, *RotateAccessKeyRequest) (*RotateAccessKeyReply, error)
 	// root can update namespace owner app keys
 	UpdateNameSpaceInfo(context.Context, *UpdateNameSpaceInfoRequest) (*UpdateNameSpaceInfoReply, error)
 	CreateKeyEncryptionKey(context.Context, *CreateKeyEncryptionKeyRequest) (*CreateKeyEncryptionKeyReply, error)
-	GenerateCredential(context.Context, *GenerateCredentialRequest) (*GenerateCredentialReply, error)
-	RevokeCredential(context.Context, *RevokeCredentialRequest) (*RevokeCredentialReply, error)
 	mustEmbedUnimplementedQkmsServer()
 }
 
@@ -333,20 +307,20 @@ func (UnimplementedQkmsServer) ReadNameSpace(context.Context, *ReadNameSpaceRequ
 func (UnimplementedQkmsServer) UpdateAccessKey(context.Context, *UpdateAccessKeyRequest) (*UpdateAccessKeyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateAccessKey not implemented")
 }
-func (UnimplementedQkmsServer) GrantAccessKeyAuthorization(context.Context, *GrantAccessKeyAuthorizationRequest) (*GrantAccessKeyAuthorizationReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GrantAccessKeyAuthorization not implemented")
+func (UnimplementedQkmsServer) CreateOrUpdateKeyAuthorizationPolicy(context.Context, *CreateOrUpdateKeyAuthorizationPolicyRequest) (*CreateOrUpdateKeyAuthorizationPolicyReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateKeyAuthorizationPolicy not implemented")
 }
 func (UnimplementedQkmsServer) GetAccessKeyIndexs(context.Context, *GetAccessKeyIndexsRequest) (*GetAccessKeyIndexsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccessKeyIndexs not implemented")
 }
-func (UnimplementedQkmsServer) CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateRole not implemented")
+func (UnimplementedQkmsServer) GenerateCredential(context.Context, *GenerateCredentialRequest) (*GenerateCredentialReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateCredential not implemented")
 }
-func (UnimplementedQkmsServer) GrantNameSpaceForRole(context.Context, *GrantNameSpaceForRoleRequest) (*GrantNameSpaceForRoleReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GrantNameSpaceForRole not implemented")
+func (UnimplementedQkmsServer) RevokeCredential(context.Context, *RevokeCredentialRequest) (*RevokeCredentialReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevokeCredential not implemented")
 }
-func (UnimplementedQkmsServer) GrantRoleForUser(context.Context, *GrantRoleForUserRequest) (*GrantRoleForUserReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GrantRoleForUser not implemented")
+func (UnimplementedQkmsServer) GrantAdmin(context.Context, *GrantAdminRequest) (*GrantAdminReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GrantAdmin not implemented")
 }
 func (UnimplementedQkmsServer) RotateNameSpaceKeyEncryptionKey(context.Context, *RotateNameSpaceKeyEncryptionKeyRequest) (*RotateNameSpaceKeyEncryptionKeyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RotateNameSpaceKeyEncryptionKey not implemented")
@@ -359,12 +333,6 @@ func (UnimplementedQkmsServer) UpdateNameSpaceInfo(context.Context, *UpdateNameS
 }
 func (UnimplementedQkmsServer) CreateKeyEncryptionKey(context.Context, *CreateKeyEncryptionKeyRequest) (*CreateKeyEncryptionKeyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateKeyEncryptionKey not implemented")
-}
-func (UnimplementedQkmsServer) GenerateCredential(context.Context, *GenerateCredentialRequest) (*GenerateCredentialReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GenerateCredential not implemented")
-}
-func (UnimplementedQkmsServer) RevokeCredential(context.Context, *RevokeCredentialRequest) (*RevokeCredentialReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RevokeCredential not implemented")
 }
 func (UnimplementedQkmsServer) mustEmbedUnimplementedQkmsServer() {}
 func (UnimplementedQkmsServer) testEmbeddedByValue()              {}
@@ -531,20 +499,20 @@ func _Qkms_UpdateAccessKey_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Qkms_GrantAccessKeyAuthorization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GrantAccessKeyAuthorizationRequest)
+func _Qkms_CreateOrUpdateKeyAuthorizationPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrUpdateKeyAuthorizationPolicyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QkmsServer).GrantAccessKeyAuthorization(ctx, in)
+		return srv.(QkmsServer).CreateOrUpdateKeyAuthorizationPolicy(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Qkms_GrantAccessKeyAuthorization_FullMethodName,
+		FullMethod: Qkms_CreateOrUpdateKeyAuthorizationPolicy_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QkmsServer).GrantAccessKeyAuthorization(ctx, req.(*GrantAccessKeyAuthorizationRequest))
+		return srv.(QkmsServer).CreateOrUpdateKeyAuthorizationPolicy(ctx, req.(*CreateOrUpdateKeyAuthorizationPolicyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -567,56 +535,56 @@ func _Qkms_GetAccessKeyIndexs_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Qkms_CreateRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateRoleRequest)
+func _Qkms_GenerateCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateCredentialRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QkmsServer).CreateRole(ctx, in)
+		return srv.(QkmsServer).GenerateCredential(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Qkms_CreateRole_FullMethodName,
+		FullMethod: Qkms_GenerateCredential_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QkmsServer).CreateRole(ctx, req.(*CreateRoleRequest))
+		return srv.(QkmsServer).GenerateCredential(ctx, req.(*GenerateCredentialRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Qkms_GrantNameSpaceForRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GrantNameSpaceForRoleRequest)
+func _Qkms_RevokeCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RevokeCredentialRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QkmsServer).GrantNameSpaceForRole(ctx, in)
+		return srv.(QkmsServer).RevokeCredential(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Qkms_GrantNameSpaceForRole_FullMethodName,
+		FullMethod: Qkms_RevokeCredential_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QkmsServer).GrantNameSpaceForRole(ctx, req.(*GrantNameSpaceForRoleRequest))
+		return srv.(QkmsServer).RevokeCredential(ctx, req.(*RevokeCredentialRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Qkms_GrantRoleForUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GrantRoleForUserRequest)
+func _Qkms_GrantAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GrantAdminRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QkmsServer).GrantRoleForUser(ctx, in)
+		return srv.(QkmsServer).GrantAdmin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Qkms_GrantRoleForUser_FullMethodName,
+		FullMethod: Qkms_GrantAdmin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QkmsServer).GrantRoleForUser(ctx, req.(*GrantRoleForUserRequest))
+		return srv.(QkmsServer).GrantAdmin(ctx, req.(*GrantAdminRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -693,42 +661,6 @@ func _Qkms_CreateKeyEncryptionKey_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Qkms_GenerateCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GenerateCredentialRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QkmsServer).GenerateCredential(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Qkms_GenerateCredential_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QkmsServer).GenerateCredential(ctx, req.(*GenerateCredentialRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Qkms_RevokeCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RevokeCredentialRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QkmsServer).RevokeCredential(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Qkms_RevokeCredential_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QkmsServer).RevokeCredential(ctx, req.(*RevokeCredentialRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Qkms_ServiceDesc is the grpc.ServiceDesc for Qkms service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -769,24 +701,24 @@ var Qkms_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Qkms_UpdateAccessKey_Handler,
 		},
 		{
-			MethodName: "GrantAccessKeyAuthorization",
-			Handler:    _Qkms_GrantAccessKeyAuthorization_Handler,
+			MethodName: "CreateOrUpdateKeyAuthorizationPolicy",
+			Handler:    _Qkms_CreateOrUpdateKeyAuthorizationPolicy_Handler,
 		},
 		{
 			MethodName: "GetAccessKeyIndexs",
 			Handler:    _Qkms_GetAccessKeyIndexs_Handler,
 		},
 		{
-			MethodName: "CreateRole",
-			Handler:    _Qkms_CreateRole_Handler,
+			MethodName: "GenerateCredential",
+			Handler:    _Qkms_GenerateCredential_Handler,
 		},
 		{
-			MethodName: "GrantNameSpaceForRole",
-			Handler:    _Qkms_GrantNameSpaceForRole_Handler,
+			MethodName: "RevokeCredential",
+			Handler:    _Qkms_RevokeCredential_Handler,
 		},
 		{
-			MethodName: "GrantRoleForUser",
-			Handler:    _Qkms_GrantRoleForUser_Handler,
+			MethodName: "GrantAdmin",
+			Handler:    _Qkms_GrantAdmin_Handler,
 		},
 		{
 			MethodName: "RotateNameSpaceKeyEncryptionKey",
@@ -803,14 +735,6 @@ var Qkms_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateKeyEncryptionKey",
 			Handler:    _Qkms_CreateKeyEncryptionKey_Handler,
-		},
-		{
-			MethodName: "GenerateCredential",
-			Handler:    _Qkms_GenerateCredential_Handler,
-		},
-		{
-			MethodName: "RevokeCredential",
-			Handler:    _Qkms_RevokeCredential_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

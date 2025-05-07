@@ -1026,31 +1026,32 @@ func (x *UpdateAccessKeyReply) GetErrorMsg() string {
 	return ""
 }
 
-type GrantAccessKeyAuthorizationRequest struct {
+type CreateOrUpdateKeyAuthorizationPolicyRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	NameSpace     string                 `protobuf:"bytes,1,opt,name=NameSpace,proto3" json:"NameSpace,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=Name,proto3" json:"Name,omitempty"`
 	Environment   string                 `protobuf:"bytes,3,opt,name=Environment,proto3" json:"Environment,omitempty"`
-	Appkey        string                 `protobuf:"bytes,4,opt,name=Appkey,proto3" json:"Appkey,omitempty"`
-	Behavior      string                 `protobuf:"bytes,5,opt,name=Behavior,proto3" json:"Behavior,omitempty"`
+	UserAppkey    string                 `protobuf:"bytes,4,opt,name=UserAppkey,proto3" json:"UserAppkey,omitempty"`
+	Action        string                 `protobuf:"bytes,5,opt,name=Action,proto3" json:"Action,omitempty"`
+	Effect        string                 `protobuf:"bytes,6,opt,name=Effect,proto3" json:"Effect,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GrantAccessKeyAuthorizationRequest) Reset() {
-	*x = GrantAccessKeyAuthorizationRequest{}
+func (x *CreateOrUpdateKeyAuthorizationPolicyRequest) Reset() {
+	*x = CreateOrUpdateKeyAuthorizationPolicyRequest{}
 	mi := &file_proto_qkms_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GrantAccessKeyAuthorizationRequest) String() string {
+func (x *CreateOrUpdateKeyAuthorizationPolicyRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GrantAccessKeyAuthorizationRequest) ProtoMessage() {}
+func (*CreateOrUpdateKeyAuthorizationPolicyRequest) ProtoMessage() {}
 
-func (x *GrantAccessKeyAuthorizationRequest) ProtoReflect() protoreflect.Message {
+func (x *CreateOrUpdateKeyAuthorizationPolicyRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_qkms_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1062,47 +1063,54 @@ func (x *GrantAccessKeyAuthorizationRequest) ProtoReflect() protoreflect.Message
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GrantAccessKeyAuthorizationRequest.ProtoReflect.Descriptor instead.
-func (*GrantAccessKeyAuthorizationRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateOrUpdateKeyAuthorizationPolicyRequest.ProtoReflect.Descriptor instead.
+func (*CreateOrUpdateKeyAuthorizationPolicyRequest) Descriptor() ([]byte, []int) {
 	return file_proto_qkms_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *GrantAccessKeyAuthorizationRequest) GetNameSpace() string {
+func (x *CreateOrUpdateKeyAuthorizationPolicyRequest) GetNameSpace() string {
 	if x != nil {
 		return x.NameSpace
 	}
 	return ""
 }
 
-func (x *GrantAccessKeyAuthorizationRequest) GetName() string {
+func (x *CreateOrUpdateKeyAuthorizationPolicyRequest) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *GrantAccessKeyAuthorizationRequest) GetEnvironment() string {
+func (x *CreateOrUpdateKeyAuthorizationPolicyRequest) GetEnvironment() string {
 	if x != nil {
 		return x.Environment
 	}
 	return ""
 }
 
-func (x *GrantAccessKeyAuthorizationRequest) GetAppkey() string {
+func (x *CreateOrUpdateKeyAuthorizationPolicyRequest) GetUserAppkey() string {
 	if x != nil {
-		return x.Appkey
+		return x.UserAppkey
 	}
 	return ""
 }
 
-func (x *GrantAccessKeyAuthorizationRequest) GetBehavior() string {
+func (x *CreateOrUpdateKeyAuthorizationPolicyRequest) GetAction() string {
 	if x != nil {
-		return x.Behavior
+		return x.Action
 	}
 	return ""
 }
 
-type GrantAccessKeyAuthorizationReply struct {
+func (x *CreateOrUpdateKeyAuthorizationPolicyRequest) GetEffect() string {
+	if x != nil {
+		return x.Effect
+	}
+	return ""
+}
+
+type CreateOrUpdateKeyAuthorizationPolicyReply struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ErrorCode     uint64                 `protobuf:"varint,1,opt,name=ErrorCode,proto3" json:"ErrorCode,omitempty"`
 	ErrorMsg      string                 `protobuf:"bytes,2,opt,name=ErrorMsg,proto3" json:"ErrorMsg,omitempty"`
@@ -1110,20 +1118,20 @@ type GrantAccessKeyAuthorizationReply struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GrantAccessKeyAuthorizationReply) Reset() {
-	*x = GrantAccessKeyAuthorizationReply{}
+func (x *CreateOrUpdateKeyAuthorizationPolicyReply) Reset() {
+	*x = CreateOrUpdateKeyAuthorizationPolicyReply{}
 	mi := &file_proto_qkms_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GrantAccessKeyAuthorizationReply) String() string {
+func (x *CreateOrUpdateKeyAuthorizationPolicyReply) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GrantAccessKeyAuthorizationReply) ProtoMessage() {}
+func (*CreateOrUpdateKeyAuthorizationPolicyReply) ProtoMessage() {}
 
-func (x *GrantAccessKeyAuthorizationReply) ProtoReflect() protoreflect.Message {
+func (x *CreateOrUpdateKeyAuthorizationPolicyReply) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_qkms_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1135,19 +1143,19 @@ func (x *GrantAccessKeyAuthorizationReply) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GrantAccessKeyAuthorizationReply.ProtoReflect.Descriptor instead.
-func (*GrantAccessKeyAuthorizationReply) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateOrUpdateKeyAuthorizationPolicyReply.ProtoReflect.Descriptor instead.
+func (*CreateOrUpdateKeyAuthorizationPolicyReply) Descriptor() ([]byte, []int) {
 	return file_proto_qkms_proto_rawDescGZIP(), []int{15}
 }
 
-func (x *GrantAccessKeyAuthorizationReply) GetErrorCode() uint64 {
+func (x *CreateOrUpdateKeyAuthorizationPolicyReply) GetErrorCode() uint64 {
 	if x != nil {
 		return x.ErrorCode
 	}
 	return 0
 }
 
-func (x *GrantAccessKeyAuthorizationReply) GetErrorMsg() string {
+func (x *CreateOrUpdateKeyAuthorizationPolicyReply) GetErrorMsg() string {
 	if x != nil {
 		return x.ErrorMsg
 	}
@@ -1826,29 +1834,27 @@ func (x *CreateRoleReply) GetErrorMsg() string {
 	return ""
 }
 
-type GrantNameSpaceForRoleRequest struct {
+type GrantAdminRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Role          string                 `protobuf:"bytes,1,opt,name=Role,proto3" json:"Role,omitempty"`
-	NameSpaces    []string               `protobuf:"bytes,2,rep,name=NameSpaces,proto3" json:"NameSpaces,omitempty"`
-	Behavior      string                 `protobuf:"bytes,3,opt,name=Behavior,proto3" json:"Behavior,omitempty"`
+	AppKey        string                 `protobuf:"bytes,1,opt,name=AppKey,proto3" json:"AppKey,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GrantNameSpaceForRoleRequest) Reset() {
-	*x = GrantNameSpaceForRoleRequest{}
+func (x *GrantAdminRequest) Reset() {
+	*x = GrantAdminRequest{}
 	mi := &file_proto_qkms_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GrantNameSpaceForRoleRequest) String() string {
+func (x *GrantAdminRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GrantNameSpaceForRoleRequest) ProtoMessage() {}
+func (*GrantAdminRequest) ProtoMessage() {}
 
-func (x *GrantNameSpaceForRoleRequest) ProtoReflect() protoreflect.Message {
+func (x *GrantAdminRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_qkms_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1860,33 +1866,19 @@ func (x *GrantNameSpaceForRoleRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GrantNameSpaceForRoleRequest.ProtoReflect.Descriptor instead.
-func (*GrantNameSpaceForRoleRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GrantAdminRequest.ProtoReflect.Descriptor instead.
+func (*GrantAdminRequest) Descriptor() ([]byte, []int) {
 	return file_proto_qkms_proto_rawDescGZIP(), []int{28}
 }
 
-func (x *GrantNameSpaceForRoleRequest) GetRole() string {
+func (x *GrantAdminRequest) GetAppKey() string {
 	if x != nil {
-		return x.Role
+		return x.AppKey
 	}
 	return ""
 }
 
-func (x *GrantNameSpaceForRoleRequest) GetNameSpaces() []string {
-	if x != nil {
-		return x.NameSpaces
-	}
-	return nil
-}
-
-func (x *GrantNameSpaceForRoleRequest) GetBehavior() string {
-	if x != nil {
-		return x.Behavior
-	}
-	return ""
-}
-
-type GrantNameSpaceForRoleReply struct {
+type GrantAdminReply struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ErrorCode     uint64                 `protobuf:"varint,1,opt,name=ErrorCode,proto3" json:"ErrorCode,omitempty"`
 	ErrorMsg      string                 `protobuf:"bytes,2,opt,name=ErrorMsg,proto3" json:"ErrorMsg,omitempty"`
@@ -1894,20 +1886,20 @@ type GrantNameSpaceForRoleReply struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GrantNameSpaceForRoleReply) Reset() {
-	*x = GrantNameSpaceForRoleReply{}
+func (x *GrantAdminReply) Reset() {
+	*x = GrantAdminReply{}
 	mi := &file_proto_qkms_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GrantNameSpaceForRoleReply) String() string {
+func (x *GrantAdminReply) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GrantNameSpaceForRoleReply) ProtoMessage() {}
+func (*GrantAdminReply) ProtoMessage() {}
 
-func (x *GrantNameSpaceForRoleReply) ProtoReflect() protoreflect.Message {
+func (x *GrantAdminReply) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_qkms_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1919,123 +1911,19 @@ func (x *GrantNameSpaceForRoleReply) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GrantNameSpaceForRoleReply.ProtoReflect.Descriptor instead.
-func (*GrantNameSpaceForRoleReply) Descriptor() ([]byte, []int) {
+// Deprecated: Use GrantAdminReply.ProtoReflect.Descriptor instead.
+func (*GrantAdminReply) Descriptor() ([]byte, []int) {
 	return file_proto_qkms_proto_rawDescGZIP(), []int{29}
 }
 
-func (x *GrantNameSpaceForRoleReply) GetErrorCode() uint64 {
+func (x *GrantAdminReply) GetErrorCode() uint64 {
 	if x != nil {
 		return x.ErrorCode
 	}
 	return 0
 }
 
-func (x *GrantNameSpaceForRoleReply) GetErrorMsg() string {
-	if x != nil {
-		return x.ErrorMsg
-	}
-	return ""
-}
-
-type GrantRoleForUserRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	User          string                 `protobuf:"bytes,1,opt,name=User,proto3" json:"User,omitempty"`
-	Role          string                 `protobuf:"bytes,2,opt,name=Role,proto3" json:"Role,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GrantRoleForUserRequest) Reset() {
-	*x = GrantRoleForUserRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[30]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GrantRoleForUserRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GrantRoleForUserRequest) ProtoMessage() {}
-
-func (x *GrantRoleForUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[30]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GrantRoleForUserRequest.ProtoReflect.Descriptor instead.
-func (*GrantRoleForUserRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{30}
-}
-
-func (x *GrantRoleForUserRequest) GetUser() string {
-	if x != nil {
-		return x.User
-	}
-	return ""
-}
-
-func (x *GrantRoleForUserRequest) GetRole() string {
-	if x != nil {
-		return x.Role
-	}
-	return ""
-}
-
-type GrantRoleForUserReply struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ErrorCode     uint64                 `protobuf:"varint,1,opt,name=ErrorCode,proto3" json:"ErrorCode,omitempty"`
-	ErrorMsg      string                 `protobuf:"bytes,2,opt,name=ErrorMsg,proto3" json:"ErrorMsg,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GrantRoleForUserReply) Reset() {
-	*x = GrantRoleForUserReply{}
-	mi := &file_proto_qkms_proto_msgTypes[31]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GrantRoleForUserReply) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GrantRoleForUserReply) ProtoMessage() {}
-
-func (x *GrantRoleForUserReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[31]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GrantRoleForUserReply.ProtoReflect.Descriptor instead.
-func (*GrantRoleForUserReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{31}
-}
-
-func (x *GrantRoleForUserReply) GetErrorCode() uint64 {
-	if x != nil {
-		return x.ErrorCode
-	}
-	return 0
-}
-
-func (x *GrantRoleForUserReply) GetErrorMsg() string {
+func (x *GrantAdminReply) GetErrorMsg() string {
 	if x != nil {
 		return x.ErrorMsg
 	}
@@ -2051,7 +1939,7 @@ type GetAccessKeyIndexsRequest struct {
 
 func (x *GetAccessKeyIndexsRequest) Reset() {
 	*x = GetAccessKeyIndexsRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[32]
+	mi := &file_proto_qkms_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2063,7 +1951,7 @@ func (x *GetAccessKeyIndexsRequest) String() string {
 func (*GetAccessKeyIndexsRequest) ProtoMessage() {}
 
 func (x *GetAccessKeyIndexsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[32]
+	mi := &file_proto_qkms_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2076,7 +1964,7 @@ func (x *GetAccessKeyIndexsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAccessKeyIndexsRequest.ProtoReflect.Descriptor instead.
 func (*GetAccessKeyIndexsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{32}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *GetAccessKeyIndexsRequest) GetNameSpace() string {
@@ -2097,7 +1985,7 @@ type GetAccessKeyIndexsReply struct {
 
 func (x *GetAccessKeyIndexsReply) Reset() {
 	*x = GetAccessKeyIndexsReply{}
-	mi := &file_proto_qkms_proto_msgTypes[33]
+	mi := &file_proto_qkms_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2109,7 +1997,7 @@ func (x *GetAccessKeyIndexsReply) String() string {
 func (*GetAccessKeyIndexsReply) ProtoMessage() {}
 
 func (x *GetAccessKeyIndexsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[33]
+	mi := &file_proto_qkms_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2122,7 +2010,7 @@ func (x *GetAccessKeyIndexsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAccessKeyIndexsReply.ProtoReflect.Descriptor instead.
 func (*GetAccessKeyIndexsReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{33}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *GetAccessKeyIndexsReply) GetAccessKeys() []*GetAccessKeyIndexsReply_AccessKey {
@@ -2155,7 +2043,7 @@ type GenerateCredentialRequest struct {
 
 func (x *GenerateCredentialRequest) Reset() {
 	*x = GenerateCredentialRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[34]
+	mi := &file_proto_qkms_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2167,7 +2055,7 @@ func (x *GenerateCredentialRequest) String() string {
 func (*GenerateCredentialRequest) ProtoMessage() {}
 
 func (x *GenerateCredentialRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[34]
+	mi := &file_proto_qkms_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2180,7 +2068,7 @@ func (x *GenerateCredentialRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateCredentialRequest.ProtoReflect.Descriptor instead.
 func (*GenerateCredentialRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{34}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *GenerateCredentialRequest) GetName() string {
@@ -2203,7 +2091,7 @@ type GenerateCredentialReply struct {
 
 func (x *GenerateCredentialReply) Reset() {
 	*x = GenerateCredentialReply{}
-	mi := &file_proto_qkms_proto_msgTypes[35]
+	mi := &file_proto_qkms_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2215,7 +2103,7 @@ func (x *GenerateCredentialReply) String() string {
 func (*GenerateCredentialReply) ProtoMessage() {}
 
 func (x *GenerateCredentialReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[35]
+	mi := &file_proto_qkms_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2228,7 +2116,7 @@ func (x *GenerateCredentialReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateCredentialReply.ProtoReflect.Descriptor instead.
 func (*GenerateCredentialReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{35}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *GenerateCredentialReply) GetErrorCode() uint64 {
@@ -2275,7 +2163,7 @@ type RevokeCredentialRequest struct {
 
 func (x *RevokeCredentialRequest) Reset() {
 	*x = RevokeCredentialRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[36]
+	mi := &file_proto_qkms_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2287,7 +2175,7 @@ func (x *RevokeCredentialRequest) String() string {
 func (*RevokeCredentialRequest) ProtoMessage() {}
 
 func (x *RevokeCredentialRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[36]
+	mi := &file_proto_qkms_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2300,7 +2188,7 @@ func (x *RevokeCredentialRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeCredentialRequest.ProtoReflect.Descriptor instead.
 func (*RevokeCredentialRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{36}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *RevokeCredentialRequest) GetAppKey() string {
@@ -2320,7 +2208,7 @@ type RevokeCredentialReply struct {
 
 func (x *RevokeCredentialReply) Reset() {
 	*x = RevokeCredentialReply{}
-	mi := &file_proto_qkms_proto_msgTypes[37]
+	mi := &file_proto_qkms_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2332,7 +2220,7 @@ func (x *RevokeCredentialReply) String() string {
 func (*RevokeCredentialReply) ProtoMessage() {}
 
 func (x *RevokeCredentialReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[37]
+	mi := &file_proto_qkms_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2345,7 +2233,7 @@ func (x *RevokeCredentialReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeCredentialReply.ProtoReflect.Descriptor instead.
 func (*RevokeCredentialReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{37}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *RevokeCredentialReply) GetErrorCode() uint64 {
@@ -2373,7 +2261,7 @@ type GetAccessKeyIndexsReply_AccessKey struct {
 
 func (x *GetAccessKeyIndexsReply_AccessKey) Reset() {
 	*x = GetAccessKeyIndexsReply_AccessKey{}
-	mi := &file_proto_qkms_proto_msgTypes[38]
+	mi := &file_proto_qkms_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2385,7 +2273,7 @@ func (x *GetAccessKeyIndexsReply_AccessKey) String() string {
 func (*GetAccessKeyIndexsReply_AccessKey) ProtoMessage() {}
 
 func (x *GetAccessKeyIndexsReply_AccessKey) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[38]
+	mi := &file_proto_qkms_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2398,7 +2286,7 @@ func (x *GetAccessKeyIndexsReply_AccessKey) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use GetAccessKeyIndexsReply_AccessKey.ProtoReflect.Descriptor instead.
 func (*GetAccessKeyIndexsReply_AccessKey) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{33, 0}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{31, 0}
 }
 
 func (x *GetAccessKeyIndexsReply_AccessKey) GetNameSpace() string {
@@ -2503,14 +2391,17 @@ const file_proto_qkms_proto_rawDesc = "" +
 	"\aVersion\x18\x06 \x01(\x04R\aVersion\"P\n" +
 	"\x14UpdateAccessKeyReply\x12\x1c\n" +
 	"\tErrorCode\x18\x01 \x01(\x04R\tErrorCode\x12\x1a\n" +
-	"\bErrorMsg\x18\x02 \x01(\tR\bErrorMsg\"\xac\x01\n" +
-	"\"GrantAccessKeyAuthorizationRequest\x12\x1c\n" +
+	"\bErrorMsg\x18\x02 \x01(\tR\bErrorMsg\"\xd1\x01\n" +
+	"+CreateOrUpdateKeyAuthorizationPolicyRequest\x12\x1c\n" +
 	"\tNameSpace\x18\x01 \x01(\tR\tNameSpace\x12\x12\n" +
 	"\x04Name\x18\x02 \x01(\tR\x04Name\x12 \n" +
-	"\vEnvironment\x18\x03 \x01(\tR\vEnvironment\x12\x16\n" +
-	"\x06Appkey\x18\x04 \x01(\tR\x06Appkey\x12\x1a\n" +
-	"\bBehavior\x18\x05 \x01(\tR\bBehavior\"\\\n" +
-	" GrantAccessKeyAuthorizationReply\x12\x1c\n" +
+	"\vEnvironment\x18\x03 \x01(\tR\vEnvironment\x12\x1e\n" +
+	"\n" +
+	"UserAppkey\x18\x04 \x01(\tR\n" +
+	"UserAppkey\x12\x16\n" +
+	"\x06Action\x18\x05 \x01(\tR\x06Action\x12\x16\n" +
+	"\x06Effect\x18\x06 \x01(\tR\x06Effect\"e\n" +
+	")CreateOrUpdateKeyAuthorizationPolicyReply\x12\x1c\n" +
 	"\tErrorCode\x18\x01 \x01(\x04R\tErrorCode\x12\x1a\n" +
 	"\bErrorMsg\x18\x02 \x01(\tR\bErrorMsg\"N\n" +
 	"\x16CreateNameSpaceRequest\x12\x12\n" +
@@ -2554,20 +2445,10 @@ const file_proto_qkms_proto_rawDesc = "" +
 	"\x04Name\x18\x01 \x01(\tR\x04Name\"K\n" +
 	"\x0fCreateRoleReply\x12\x1c\n" +
 	"\tErrorCode\x18\x01 \x01(\x04R\tErrorCode\x12\x1a\n" +
-	"\bErrorMsg\x18\x02 \x01(\tR\bErrorMsg\"n\n" +
-	"\x1cGrantNameSpaceForRoleRequest\x12\x12\n" +
-	"\x04Role\x18\x01 \x01(\tR\x04Role\x12\x1e\n" +
-	"\n" +
-	"NameSpaces\x18\x02 \x03(\tR\n" +
-	"NameSpaces\x12\x1a\n" +
-	"\bBehavior\x18\x03 \x01(\tR\bBehavior\"V\n" +
-	"\x1aGrantNameSpaceForRoleReply\x12\x1c\n" +
-	"\tErrorCode\x18\x01 \x01(\x04R\tErrorCode\x12\x1a\n" +
-	"\bErrorMsg\x18\x02 \x01(\tR\bErrorMsg\"A\n" +
-	"\x17GrantRoleForUserRequest\x12\x12\n" +
-	"\x04User\x18\x01 \x01(\tR\x04User\x12\x12\n" +
-	"\x04Role\x18\x02 \x01(\tR\x04Role\"Q\n" +
-	"\x15GrantRoleForUserReply\x12\x1c\n" +
+	"\bErrorMsg\x18\x02 \x01(\tR\bErrorMsg\"+\n" +
+	"\x11GrantAdminRequest\x12\x16\n" +
+	"\x06AppKey\x18\x01 \x01(\tR\x06AppKey\"K\n" +
+	"\x0fGrantAdminReply\x12\x1c\n" +
 	"\tErrorCode\x18\x01 \x01(\x04R\tErrorCode\x12\x1a\n" +
 	"\bErrorMsg\x18\x02 \x01(\tR\bErrorMsg\"9\n" +
 	"\x19GetAccessKeyIndexsRequest\x12\x1c\n" +
@@ -2594,7 +2475,7 @@ const file_proto_qkms_proto_rawDesc = "" +
 	"\x06AppKey\x18\x01 \x01(\tR\x06AppKey\"Q\n" +
 	"\x15RevokeCredentialReply\x12\x1c\n" +
 	"\tErrorCode\x18\x01 \x01(\x04R\tErrorCode\x12\x1a\n" +
-	"\bErrorMsg\x18\x02 \x01(\tR\bErrorMsg2\xfc\x0e\n" +
+	"\bErrorMsg\x18\x02 \x01(\tR\bErrorMsg2\xcd\r\n" +
 	"\x04qkms\x12S\n" +
 	"\rReadAccessKey\x12 .qkms_proto.ReadAccessKeyRequest\x1a\x1e.qkms_proto.ReadAccessKeyReply\"\x00\x12k\n" +
 	"\x15ReadReadableAccessKey\x12(.qkms_proto.ReadReadableAccessKeyRequest\x1a&.qkms_proto.ReadReadableAccessKeyReply\"\x00\x12_\n" +
@@ -2603,19 +2484,17 @@ const file_proto_qkms_proto_rawDesc = "" +
 	"\x0fCreateAccessKey\x12\".qkms_proto.CreateAccessKeyRequest\x1a .qkms_proto.CreateAccessKeyReply\"\x00\x12Y\n" +
 	"\x0fCreateNameSpace\x12\".qkms_proto.CreateNameSpaceRequest\x1a .qkms_proto.CreateNameSpaceReply\"\x00\x12S\n" +
 	"\rReadNameSpace\x12 .qkms_proto.ReadNameSpaceRequest\x1a\x1e.qkms_proto.ReadNameSpaceReply\"\x00\x12Y\n" +
-	"\x0fUpdateAccessKey\x12\".qkms_proto.UpdateAccessKeyRequest\x1a .qkms_proto.UpdateAccessKeyReply\"\x00\x12}\n" +
-	"\x1bGrantAccessKeyAuthorization\x12..qkms_proto.GrantAccessKeyAuthorizationRequest\x1a,.qkms_proto.GrantAccessKeyAuthorizationReply\"\x00\x12b\n" +
-	"\x12GetAccessKeyIndexs\x12%.qkms_proto.GetAccessKeyIndexsRequest\x1a#.qkms_proto.GetAccessKeyIndexsReply\"\x00\x12J\n" +
+	"\x0fUpdateAccessKey\x12\".qkms_proto.UpdateAccessKeyRequest\x1a .qkms_proto.UpdateAccessKeyReply\"\x00\x12\x98\x01\n" +
+	"$CreateOrUpdateKeyAuthorizationPolicy\x127.qkms_proto.CreateOrUpdateKeyAuthorizationPolicyRequest\x1a5.qkms_proto.CreateOrUpdateKeyAuthorizationPolicyReply\"\x00\x12b\n" +
+	"\x12GetAccessKeyIndexs\x12%.qkms_proto.GetAccessKeyIndexsRequest\x1a#.qkms_proto.GetAccessKeyIndexsReply\"\x00\x12b\n" +
+	"\x12GenerateCredential\x12%.qkms_proto.GenerateCredentialRequest\x1a#.qkms_proto.GenerateCredentialReply\"\x00\x12\\\n" +
+	"\x10RevokeCredential\x12#.qkms_proto.RevokeCredentialRequest\x1a!.qkms_proto.RevokeCredentialReply\"\x00\x12J\n" +
 	"\n" +
-	"CreateRole\x12\x1d.qkms_proto.CreateRoleRequest\x1a\x1b.qkms_proto.CreateRoleReply\"\x00\x12k\n" +
-	"\x15GrantNameSpaceForRole\x12(.qkms_proto.GrantNameSpaceForRoleRequest\x1a&.qkms_proto.GrantNameSpaceForRoleReply\"\x00\x12\\\n" +
-	"\x10GrantRoleForUser\x12#.qkms_proto.GrantRoleForUserRequest\x1a!.qkms_proto.GrantRoleForUserReply\"\x00\x12\x89\x01\n" +
+	"GrantAdmin\x12\x1d.qkms_proto.GrantAdminRequest\x1a\x1b.qkms_proto.GrantAdminReply\"\x00\x12\x89\x01\n" +
 	"\x1fRotateNameSpaceKeyEncryptionKey\x122.qkms_proto.RotateNameSpaceKeyEncryptionKeyRequest\x1a0.qkms_proto.RotateNameSpaceKeyEncryptionKeyReply\"\x00\x12Y\n" +
 	"\x0fRotateAccessKey\x12\".qkms_proto.RotateAccessKeyRequest\x1a .qkms_proto.RotateAccessKeyReply\"\x00\x12e\n" +
 	"\x13UpdateNameSpaceInfo\x12&.qkms_proto.UpdateNameSpaceInfoRequest\x1a$.qkms_proto.UpdateNameSpaceInfoReply\"\x00\x12n\n" +
-	"\x16CreateKeyEncryptionKey\x12).qkms_proto.CreateKeyEncryptionKeyRequest\x1a'.qkms_proto.CreateKeyEncryptionKeyReply\"\x00\x12b\n" +
-	"\x12GenerateCredential\x12%.qkms_proto.GenerateCredentialRequest\x1a#.qkms_proto.GenerateCredentialReply\"\x00\x12\\\n" +
-	"\x10RevokeCredential\x12#.qkms_proto.RevokeCredentialRequest\x1a!.qkms_proto.RevokeCredentialReply\"\x00B\x0fZ\r./;qkms_protob\x06proto3"
+	"\x16CreateKeyEncryptionKey\x12).qkms_proto.CreateKeyEncryptionKeyRequest\x1a'.qkms_proto.CreateKeyEncryptionKeyReply\"\x00B\x0fZ\r./;qkms_protob\x06proto3"
 
 var (
 	file_proto_qkms_proto_rawDescOnce sync.Once
@@ -2629,50 +2508,48 @@ func file_proto_qkms_proto_rawDescGZIP() []byte {
 	return file_proto_qkms_proto_rawDescData
 }
 
-var file_proto_qkms_proto_msgTypes = make([]protoimpl.MessageInfo, 39)
+var file_proto_qkms_proto_msgTypes = make([]protoimpl.MessageInfo, 37)
 var file_proto_qkms_proto_goTypes = []any{
-	(*ReadAccessKeyRequest)(nil),                   // 0: qkms_proto.ReadAccessKeyRequest
-	(*ReadAccessKeyReply)(nil),                     // 1: qkms_proto.ReadAccessKeyReply
-	(*ReadReadableAccessKeyRequest)(nil),           // 2: qkms_proto.ReadReadableAccessKeyRequest
-	(*ReadReadableAccessKeyReply)(nil),             // 3: qkms_proto.ReadReadableAccessKeyReply
-	(*GenerateAccessKeyRequest)(nil),               // 4: qkms_proto.GenerateAccessKeyRequest
-	(*GenerateAccessKeyReply)(nil),                 // 5: qkms_proto.GenerateAccessKeyReply
-	(*RotateAccessKeyRequest)(nil),                 // 6: qkms_proto.RotateAccessKeyRequest
-	(*RotateAccessKeyReply)(nil),                   // 7: qkms_proto.RotateAccessKeyReply
-	(*CreateAccessKeyRequest)(nil),                 // 8: qkms_proto.CreateAccessKeyRequest
-	(*CreateAccessKeyReply)(nil),                   // 9: qkms_proto.CreateAccessKeyReply
-	(*CreateReadableAccessKeyRequest)(nil),         // 10: qkms_proto.CreateReadableAccessKeyRequest
-	(*CreateReadableAccessKeyReply)(nil),           // 11: qkms_proto.CreateReadableAccessKeyReply
-	(*UpdateAccessKeyRequest)(nil),                 // 12: qkms_proto.UpdateAccessKeyRequest
-	(*UpdateAccessKeyReply)(nil),                   // 13: qkms_proto.UpdateAccessKeyReply
-	(*GrantAccessKeyAuthorizationRequest)(nil),     // 14: qkms_proto.GrantAccessKeyAuthorizationRequest
-	(*GrantAccessKeyAuthorizationReply)(nil),       // 15: qkms_proto.GrantAccessKeyAuthorizationReply
-	(*CreateNameSpaceRequest)(nil),                 // 16: qkms_proto.CreateNameSpaceRequest
-	(*CreateNameSpaceReply)(nil),                   // 17: qkms_proto.CreateNameSpaceReply
-	(*RotateNameSpaceKeyEncryptionKeyRequest)(nil), // 18: qkms_proto.RotateNameSpaceKeyEncryptionKeyRequest
-	(*RotateNameSpaceKeyEncryptionKeyReply)(nil),   // 19: qkms_proto.RotateNameSpaceKeyEncryptionKeyReply
-	(*CreateKeyEncryptionKeyRequest)(nil),          // 20: qkms_proto.CreateKeyEncryptionKeyRequest
-	(*CreateKeyEncryptionKeyReply)(nil),            // 21: qkms_proto.CreateKeyEncryptionKeyReply
-	(*ReadNameSpaceRequest)(nil),                   // 22: qkms_proto.ReadNameSpaceRequest
-	(*ReadNameSpaceReply)(nil),                     // 23: qkms_proto.ReadNameSpaceReply
-	(*UpdateNameSpaceInfoRequest)(nil),             // 24: qkms_proto.UpdateNameSpaceInfoRequest
-	(*UpdateNameSpaceInfoReply)(nil),               // 25: qkms_proto.UpdateNameSpaceInfoReply
-	(*CreateRoleRequest)(nil),                      // 26: qkms_proto.CreateRoleRequest
-	(*CreateRoleReply)(nil),                        // 27: qkms_proto.CreateRoleReply
-	(*GrantNameSpaceForRoleRequest)(nil),           // 28: qkms_proto.GrantNameSpaceForRoleRequest
-	(*GrantNameSpaceForRoleReply)(nil),             // 29: qkms_proto.GrantNameSpaceForRoleReply
-	(*GrantRoleForUserRequest)(nil),                // 30: qkms_proto.GrantRoleForUserRequest
-	(*GrantRoleForUserReply)(nil),                  // 31: qkms_proto.GrantRoleForUserReply
-	(*GetAccessKeyIndexsRequest)(nil),              // 32: qkms_proto.GetAccessKeyIndexsRequest
-	(*GetAccessKeyIndexsReply)(nil),                // 33: qkms_proto.GetAccessKeyIndexsReply
-	(*GenerateCredentialRequest)(nil),              // 34: qkms_proto.GenerateCredentialRequest
-	(*GenerateCredentialReply)(nil),                // 35: qkms_proto.GenerateCredentialReply
-	(*RevokeCredentialRequest)(nil),                // 36: qkms_proto.RevokeCredentialRequest
-	(*RevokeCredentialReply)(nil),                  // 37: qkms_proto.RevokeCredentialReply
-	(*GetAccessKeyIndexsReply_AccessKey)(nil),      // 38: qkms_proto.GetAccessKeyIndexsReply.AccessKey
+	(*ReadAccessKeyRequest)(nil),                        // 0: qkms_proto.ReadAccessKeyRequest
+	(*ReadAccessKeyReply)(nil),                          // 1: qkms_proto.ReadAccessKeyReply
+	(*ReadReadableAccessKeyRequest)(nil),                // 2: qkms_proto.ReadReadableAccessKeyRequest
+	(*ReadReadableAccessKeyReply)(nil),                  // 3: qkms_proto.ReadReadableAccessKeyReply
+	(*GenerateAccessKeyRequest)(nil),                    // 4: qkms_proto.GenerateAccessKeyRequest
+	(*GenerateAccessKeyReply)(nil),                      // 5: qkms_proto.GenerateAccessKeyReply
+	(*RotateAccessKeyRequest)(nil),                      // 6: qkms_proto.RotateAccessKeyRequest
+	(*RotateAccessKeyReply)(nil),                        // 7: qkms_proto.RotateAccessKeyReply
+	(*CreateAccessKeyRequest)(nil),                      // 8: qkms_proto.CreateAccessKeyRequest
+	(*CreateAccessKeyReply)(nil),                        // 9: qkms_proto.CreateAccessKeyReply
+	(*CreateReadableAccessKeyRequest)(nil),              // 10: qkms_proto.CreateReadableAccessKeyRequest
+	(*CreateReadableAccessKeyReply)(nil),                // 11: qkms_proto.CreateReadableAccessKeyReply
+	(*UpdateAccessKeyRequest)(nil),                      // 12: qkms_proto.UpdateAccessKeyRequest
+	(*UpdateAccessKeyReply)(nil),                        // 13: qkms_proto.UpdateAccessKeyReply
+	(*CreateOrUpdateKeyAuthorizationPolicyRequest)(nil), // 14: qkms_proto.CreateOrUpdateKeyAuthorizationPolicyRequest
+	(*CreateOrUpdateKeyAuthorizationPolicyReply)(nil),   // 15: qkms_proto.CreateOrUpdateKeyAuthorizationPolicyReply
+	(*CreateNameSpaceRequest)(nil),                      // 16: qkms_proto.CreateNameSpaceRequest
+	(*CreateNameSpaceReply)(nil),                        // 17: qkms_proto.CreateNameSpaceReply
+	(*RotateNameSpaceKeyEncryptionKeyRequest)(nil),      // 18: qkms_proto.RotateNameSpaceKeyEncryptionKeyRequest
+	(*RotateNameSpaceKeyEncryptionKeyReply)(nil),        // 19: qkms_proto.RotateNameSpaceKeyEncryptionKeyReply
+	(*CreateKeyEncryptionKeyRequest)(nil),               // 20: qkms_proto.CreateKeyEncryptionKeyRequest
+	(*CreateKeyEncryptionKeyReply)(nil),                 // 21: qkms_proto.CreateKeyEncryptionKeyReply
+	(*ReadNameSpaceRequest)(nil),                        // 22: qkms_proto.ReadNameSpaceRequest
+	(*ReadNameSpaceReply)(nil),                          // 23: qkms_proto.ReadNameSpaceReply
+	(*UpdateNameSpaceInfoRequest)(nil),                  // 24: qkms_proto.UpdateNameSpaceInfoRequest
+	(*UpdateNameSpaceInfoReply)(nil),                    // 25: qkms_proto.UpdateNameSpaceInfoReply
+	(*CreateRoleRequest)(nil),                           // 26: qkms_proto.CreateRoleRequest
+	(*CreateRoleReply)(nil),                             // 27: qkms_proto.CreateRoleReply
+	(*GrantAdminRequest)(nil),                           // 28: qkms_proto.GrantAdminRequest
+	(*GrantAdminReply)(nil),                             // 29: qkms_proto.GrantAdminReply
+	(*GetAccessKeyIndexsRequest)(nil),                   // 30: qkms_proto.GetAccessKeyIndexsRequest
+	(*GetAccessKeyIndexsReply)(nil),                     // 31: qkms_proto.GetAccessKeyIndexsReply
+	(*GenerateCredentialRequest)(nil),                   // 32: qkms_proto.GenerateCredentialRequest
+	(*GenerateCredentialReply)(nil),                     // 33: qkms_proto.GenerateCredentialReply
+	(*RevokeCredentialRequest)(nil),                     // 34: qkms_proto.RevokeCredentialRequest
+	(*RevokeCredentialReply)(nil),                       // 35: qkms_proto.RevokeCredentialReply
+	(*GetAccessKeyIndexsReply_AccessKey)(nil),           // 36: qkms_proto.GetAccessKeyIndexsReply.AccessKey
 }
 var file_proto_qkms_proto_depIdxs = []int32{
-	38, // 0: qkms_proto.GetAccessKeyIndexsReply.AccessKeys:type_name -> qkms_proto.GetAccessKeyIndexsReply.AccessKey
+	36, // 0: qkms_proto.GetAccessKeyIndexsReply.AccessKeys:type_name -> qkms_proto.GetAccessKeyIndexsReply.AccessKey
 	0,  // 1: qkms_proto.qkms.ReadAccessKey:input_type -> qkms_proto.ReadAccessKeyRequest
 	2,  // 2: qkms_proto.qkms.ReadReadableAccessKey:input_type -> qkms_proto.ReadReadableAccessKeyRequest
 	4,  // 3: qkms_proto.qkms.GenerateAccessKey:input_type -> qkms_proto.GenerateAccessKeyRequest
@@ -2681,38 +2558,34 @@ var file_proto_qkms_proto_depIdxs = []int32{
 	16, // 6: qkms_proto.qkms.CreateNameSpace:input_type -> qkms_proto.CreateNameSpaceRequest
 	22, // 7: qkms_proto.qkms.ReadNameSpace:input_type -> qkms_proto.ReadNameSpaceRequest
 	12, // 8: qkms_proto.qkms.UpdateAccessKey:input_type -> qkms_proto.UpdateAccessKeyRequest
-	14, // 9: qkms_proto.qkms.GrantAccessKeyAuthorization:input_type -> qkms_proto.GrantAccessKeyAuthorizationRequest
-	32, // 10: qkms_proto.qkms.GetAccessKeyIndexs:input_type -> qkms_proto.GetAccessKeyIndexsRequest
-	26, // 11: qkms_proto.qkms.CreateRole:input_type -> qkms_proto.CreateRoleRequest
-	28, // 12: qkms_proto.qkms.GrantNameSpaceForRole:input_type -> qkms_proto.GrantNameSpaceForRoleRequest
-	30, // 13: qkms_proto.qkms.GrantRoleForUser:input_type -> qkms_proto.GrantRoleForUserRequest
+	14, // 9: qkms_proto.qkms.CreateOrUpdateKeyAuthorizationPolicy:input_type -> qkms_proto.CreateOrUpdateKeyAuthorizationPolicyRequest
+	30, // 10: qkms_proto.qkms.GetAccessKeyIndexs:input_type -> qkms_proto.GetAccessKeyIndexsRequest
+	32, // 11: qkms_proto.qkms.GenerateCredential:input_type -> qkms_proto.GenerateCredentialRequest
+	34, // 12: qkms_proto.qkms.RevokeCredential:input_type -> qkms_proto.RevokeCredentialRequest
+	28, // 13: qkms_proto.qkms.GrantAdmin:input_type -> qkms_proto.GrantAdminRequest
 	18, // 14: qkms_proto.qkms.RotateNameSpaceKeyEncryptionKey:input_type -> qkms_proto.RotateNameSpaceKeyEncryptionKeyRequest
 	6,  // 15: qkms_proto.qkms.RotateAccessKey:input_type -> qkms_proto.RotateAccessKeyRequest
 	24, // 16: qkms_proto.qkms.UpdateNameSpaceInfo:input_type -> qkms_proto.UpdateNameSpaceInfoRequest
 	20, // 17: qkms_proto.qkms.CreateKeyEncryptionKey:input_type -> qkms_proto.CreateKeyEncryptionKeyRequest
-	34, // 18: qkms_proto.qkms.GenerateCredential:input_type -> qkms_proto.GenerateCredentialRequest
-	36, // 19: qkms_proto.qkms.RevokeCredential:input_type -> qkms_proto.RevokeCredentialRequest
-	1,  // 20: qkms_proto.qkms.ReadAccessKey:output_type -> qkms_proto.ReadAccessKeyReply
-	3,  // 21: qkms_proto.qkms.ReadReadableAccessKey:output_type -> qkms_proto.ReadReadableAccessKeyReply
-	5,  // 22: qkms_proto.qkms.GenerateAccessKey:output_type -> qkms_proto.GenerateAccessKeyReply
-	11, // 23: qkms_proto.qkms.CreateReadableAccessKey:output_type -> qkms_proto.CreateReadableAccessKeyReply
-	9,  // 24: qkms_proto.qkms.CreateAccessKey:output_type -> qkms_proto.CreateAccessKeyReply
-	17, // 25: qkms_proto.qkms.CreateNameSpace:output_type -> qkms_proto.CreateNameSpaceReply
-	23, // 26: qkms_proto.qkms.ReadNameSpace:output_type -> qkms_proto.ReadNameSpaceReply
-	13, // 27: qkms_proto.qkms.UpdateAccessKey:output_type -> qkms_proto.UpdateAccessKeyReply
-	15, // 28: qkms_proto.qkms.GrantAccessKeyAuthorization:output_type -> qkms_proto.GrantAccessKeyAuthorizationReply
-	33, // 29: qkms_proto.qkms.GetAccessKeyIndexs:output_type -> qkms_proto.GetAccessKeyIndexsReply
-	27, // 30: qkms_proto.qkms.CreateRole:output_type -> qkms_proto.CreateRoleReply
-	29, // 31: qkms_proto.qkms.GrantNameSpaceForRole:output_type -> qkms_proto.GrantNameSpaceForRoleReply
-	31, // 32: qkms_proto.qkms.GrantRoleForUser:output_type -> qkms_proto.GrantRoleForUserReply
-	19, // 33: qkms_proto.qkms.RotateNameSpaceKeyEncryptionKey:output_type -> qkms_proto.RotateNameSpaceKeyEncryptionKeyReply
-	7,  // 34: qkms_proto.qkms.RotateAccessKey:output_type -> qkms_proto.RotateAccessKeyReply
-	25, // 35: qkms_proto.qkms.UpdateNameSpaceInfo:output_type -> qkms_proto.UpdateNameSpaceInfoReply
-	21, // 36: qkms_proto.qkms.CreateKeyEncryptionKey:output_type -> qkms_proto.CreateKeyEncryptionKeyReply
-	35, // 37: qkms_proto.qkms.GenerateCredential:output_type -> qkms_proto.GenerateCredentialReply
-	37, // 38: qkms_proto.qkms.RevokeCredential:output_type -> qkms_proto.RevokeCredentialReply
-	20, // [20:39] is the sub-list for method output_type
-	1,  // [1:20] is the sub-list for method input_type
+	1,  // 18: qkms_proto.qkms.ReadAccessKey:output_type -> qkms_proto.ReadAccessKeyReply
+	3,  // 19: qkms_proto.qkms.ReadReadableAccessKey:output_type -> qkms_proto.ReadReadableAccessKeyReply
+	5,  // 20: qkms_proto.qkms.GenerateAccessKey:output_type -> qkms_proto.GenerateAccessKeyReply
+	11, // 21: qkms_proto.qkms.CreateReadableAccessKey:output_type -> qkms_proto.CreateReadableAccessKeyReply
+	9,  // 22: qkms_proto.qkms.CreateAccessKey:output_type -> qkms_proto.CreateAccessKeyReply
+	17, // 23: qkms_proto.qkms.CreateNameSpace:output_type -> qkms_proto.CreateNameSpaceReply
+	23, // 24: qkms_proto.qkms.ReadNameSpace:output_type -> qkms_proto.ReadNameSpaceReply
+	13, // 25: qkms_proto.qkms.UpdateAccessKey:output_type -> qkms_proto.UpdateAccessKeyReply
+	15, // 26: qkms_proto.qkms.CreateOrUpdateKeyAuthorizationPolicy:output_type -> qkms_proto.CreateOrUpdateKeyAuthorizationPolicyReply
+	31, // 27: qkms_proto.qkms.GetAccessKeyIndexs:output_type -> qkms_proto.GetAccessKeyIndexsReply
+	33, // 28: qkms_proto.qkms.GenerateCredential:output_type -> qkms_proto.GenerateCredentialReply
+	35, // 29: qkms_proto.qkms.RevokeCredential:output_type -> qkms_proto.RevokeCredentialReply
+	29, // 30: qkms_proto.qkms.GrantAdmin:output_type -> qkms_proto.GrantAdminReply
+	19, // 31: qkms_proto.qkms.RotateNameSpaceKeyEncryptionKey:output_type -> qkms_proto.RotateNameSpaceKeyEncryptionKeyReply
+	7,  // 32: qkms_proto.qkms.RotateAccessKey:output_type -> qkms_proto.RotateAccessKeyReply
+	25, // 33: qkms_proto.qkms.UpdateNameSpaceInfo:output_type -> qkms_proto.UpdateNameSpaceInfoReply
+	21, // 34: qkms_proto.qkms.CreateKeyEncryptionKey:output_type -> qkms_proto.CreateKeyEncryptionKeyReply
+	18, // [18:35] is the sub-list for method output_type
+	1,  // [1:18] is the sub-list for method input_type
 	1,  // [1:1] is the sub-list for extension type_name
 	1,  // [1:1] is the sub-list for extension extendee
 	0,  // [0:1] is the sub-list for field type_name
@@ -2729,7 +2602,7 @@ func file_proto_qkms_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_qkms_proto_rawDesc), len(file_proto_qkms_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   39,
+			NumMessages:   37,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

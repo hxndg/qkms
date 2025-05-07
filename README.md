@@ -27,7 +27,7 @@ Open source qbue kms write in go.
 grpcurl或者grpcui
 只列出grpcui的命令
 ```
-grpcui -cert .\credentials\client\client.pem -key .\credentials\client/client.key -insecure 127.0.0.1:8000
+grpcui -cert .\credentials\client\client.pem.example -key .\credentials\client/client.key.example -insecure 127.0.0.1:8000
 ```
 
 ## 一些快捷命令

@@ -113,15 +113,16 @@ message UpdateAccessKeyReply {
     string ErrorMsg = 2;
 }
 
-message GrantAccessKeyAuthorizationRequest {
+message CreateOrUpdateKeyAuthorizationPolicyRequest {
     string NameSpace = 1;
     string Name = 2;
     string Environment = 3;
-    string Appkey = 4;
-    string Behavior = 5;
+    string UserAppkey = 4;
+    string Action = 5;
+    string Effect = 6;
 }
 
-message GrantAccessKeyAuthorizationReply {
+message CreateOrUpdateKeyAuthorizationPolicyReply {
     uint64 ErrorCode = 1;
     string ErrorMsg = 2;
 }
@@ -192,23 +193,11 @@ message CreateRoleReply {
     string ErrorMsg = 2;
 }
 
-message GrantNameSpaceForRoleRequest {
-    string Role = 1;
-    repeated string NameSpaces = 2;
-    string Behavior = 3;
+message GrantAdminRequest {
+    string AppKey = 1;
 }
 
-message GrantNameSpaceForRoleReply {
-    uint64 ErrorCode = 1;
-    string ErrorMsg = 2;
-}
-
-message GrantRoleForUserRequest {
-    string User = 1;
-    string Role = 2;
-}
-
-message GrantRoleForUserReply {
+message GrantAdminReply {
     uint64 ErrorCode = 1;
     string ErrorMsg = 2;
 }
@@ -260,21 +249,20 @@ service qkms {
     rpc CreateNameSpace(CreateNameSpaceRequest) returns (CreateNameSpaceReply) {}
     rpc ReadNameSpace(ReadNameSpaceRequest) returns (ReadNameSpaceReply) {}
     rpc UpdateAccessKey(UpdateAccessKeyRequest) returns (UpdateAccessKeyReply) {}
-    rpc GrantAccessKeyAuthorization(GrantAccessKeyAuthorizationRequest) returns (GrantAccessKeyAuthorizationReply) {}
-
+    rpc CreateOrUpdateKeyAuthorizationPolicy(CreateOrUpdateKeyAuthorizationPolicyRequest) returns (CreateOrUpdateKeyAuthorizationPolicyReply) {}
 
     rpc GetAccessKeyIndexs(GetAccessKeyIndexsRequest) returns (GetAccessKeyIndexsReply) {}
 
     /* only for roots */
-    rpc CreateRole(CreateRoleRequest) returns (CreateRoleReply) {}
-    rpc GrantNameSpaceForRole(GrantNameSpaceForRoleRequest) returns (GrantNameSpaceForRoleReply) {}
-    rpc GrantRoleForUser(GrantRoleForUserRequest) returns (GrantRoleForUserReply) {}
+    rpc GenerateCredential(GenerateCredentialRequest) returns (GenerateCredentialReply) {}
+    rpc RevokeCredential(RevokeCredentialRequest) returns (RevokeCredentialReply) {}
+    rpc GrantAdmin(GrantAdminRequest) returns (GrantAdminReply) {}
+
     /* Any form rotation should only be perform by root */
     rpc RotateNameSpaceKeyEncryptionKey(RotateNameSpaceKeyEncryptionKeyRequest) returns (RotateNameSpaceKeyEncryptionKeyReply) {}
     rpc RotateAccessKey(RotateAccessKeyRequest) returns (RotateAccessKeyReply) {}
+
     /* root can update namespace owner app keys */
     rpc UpdateNameSpaceInfo(UpdateNameSpaceInfoRequest) returns (UpdateNameSpaceInfoReply) {}
     rpc CreateKeyEncryptionKey(CreateKeyEncryptionKeyRequest) returns (CreateKeyEncryptionKeyReply) {}
-    rpc GenerateCredential(GenerateCredentialRequest) returns (GenerateCredentialReply) {}
-    rpc RevokeCredential(RevokeCredentialRequest) returns (RevokeCredentialReply) {}
 }

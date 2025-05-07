@@ -51,7 +51,14 @@ func (server *QkmsRealServer) UpdateNameSpace(ctx context.Context, req *qkms_pro
 	if err != nil {
 		return &qkms_proto.UpdateNameSpaceInfoReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_UPDATE_NAMESPACE_FAILED}, err
 	}
-
+	isAdmin, err := server.IsAdmin(ctx, *ownerappkey)
+	if err != nil {
+		return &qkms_proto.UpdateNameSpaceInfoReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR}, err
+	}
+	if !isAdmin {
+		glog.Warning(fmt.Sprintf("GrantAdmin failed, ownerappkey: %s, isAdmin: %t", *ownerappkey, isAdmin))
+		return &qkms_proto.UpdateNameSpaceInfoReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_NOT_AUTHORIZED}, nil
+	}
 	err = server.UpdateNameSpaceInfoInternal(ctx, req.Name, req.Environment, req.KEK, req.OwnerAppkey)
 	if err != nil {
 		glog.Info(fmt.Sprintf("Read NameSpace failed, req:%+v, ownerappkey: %s, error: %s", req.String(), *ownerappkey, err.Error()))
