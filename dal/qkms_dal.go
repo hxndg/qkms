@@ -46,6 +46,7 @@ func (d *BaseDal) Init(cfg DBConfig) error {
 	d.DB = db
 	//自动迁移，如果表已经存在不会重新创建。
 	d.DB.AutoMigrate(&qkms_model.AccessKey{}, &qkms_model.KeyEncryptionKey{}, &qkms_model.KeyAuthorizationPolicy{}, &qkms_model.User{}, &qkms_model.Administrator{}, &qkms_model.RevokeCert{}, &qkms_model.NameSpace{})
+	d.DB.Exec(`CREATE INDEX idx_access_key_attributes ON "AccessKeys" USING GIN (attributes)`)
 	return err
 }
 

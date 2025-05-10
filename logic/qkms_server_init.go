@@ -281,6 +281,8 @@ func (server *QkmsRealServer) Init(cert string, key string, ca_cert string, ca_k
 		return err
 	}
 	_ = server.InitScheduler()
-
+	if err := server.LoadKAP(); err != nil {
+		glog.Error(fmt.Sprintf("LoadKAP failed, error: %s", err.Error()))
+	}
 	return nil
 }

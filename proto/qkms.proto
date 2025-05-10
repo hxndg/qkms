@@ -24,6 +24,24 @@ message ReadAccessKeyReply {
     uint64 Version = 8;
 }
 
+message GetAccessKeyIndexByTagsRequest {
+    string NameSpace = 1;
+    string Name = 2;
+    string Environment = 3;
+    map<string, string> required_attributes = 4;
+}
+
+message GetAccessKeyIndexByTagsReply {
+    message AccessKey {
+        string NameSpace = 1;
+        string Name = 2;
+        string Environment = 3;
+    }
+    repeated AccessKey AccessKeys = 1;
+    uint64 ErrorCode = 2;
+    string ErrorMsg = 3;
+}
+
 message ReadReadableAccessKeyRequest {
     string NameSpace = 1;
     string Name = 2;
@@ -109,6 +127,20 @@ message UpdateAccessKeyRequest {
 }
 
 message UpdateAccessKeyReply {
+    uint64 ErrorCode = 1;
+    string ErrorMsg = 2;
+}
+
+// 首先key_type需要和数据库里面的key_type一致。
+message TagAccessKeyRequest {
+    string NameSpace = 1;
+    string Name = 2;
+    string Environment = 3;
+    string TagKey = 4;
+    string TagValue = 5;
+}
+
+message TagAccessKeyReply {
     uint64 ErrorCode = 1;
     string ErrorMsg = 2;
 }
@@ -252,6 +284,8 @@ service qkms {
     rpc CreateOrUpdateKeyAuthorizationPolicy(CreateOrUpdateKeyAuthorizationPolicyRequest) returns (CreateOrUpdateKeyAuthorizationPolicyReply) {}
 
     rpc GetAccessKeyIndexs(GetAccessKeyIndexsRequest) returns (GetAccessKeyIndexsReply) {}
+    rpc GetAccessKeyIndexByTags(GetAccessKeyIndexByTagsRequest) returns (GetAccessKeyIndexByTagsReply) {}
+    rpc TagAccessKey(TagAccessKeyRequest) returns (TagAccessKeyReply) {}
 
     /* only for roots */
     rpc GenerateCredential(GenerateCredentialRequest) returns (GenerateCredentialReply) {}

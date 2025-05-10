@@ -32,6 +32,8 @@ const (
 	Qkms_UpdateAccessKey_FullMethodName                      = "/qkms_proto.qkms/UpdateAccessKey"
 	Qkms_CreateOrUpdateKeyAuthorizationPolicy_FullMethodName = "/qkms_proto.qkms/CreateOrUpdateKeyAuthorizationPolicy"
 	Qkms_GetAccessKeyIndexs_FullMethodName                   = "/qkms_proto.qkms/GetAccessKeyIndexs"
+	Qkms_GetAccessKeyIndexByTags_FullMethodName              = "/qkms_proto.qkms/GetAccessKeyIndexByTags"
+	Qkms_TagAccessKey_FullMethodName                         = "/qkms_proto.qkms/TagAccessKey"
 	Qkms_GenerateCredential_FullMethodName                   = "/qkms_proto.qkms/GenerateCredential"
 	Qkms_RevokeCredential_FullMethodName                     = "/qkms_proto.qkms/RevokeCredential"
 	Qkms_GrantAdmin_FullMethodName                           = "/qkms_proto.qkms/GrantAdmin"
@@ -57,6 +59,8 @@ type QkmsClient interface {
 	UpdateAccessKey(ctx context.Context, in *UpdateAccessKeyRequest, opts ...grpc.CallOption) (*UpdateAccessKeyReply, error)
 	CreateOrUpdateKeyAuthorizationPolicy(ctx context.Context, in *CreateOrUpdateKeyAuthorizationPolicyRequest, opts ...grpc.CallOption) (*CreateOrUpdateKeyAuthorizationPolicyReply, error)
 	GetAccessKeyIndexs(ctx context.Context, in *GetAccessKeyIndexsRequest, opts ...grpc.CallOption) (*GetAccessKeyIndexsReply, error)
+	GetAccessKeyIndexByTags(ctx context.Context, in *GetAccessKeyIndexByTagsRequest, opts ...grpc.CallOption) (*GetAccessKeyIndexByTagsReply, error)
+	TagAccessKey(ctx context.Context, in *TagAccessKeyRequest, opts ...grpc.CallOption) (*TagAccessKeyReply, error)
 	// only for roots
 	GenerateCredential(ctx context.Context, in *GenerateCredentialRequest, opts ...grpc.CallOption) (*GenerateCredentialReply, error)
 	RevokeCredential(ctx context.Context, in *RevokeCredentialRequest, opts ...grpc.CallOption) (*RevokeCredentialReply, error)
@@ -177,6 +181,26 @@ func (c *qkmsClient) GetAccessKeyIndexs(ctx context.Context, in *GetAccessKeyInd
 	return out, nil
 }
 
+func (c *qkmsClient) GetAccessKeyIndexByTags(ctx context.Context, in *GetAccessKeyIndexByTagsRequest, opts ...grpc.CallOption) (*GetAccessKeyIndexByTagsReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAccessKeyIndexByTagsReply)
+	err := c.cc.Invoke(ctx, Qkms_GetAccessKeyIndexByTags_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *qkmsClient) TagAccessKey(ctx context.Context, in *TagAccessKeyRequest, opts ...grpc.CallOption) (*TagAccessKeyReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TagAccessKeyReply)
+	err := c.cc.Invoke(ctx, Qkms_TagAccessKey_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *qkmsClient) GenerateCredential(ctx context.Context, in *GenerateCredentialRequest, opts ...grpc.CallOption) (*GenerateCredentialReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GenerateCredentialReply)
@@ -263,6 +287,8 @@ type QkmsServer interface {
 	UpdateAccessKey(context.Context, *UpdateAccessKeyRequest) (*UpdateAccessKeyReply, error)
 	CreateOrUpdateKeyAuthorizationPolicy(context.Context, *CreateOrUpdateKeyAuthorizationPolicyRequest) (*CreateOrUpdateKeyAuthorizationPolicyReply, error)
 	GetAccessKeyIndexs(context.Context, *GetAccessKeyIndexsRequest) (*GetAccessKeyIndexsReply, error)
+	GetAccessKeyIndexByTags(context.Context, *GetAccessKeyIndexByTagsRequest) (*GetAccessKeyIndexByTagsReply, error)
+	TagAccessKey(context.Context, *TagAccessKeyRequest) (*TagAccessKeyReply, error)
 	// only for roots
 	GenerateCredential(context.Context, *GenerateCredentialRequest) (*GenerateCredentialReply, error)
 	RevokeCredential(context.Context, *RevokeCredentialRequest) (*RevokeCredentialReply, error)
@@ -312,6 +338,12 @@ func (UnimplementedQkmsServer) CreateOrUpdateKeyAuthorizationPolicy(context.Cont
 }
 func (UnimplementedQkmsServer) GetAccessKeyIndexs(context.Context, *GetAccessKeyIndexsRequest) (*GetAccessKeyIndexsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccessKeyIndexs not implemented")
+}
+func (UnimplementedQkmsServer) GetAccessKeyIndexByTags(context.Context, *GetAccessKeyIndexByTagsRequest) (*GetAccessKeyIndexByTagsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAccessKeyIndexByTags not implemented")
+}
+func (UnimplementedQkmsServer) TagAccessKey(context.Context, *TagAccessKeyRequest) (*TagAccessKeyReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TagAccessKey not implemented")
 }
 func (UnimplementedQkmsServer) GenerateCredential(context.Context, *GenerateCredentialRequest) (*GenerateCredentialReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateCredential not implemented")
@@ -535,6 +567,42 @@ func _Qkms_GetAccessKeyIndexs_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Qkms_GetAccessKeyIndexByTags_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAccessKeyIndexByTagsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QkmsServer).GetAccessKeyIndexByTags(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Qkms_GetAccessKeyIndexByTags_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QkmsServer).GetAccessKeyIndexByTags(ctx, req.(*GetAccessKeyIndexByTagsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Qkms_TagAccessKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TagAccessKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QkmsServer).TagAccessKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Qkms_TagAccessKey_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QkmsServer).TagAccessKey(ctx, req.(*TagAccessKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Qkms_GenerateCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GenerateCredentialRequest)
 	if err := dec(in); err != nil {
@@ -707,6 +775,14 @@ var Qkms_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAccessKeyIndexs",
 			Handler:    _Qkms_GetAccessKeyIndexs_Handler,
+		},
+		{
+			MethodName: "GetAccessKeyIndexByTags",
+			Handler:    _Qkms_GetAccessKeyIndexByTags_Handler,
+		},
+		{
+			MethodName: "TagAccessKey",
+			Handler:    _Qkms_TagAccessKey_Handler,
 		},
 		{
 			MethodName: "GenerateCredential",

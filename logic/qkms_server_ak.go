@@ -244,3 +244,50 @@ func (server *QkmsRealServer) GetAccessKeyIndexs(ctx context.Context, req *qkms_
 	glog.Info(fmt.Sprintf("Get AK Index Success, AK indexs :%+v,client appkey:%s", reply_aks, *ownerappkey))
 	return reply, nil
 }
+
+func (server *QkmsRealServer) GetAccessKeyIndexByTags(ctx context.Context, req *qkms_proto.GetAccessKeyIndexByTagsRequest) (*qkms_proto.GetAccessKeyIndexByTagsReply, error) {
+	ownerappkey, err := LoadAppKey(ctx)
+	if err != nil {
+		return &qkms_proto.GetAccessKeyIndexByTagsReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GET_AK_INDEX_FAILED}, err
+	}
+	reply_aks, err := server.GetAccessKeyIndexsBytagsInternal(ctx, req.NameSpace, req.Name, req.Environment, req.RequiredAttributes)
+	if err != nil {
+		glog.Error(fmt.Sprintf("Get AK Index failed, Client appkey subject :%+v,err:%s", *ownerappkey, err.Error()))
+		return &qkms_proto.GetAccessKeyIndexByTagsReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GET_AK_INDEX_FAILED}, err
+	}
+	reply := &qkms_proto.GetAccessKeyIndexByTagsReply{
+		ErrorCode:  qkms_common.QKMS_ERROR_CODE_GET_AK_INDEX_SUCCESS,
+		AccessKeys: reply_aks,
+		ErrorMsg:   "success",
+	}
+	glog.Info(fmt.Sprintf("Get AK Index Success, AK indexs :%+v,client appkey:%s", reply_aks, *ownerappkey))
+	return reply, nil
+}
+
+func (server *QkmsRealServer) TagAccessKey(ctx context.Context, req *qkms_proto.TagAccessKeyRequest) (*qkms_proto.TagAccessKeyReply, error) {
+	ownerappkey, err := LoadAppKey(ctx)
+	if err != nil {
+		return &qkms_proto.TagAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GET_AK_INDEX_FAILED}, err
+	}
+	allow, err := server.CheckKAP(ctx, req.NameSpace, req.Name, req.Environment, *ownerappkey, "write")
+	if err != nil {
+		glog.Error(fmt.Sprintf("CheckKAP failed, req is %+v, error: %s", req.String(), err.Error()))
+		return &qkms_proto.TagAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_INTERNAL_ERROR}, err
+	}
+	if !allow {
+		glog.Error(fmt.Sprintf("CheckKAP failed disallow, req is %+v", req.String()))
+		return &qkms_proto.TagAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_CHANGE_KAP_NOT_AUTHORIZED}, err
+	}
+
+	err = server.TagAccessKeyInternal(ctx, req.NameSpace, req.Name, req.Environment, req.TagKey, req.TagValue)
+	if err != nil {
+		glog.Error(fmt.Sprintf("Get AK Index failed, Client appkey subject :%+v,err:%s", *ownerappkey, err.Error()))
+		return &qkms_proto.TagAccessKeyReply{ErrorCode: qkms_common.QKMS_ERROR_CODE_GET_AK_INDEX_FAILED}, err
+	}
+	reply := &qkms_proto.TagAccessKeyReply{
+		ErrorCode: qkms_common.QKMS_ERROR_CODE_GET_AK_INDEX_SUCCESS,
+		ErrorMsg:  "success",
+	}
+	glog.Info(fmt.Sprintf("Tag AK Success, AK indexs :%+v,client appkey:%s", req, *ownerappkey))
+	return reply, nil
+}

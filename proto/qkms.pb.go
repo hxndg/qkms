@@ -184,6 +184,134 @@ func (x *ReadAccessKeyReply) GetVersion() uint64 {
 	return 0
 }
 
+type GetAccessKeyIndexByTagsRequest struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	NameSpace          string                 `protobuf:"bytes,1,opt,name=NameSpace,proto3" json:"NameSpace,omitempty"`
+	Name               string                 `protobuf:"bytes,2,opt,name=Name,proto3" json:"Name,omitempty"`
+	Environment        string                 `protobuf:"bytes,3,opt,name=Environment,proto3" json:"Environment,omitempty"`
+	RequiredAttributes map[string]string      `protobuf:"bytes,4,rep,name=required_attributes,json=requiredAttributes,proto3" json:"required_attributes,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *GetAccessKeyIndexByTagsRequest) Reset() {
+	*x = GetAccessKeyIndexByTagsRequest{}
+	mi := &file_proto_qkms_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAccessKeyIndexByTagsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAccessKeyIndexByTagsRequest) ProtoMessage() {}
+
+func (x *GetAccessKeyIndexByTagsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_qkms_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAccessKeyIndexByTagsRequest.ProtoReflect.Descriptor instead.
+func (*GetAccessKeyIndexByTagsRequest) Descriptor() ([]byte, []int) {
+	return file_proto_qkms_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GetAccessKeyIndexByTagsRequest) GetNameSpace() string {
+	if x != nil {
+		return x.NameSpace
+	}
+	return ""
+}
+
+func (x *GetAccessKeyIndexByTagsRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *GetAccessKeyIndexByTagsRequest) GetEnvironment() string {
+	if x != nil {
+		return x.Environment
+	}
+	return ""
+}
+
+func (x *GetAccessKeyIndexByTagsRequest) GetRequiredAttributes() map[string]string {
+	if x != nil {
+		return x.RequiredAttributes
+	}
+	return nil
+}
+
+type GetAccessKeyIndexByTagsReply struct {
+	state         protoimpl.MessageState                    `protogen:"open.v1"`
+	AccessKeys    []*GetAccessKeyIndexByTagsReply_AccessKey `protobuf:"bytes,1,rep,name=AccessKeys,proto3" json:"AccessKeys,omitempty"`
+	ErrorCode     uint64                                    `protobuf:"varint,2,opt,name=ErrorCode,proto3" json:"ErrorCode,omitempty"`
+	ErrorMsg      string                                    `protobuf:"bytes,3,opt,name=ErrorMsg,proto3" json:"ErrorMsg,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAccessKeyIndexByTagsReply) Reset() {
+	*x = GetAccessKeyIndexByTagsReply{}
+	mi := &file_proto_qkms_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAccessKeyIndexByTagsReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAccessKeyIndexByTagsReply) ProtoMessage() {}
+
+func (x *GetAccessKeyIndexByTagsReply) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_qkms_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAccessKeyIndexByTagsReply.ProtoReflect.Descriptor instead.
+func (*GetAccessKeyIndexByTagsReply) Descriptor() ([]byte, []int) {
+	return file_proto_qkms_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetAccessKeyIndexByTagsReply) GetAccessKeys() []*GetAccessKeyIndexByTagsReply_AccessKey {
+	if x != nil {
+		return x.AccessKeys
+	}
+	return nil
+}
+
+func (x *GetAccessKeyIndexByTagsReply) GetErrorCode() uint64 {
+	if x != nil {
+		return x.ErrorCode
+	}
+	return 0
+}
+
+func (x *GetAccessKeyIndexByTagsReply) GetErrorMsg() string {
+	if x != nil {
+		return x.ErrorMsg
+	}
+	return ""
+}
+
 type ReadReadableAccessKeyRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	NameSpace     string                 `protobuf:"bytes,1,opt,name=NameSpace,proto3" json:"NameSpace,omitempty"`
@@ -195,7 +323,7 @@ type ReadReadableAccessKeyRequest struct {
 
 func (x *ReadReadableAccessKeyRequest) Reset() {
 	*x = ReadReadableAccessKeyRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[2]
+	mi := &file_proto_qkms_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -207,7 +335,7 @@ func (x *ReadReadableAccessKeyRequest) String() string {
 func (*ReadReadableAccessKeyRequest) ProtoMessage() {}
 
 func (x *ReadReadableAccessKeyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[2]
+	mi := &file_proto_qkms_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -220,7 +348,7 @@ func (x *ReadReadableAccessKeyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReadReadableAccessKeyRequest.ProtoReflect.Descriptor instead.
 func (*ReadReadableAccessKeyRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{2}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ReadReadableAccessKeyRequest) GetNameSpace() string {
@@ -260,7 +388,7 @@ type ReadReadableAccessKeyReply struct {
 
 func (x *ReadReadableAccessKeyReply) Reset() {
 	*x = ReadReadableAccessKeyReply{}
-	mi := &file_proto_qkms_proto_msgTypes[3]
+	mi := &file_proto_qkms_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -272,7 +400,7 @@ func (x *ReadReadableAccessKeyReply) String() string {
 func (*ReadReadableAccessKeyReply) ProtoMessage() {}
 
 func (x *ReadReadableAccessKeyReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[3]
+	mi := &file_proto_qkms_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -285,7 +413,7 @@ func (x *ReadReadableAccessKeyReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReadReadableAccessKeyReply.ProtoReflect.Descriptor instead.
 func (*ReadReadableAccessKeyReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{3}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ReadReadableAccessKeyReply) GetErrorCode() uint64 {
@@ -358,7 +486,7 @@ type GenerateAccessKeyRequest struct {
 
 func (x *GenerateAccessKeyRequest) Reset() {
 	*x = GenerateAccessKeyRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[4]
+	mi := &file_proto_qkms_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -370,7 +498,7 @@ func (x *GenerateAccessKeyRequest) String() string {
 func (*GenerateAccessKeyRequest) ProtoMessage() {}
 
 func (x *GenerateAccessKeyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[4]
+	mi := &file_proto_qkms_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -383,7 +511,7 @@ func (x *GenerateAccessKeyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateAccessKeyRequest.ProtoReflect.Descriptor instead.
 func (*GenerateAccessKeyRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{4}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GenerateAccessKeyRequest) GetNameSpace() string {
@@ -438,7 +566,7 @@ type GenerateAccessKeyReply struct {
 
 func (x *GenerateAccessKeyReply) Reset() {
 	*x = GenerateAccessKeyReply{}
-	mi := &file_proto_qkms_proto_msgTypes[5]
+	mi := &file_proto_qkms_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -450,7 +578,7 @@ func (x *GenerateAccessKeyReply) String() string {
 func (*GenerateAccessKeyReply) ProtoMessage() {}
 
 func (x *GenerateAccessKeyReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[5]
+	mi := &file_proto_qkms_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -463,7 +591,7 @@ func (x *GenerateAccessKeyReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateAccessKeyReply.ProtoReflect.Descriptor instead.
 func (*GenerateAccessKeyReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{5}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GenerateAccessKeyReply) GetErrorCode() uint64 {
@@ -493,7 +621,7 @@ type RotateAccessKeyRequest struct {
 
 func (x *RotateAccessKeyRequest) Reset() {
 	*x = RotateAccessKeyRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[6]
+	mi := &file_proto_qkms_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -505,7 +633,7 @@ func (x *RotateAccessKeyRequest) String() string {
 func (*RotateAccessKeyRequest) ProtoMessage() {}
 
 func (x *RotateAccessKeyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[6]
+	mi := &file_proto_qkms_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -518,7 +646,7 @@ func (x *RotateAccessKeyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RotateAccessKeyRequest.ProtoReflect.Descriptor instead.
 func (*RotateAccessKeyRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{6}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *RotateAccessKeyRequest) GetNameSpace() string {
@@ -559,7 +687,7 @@ type RotateAccessKeyReply struct {
 
 func (x *RotateAccessKeyReply) Reset() {
 	*x = RotateAccessKeyReply{}
-	mi := &file_proto_qkms_proto_msgTypes[7]
+	mi := &file_proto_qkms_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -571,7 +699,7 @@ func (x *RotateAccessKeyReply) String() string {
 func (*RotateAccessKeyReply) ProtoMessage() {}
 
 func (x *RotateAccessKeyReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[7]
+	mi := &file_proto_qkms_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -584,7 +712,7 @@ func (x *RotateAccessKeyReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RotateAccessKeyReply.ProtoReflect.Descriptor instead.
 func (*RotateAccessKeyReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{7}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *RotateAccessKeyReply) GetErrorCode() uint64 {
@@ -616,7 +744,7 @@ type CreateAccessKeyRequest struct {
 
 func (x *CreateAccessKeyRequest) Reset() {
 	*x = CreateAccessKeyRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[8]
+	mi := &file_proto_qkms_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -628,7 +756,7 @@ func (x *CreateAccessKeyRequest) String() string {
 func (*CreateAccessKeyRequest) ProtoMessage() {}
 
 func (x *CreateAccessKeyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[8]
+	mi := &file_proto_qkms_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -641,7 +769,7 @@ func (x *CreateAccessKeyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateAccessKeyRequest.ProtoReflect.Descriptor instead.
 func (*CreateAccessKeyRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{8}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *CreateAccessKeyRequest) GetNameSpace() string {
@@ -703,7 +831,7 @@ type CreateAccessKeyReply struct {
 
 func (x *CreateAccessKeyReply) Reset() {
 	*x = CreateAccessKeyReply{}
-	mi := &file_proto_qkms_proto_msgTypes[9]
+	mi := &file_proto_qkms_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -715,7 +843,7 @@ func (x *CreateAccessKeyReply) String() string {
 func (*CreateAccessKeyReply) ProtoMessage() {}
 
 func (x *CreateAccessKeyReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[9]
+	mi := &file_proto_qkms_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -728,7 +856,7 @@ func (x *CreateAccessKeyReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateAccessKeyReply.ProtoReflect.Descriptor instead.
 func (*CreateAccessKeyReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{9}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *CreateAccessKeyReply) GetErrorCode() uint64 {
@@ -760,7 +888,7 @@ type CreateReadableAccessKeyRequest struct {
 
 func (x *CreateReadableAccessKeyRequest) Reset() {
 	*x = CreateReadableAccessKeyRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[10]
+	mi := &file_proto_qkms_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -772,7 +900,7 @@ func (x *CreateReadableAccessKeyRequest) String() string {
 func (*CreateReadableAccessKeyRequest) ProtoMessage() {}
 
 func (x *CreateReadableAccessKeyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[10]
+	mi := &file_proto_qkms_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -785,7 +913,7 @@ func (x *CreateReadableAccessKeyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateReadableAccessKeyRequest.ProtoReflect.Descriptor instead.
 func (*CreateReadableAccessKeyRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{10}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *CreateReadableAccessKeyRequest) GetNameSpace() string {
@@ -847,7 +975,7 @@ type CreateReadableAccessKeyReply struct {
 
 func (x *CreateReadableAccessKeyReply) Reset() {
 	*x = CreateReadableAccessKeyReply{}
-	mi := &file_proto_qkms_proto_msgTypes[11]
+	mi := &file_proto_qkms_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -859,7 +987,7 @@ func (x *CreateReadableAccessKeyReply) String() string {
 func (*CreateReadableAccessKeyReply) ProtoMessage() {}
 
 func (x *CreateReadableAccessKeyReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[11]
+	mi := &file_proto_qkms_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -872,7 +1000,7 @@ func (x *CreateReadableAccessKeyReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateReadableAccessKeyReply.ProtoReflect.Descriptor instead.
 func (*CreateReadableAccessKeyReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{11}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *CreateReadableAccessKeyReply) GetErrorCode() uint64 {
@@ -904,7 +1032,7 @@ type UpdateAccessKeyRequest struct {
 
 func (x *UpdateAccessKeyRequest) Reset() {
 	*x = UpdateAccessKeyRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[12]
+	mi := &file_proto_qkms_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -916,7 +1044,7 @@ func (x *UpdateAccessKeyRequest) String() string {
 func (*UpdateAccessKeyRequest) ProtoMessage() {}
 
 func (x *UpdateAccessKeyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[12]
+	mi := &file_proto_qkms_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -929,7 +1057,7 @@ func (x *UpdateAccessKeyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateAccessKeyRequest.ProtoReflect.Descriptor instead.
 func (*UpdateAccessKeyRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{12}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *UpdateAccessKeyRequest) GetNameSpace() string {
@@ -984,7 +1112,7 @@ type UpdateAccessKeyReply struct {
 
 func (x *UpdateAccessKeyReply) Reset() {
 	*x = UpdateAccessKeyReply{}
-	mi := &file_proto_qkms_proto_msgTypes[13]
+	mi := &file_proto_qkms_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -996,7 +1124,7 @@ func (x *UpdateAccessKeyReply) String() string {
 func (*UpdateAccessKeyReply) ProtoMessage() {}
 
 func (x *UpdateAccessKeyReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[13]
+	mi := &file_proto_qkms_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1009,7 +1137,7 @@ func (x *UpdateAccessKeyReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateAccessKeyReply.ProtoReflect.Descriptor instead.
 func (*UpdateAccessKeyReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{13}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *UpdateAccessKeyReply) GetErrorCode() uint64 {
@@ -1020,6 +1148,135 @@ func (x *UpdateAccessKeyReply) GetErrorCode() uint64 {
 }
 
 func (x *UpdateAccessKeyReply) GetErrorMsg() string {
+	if x != nil {
+		return x.ErrorMsg
+	}
+	return ""
+}
+
+// 首先key_type需要和数据库里面的key_type一致。
+type TagAccessKeyRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	NameSpace     string                 `protobuf:"bytes,1,opt,name=NameSpace,proto3" json:"NameSpace,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=Name,proto3" json:"Name,omitempty"`
+	Environment   string                 `protobuf:"bytes,3,opt,name=Environment,proto3" json:"Environment,omitempty"`
+	TagKey        string                 `protobuf:"bytes,4,opt,name=TagKey,proto3" json:"TagKey,omitempty"`
+	TagValue      string                 `protobuf:"bytes,5,opt,name=TagValue,proto3" json:"TagValue,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TagAccessKeyRequest) Reset() {
+	*x = TagAccessKeyRequest{}
+	mi := &file_proto_qkms_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TagAccessKeyRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TagAccessKeyRequest) ProtoMessage() {}
+
+func (x *TagAccessKeyRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_qkms_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TagAccessKeyRequest.ProtoReflect.Descriptor instead.
+func (*TagAccessKeyRequest) Descriptor() ([]byte, []int) {
+	return file_proto_qkms_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *TagAccessKeyRequest) GetNameSpace() string {
+	if x != nil {
+		return x.NameSpace
+	}
+	return ""
+}
+
+func (x *TagAccessKeyRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *TagAccessKeyRequest) GetEnvironment() string {
+	if x != nil {
+		return x.Environment
+	}
+	return ""
+}
+
+func (x *TagAccessKeyRequest) GetTagKey() string {
+	if x != nil {
+		return x.TagKey
+	}
+	return ""
+}
+
+func (x *TagAccessKeyRequest) GetTagValue() string {
+	if x != nil {
+		return x.TagValue
+	}
+	return ""
+}
+
+type TagAccessKeyReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ErrorCode     uint64                 `protobuf:"varint,1,opt,name=ErrorCode,proto3" json:"ErrorCode,omitempty"`
+	ErrorMsg      string                 `protobuf:"bytes,2,opt,name=ErrorMsg,proto3" json:"ErrorMsg,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TagAccessKeyReply) Reset() {
+	*x = TagAccessKeyReply{}
+	mi := &file_proto_qkms_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TagAccessKeyReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TagAccessKeyReply) ProtoMessage() {}
+
+func (x *TagAccessKeyReply) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_qkms_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TagAccessKeyReply.ProtoReflect.Descriptor instead.
+func (*TagAccessKeyReply) Descriptor() ([]byte, []int) {
+	return file_proto_qkms_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *TagAccessKeyReply) GetErrorCode() uint64 {
+	if x != nil {
+		return x.ErrorCode
+	}
+	return 0
+}
+
+func (x *TagAccessKeyReply) GetErrorMsg() string {
 	if x != nil {
 		return x.ErrorMsg
 	}
@@ -1040,7 +1297,7 @@ type CreateOrUpdateKeyAuthorizationPolicyRequest struct {
 
 func (x *CreateOrUpdateKeyAuthorizationPolicyRequest) Reset() {
 	*x = CreateOrUpdateKeyAuthorizationPolicyRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[14]
+	mi := &file_proto_qkms_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1052,7 +1309,7 @@ func (x *CreateOrUpdateKeyAuthorizationPolicyRequest) String() string {
 func (*CreateOrUpdateKeyAuthorizationPolicyRequest) ProtoMessage() {}
 
 func (x *CreateOrUpdateKeyAuthorizationPolicyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[14]
+	mi := &file_proto_qkms_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1065,7 +1322,7 @@ func (x *CreateOrUpdateKeyAuthorizationPolicyRequest) ProtoReflect() protoreflec
 
 // Deprecated: Use CreateOrUpdateKeyAuthorizationPolicyRequest.ProtoReflect.Descriptor instead.
 func (*CreateOrUpdateKeyAuthorizationPolicyRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{14}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *CreateOrUpdateKeyAuthorizationPolicyRequest) GetNameSpace() string {
@@ -1120,7 +1377,7 @@ type CreateOrUpdateKeyAuthorizationPolicyReply struct {
 
 func (x *CreateOrUpdateKeyAuthorizationPolicyReply) Reset() {
 	*x = CreateOrUpdateKeyAuthorizationPolicyReply{}
-	mi := &file_proto_qkms_proto_msgTypes[15]
+	mi := &file_proto_qkms_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1132,7 +1389,7 @@ func (x *CreateOrUpdateKeyAuthorizationPolicyReply) String() string {
 func (*CreateOrUpdateKeyAuthorizationPolicyReply) ProtoMessage() {}
 
 func (x *CreateOrUpdateKeyAuthorizationPolicyReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[15]
+	mi := &file_proto_qkms_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1145,7 +1402,7 @@ func (x *CreateOrUpdateKeyAuthorizationPolicyReply) ProtoReflect() protoreflect.
 
 // Deprecated: Use CreateOrUpdateKeyAuthorizationPolicyReply.ProtoReflect.Descriptor instead.
 func (*CreateOrUpdateKeyAuthorizationPolicyReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{15}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *CreateOrUpdateKeyAuthorizationPolicyReply) GetErrorCode() uint64 {
@@ -1172,7 +1429,7 @@ type CreateNameSpaceRequest struct {
 
 func (x *CreateNameSpaceRequest) Reset() {
 	*x = CreateNameSpaceRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[16]
+	mi := &file_proto_qkms_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1184,7 +1441,7 @@ func (x *CreateNameSpaceRequest) String() string {
 func (*CreateNameSpaceRequest) ProtoMessage() {}
 
 func (x *CreateNameSpaceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[16]
+	mi := &file_proto_qkms_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1197,7 +1454,7 @@ func (x *CreateNameSpaceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateNameSpaceRequest.ProtoReflect.Descriptor instead.
 func (*CreateNameSpaceRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{16}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *CreateNameSpaceRequest) GetName() string {
@@ -1224,7 +1481,7 @@ type CreateNameSpaceReply struct {
 
 func (x *CreateNameSpaceReply) Reset() {
 	*x = CreateNameSpaceReply{}
-	mi := &file_proto_qkms_proto_msgTypes[17]
+	mi := &file_proto_qkms_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1236,7 +1493,7 @@ func (x *CreateNameSpaceReply) String() string {
 func (*CreateNameSpaceReply) ProtoMessage() {}
 
 func (x *CreateNameSpaceReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[17]
+	mi := &file_proto_qkms_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1249,7 +1506,7 @@ func (x *CreateNameSpaceReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateNameSpaceReply.ProtoReflect.Descriptor instead.
 func (*CreateNameSpaceReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{17}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *CreateNameSpaceReply) GetErrorCode() uint64 {
@@ -1276,7 +1533,7 @@ type RotateNameSpaceKeyEncryptionKeyRequest struct {
 
 func (x *RotateNameSpaceKeyEncryptionKeyRequest) Reset() {
 	*x = RotateNameSpaceKeyEncryptionKeyRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[18]
+	mi := &file_proto_qkms_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1288,7 +1545,7 @@ func (x *RotateNameSpaceKeyEncryptionKeyRequest) String() string {
 func (*RotateNameSpaceKeyEncryptionKeyRequest) ProtoMessage() {}
 
 func (x *RotateNameSpaceKeyEncryptionKeyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[18]
+	mi := &file_proto_qkms_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1301,7 +1558,7 @@ func (x *RotateNameSpaceKeyEncryptionKeyRequest) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use RotateNameSpaceKeyEncryptionKeyRequest.ProtoReflect.Descriptor instead.
 func (*RotateNameSpaceKeyEncryptionKeyRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{18}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *RotateNameSpaceKeyEncryptionKeyRequest) GetNameSpace() string {
@@ -1328,7 +1585,7 @@ type RotateNameSpaceKeyEncryptionKeyReply struct {
 
 func (x *RotateNameSpaceKeyEncryptionKeyReply) Reset() {
 	*x = RotateNameSpaceKeyEncryptionKeyReply{}
-	mi := &file_proto_qkms_proto_msgTypes[19]
+	mi := &file_proto_qkms_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1340,7 +1597,7 @@ func (x *RotateNameSpaceKeyEncryptionKeyReply) String() string {
 func (*RotateNameSpaceKeyEncryptionKeyReply) ProtoMessage() {}
 
 func (x *RotateNameSpaceKeyEncryptionKeyReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[19]
+	mi := &file_proto_qkms_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1353,7 +1610,7 @@ func (x *RotateNameSpaceKeyEncryptionKeyReply) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use RotateNameSpaceKeyEncryptionKeyReply.ProtoReflect.Descriptor instead.
 func (*RotateNameSpaceKeyEncryptionKeyReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{19}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *RotateNameSpaceKeyEncryptionKeyReply) GetErrorCode() uint64 {
@@ -1381,7 +1638,7 @@ type CreateKeyEncryptionKeyRequest struct {
 
 func (x *CreateKeyEncryptionKeyRequest) Reset() {
 	*x = CreateKeyEncryptionKeyRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[20]
+	mi := &file_proto_qkms_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1393,7 +1650,7 @@ func (x *CreateKeyEncryptionKeyRequest) String() string {
 func (*CreateKeyEncryptionKeyRequest) ProtoMessage() {}
 
 func (x *CreateKeyEncryptionKeyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[20]
+	mi := &file_proto_qkms_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1406,7 +1663,7 @@ func (x *CreateKeyEncryptionKeyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateKeyEncryptionKeyRequest.ProtoReflect.Descriptor instead.
 func (*CreateKeyEncryptionKeyRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{20}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *CreateKeyEncryptionKeyRequest) GetName() string {
@@ -1440,7 +1697,7 @@ type CreateKeyEncryptionKeyReply struct {
 
 func (x *CreateKeyEncryptionKeyReply) Reset() {
 	*x = CreateKeyEncryptionKeyReply{}
-	mi := &file_proto_qkms_proto_msgTypes[21]
+	mi := &file_proto_qkms_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1452,7 +1709,7 @@ func (x *CreateKeyEncryptionKeyReply) String() string {
 func (*CreateKeyEncryptionKeyReply) ProtoMessage() {}
 
 func (x *CreateKeyEncryptionKeyReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[21]
+	mi := &file_proto_qkms_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1465,7 +1722,7 @@ func (x *CreateKeyEncryptionKeyReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateKeyEncryptionKeyReply.ProtoReflect.Descriptor instead.
 func (*CreateKeyEncryptionKeyReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{21}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *CreateKeyEncryptionKeyReply) GetErrorCode() uint64 {
@@ -1492,7 +1749,7 @@ type ReadNameSpaceRequest struct {
 
 func (x *ReadNameSpaceRequest) Reset() {
 	*x = ReadNameSpaceRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[22]
+	mi := &file_proto_qkms_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1504,7 +1761,7 @@ func (x *ReadNameSpaceRequest) String() string {
 func (*ReadNameSpaceRequest) ProtoMessage() {}
 
 func (x *ReadNameSpaceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[22]
+	mi := &file_proto_qkms_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1517,7 +1774,7 @@ func (x *ReadNameSpaceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReadNameSpaceRequest.ProtoReflect.Descriptor instead.
 func (*ReadNameSpaceRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{22}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *ReadNameSpaceRequest) GetName() string {
@@ -1548,7 +1805,7 @@ type ReadNameSpaceReply struct {
 
 func (x *ReadNameSpaceReply) Reset() {
 	*x = ReadNameSpaceReply{}
-	mi := &file_proto_qkms_proto_msgTypes[23]
+	mi := &file_proto_qkms_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1560,7 +1817,7 @@ func (x *ReadNameSpaceReply) String() string {
 func (*ReadNameSpaceReply) ProtoMessage() {}
 
 func (x *ReadNameSpaceReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[23]
+	mi := &file_proto_qkms_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1573,7 +1830,7 @@ func (x *ReadNameSpaceReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReadNameSpaceReply.ProtoReflect.Descriptor instead.
 func (*ReadNameSpaceReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{23}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *ReadNameSpaceReply) GetErrorCode() uint64 {
@@ -1630,7 +1887,7 @@ type UpdateNameSpaceInfoRequest struct {
 
 func (x *UpdateNameSpaceInfoRequest) Reset() {
 	*x = UpdateNameSpaceInfoRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[24]
+	mi := &file_proto_qkms_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1642,7 +1899,7 @@ func (x *UpdateNameSpaceInfoRequest) String() string {
 func (*UpdateNameSpaceInfoRequest) ProtoMessage() {}
 
 func (x *UpdateNameSpaceInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[24]
+	mi := &file_proto_qkms_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1655,7 +1912,7 @@ func (x *UpdateNameSpaceInfoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateNameSpaceInfoRequest.ProtoReflect.Descriptor instead.
 func (*UpdateNameSpaceInfoRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{24}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *UpdateNameSpaceInfoRequest) GetName() string {
@@ -1696,7 +1953,7 @@ type UpdateNameSpaceInfoReply struct {
 
 func (x *UpdateNameSpaceInfoReply) Reset() {
 	*x = UpdateNameSpaceInfoReply{}
-	mi := &file_proto_qkms_proto_msgTypes[25]
+	mi := &file_proto_qkms_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1708,7 +1965,7 @@ func (x *UpdateNameSpaceInfoReply) String() string {
 func (*UpdateNameSpaceInfoReply) ProtoMessage() {}
 
 func (x *UpdateNameSpaceInfoReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[25]
+	mi := &file_proto_qkms_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1721,7 +1978,7 @@ func (x *UpdateNameSpaceInfoReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateNameSpaceInfoReply.ProtoReflect.Descriptor instead.
 func (*UpdateNameSpaceInfoReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{25}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *UpdateNameSpaceInfoReply) GetErrorCode() uint64 {
@@ -1747,7 +2004,7 @@ type CreateRoleRequest struct {
 
 func (x *CreateRoleRequest) Reset() {
 	*x = CreateRoleRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[26]
+	mi := &file_proto_qkms_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1759,7 +2016,7 @@ func (x *CreateRoleRequest) String() string {
 func (*CreateRoleRequest) ProtoMessage() {}
 
 func (x *CreateRoleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[26]
+	mi := &file_proto_qkms_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1772,7 +2029,7 @@ func (x *CreateRoleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateRoleRequest.ProtoReflect.Descriptor instead.
 func (*CreateRoleRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{26}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *CreateRoleRequest) GetName() string {
@@ -1792,7 +2049,7 @@ type CreateRoleReply struct {
 
 func (x *CreateRoleReply) Reset() {
 	*x = CreateRoleReply{}
-	mi := &file_proto_qkms_proto_msgTypes[27]
+	mi := &file_proto_qkms_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1804,7 +2061,7 @@ func (x *CreateRoleReply) String() string {
 func (*CreateRoleReply) ProtoMessage() {}
 
 func (x *CreateRoleReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[27]
+	mi := &file_proto_qkms_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1817,7 +2074,7 @@ func (x *CreateRoleReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateRoleReply.ProtoReflect.Descriptor instead.
 func (*CreateRoleReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{27}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *CreateRoleReply) GetErrorCode() uint64 {
@@ -1843,7 +2100,7 @@ type GrantAdminRequest struct {
 
 func (x *GrantAdminRequest) Reset() {
 	*x = GrantAdminRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[28]
+	mi := &file_proto_qkms_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1855,7 +2112,7 @@ func (x *GrantAdminRequest) String() string {
 func (*GrantAdminRequest) ProtoMessage() {}
 
 func (x *GrantAdminRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[28]
+	mi := &file_proto_qkms_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1868,7 +2125,7 @@ func (x *GrantAdminRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GrantAdminRequest.ProtoReflect.Descriptor instead.
 func (*GrantAdminRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{28}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *GrantAdminRequest) GetAppKey() string {
@@ -1888,7 +2145,7 @@ type GrantAdminReply struct {
 
 func (x *GrantAdminReply) Reset() {
 	*x = GrantAdminReply{}
-	mi := &file_proto_qkms_proto_msgTypes[29]
+	mi := &file_proto_qkms_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1900,7 +2157,7 @@ func (x *GrantAdminReply) String() string {
 func (*GrantAdminReply) ProtoMessage() {}
 
 func (x *GrantAdminReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[29]
+	mi := &file_proto_qkms_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1913,7 +2170,7 @@ func (x *GrantAdminReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GrantAdminReply.ProtoReflect.Descriptor instead.
 func (*GrantAdminReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{29}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *GrantAdminReply) GetErrorCode() uint64 {
@@ -1939,7 +2196,7 @@ type GetAccessKeyIndexsRequest struct {
 
 func (x *GetAccessKeyIndexsRequest) Reset() {
 	*x = GetAccessKeyIndexsRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[30]
+	mi := &file_proto_qkms_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1951,7 +2208,7 @@ func (x *GetAccessKeyIndexsRequest) String() string {
 func (*GetAccessKeyIndexsRequest) ProtoMessage() {}
 
 func (x *GetAccessKeyIndexsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[30]
+	mi := &file_proto_qkms_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1964,7 +2221,7 @@ func (x *GetAccessKeyIndexsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAccessKeyIndexsRequest.ProtoReflect.Descriptor instead.
 func (*GetAccessKeyIndexsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{30}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *GetAccessKeyIndexsRequest) GetNameSpace() string {
@@ -1985,7 +2242,7 @@ type GetAccessKeyIndexsReply struct {
 
 func (x *GetAccessKeyIndexsReply) Reset() {
 	*x = GetAccessKeyIndexsReply{}
-	mi := &file_proto_qkms_proto_msgTypes[31]
+	mi := &file_proto_qkms_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1997,7 +2254,7 @@ func (x *GetAccessKeyIndexsReply) String() string {
 func (*GetAccessKeyIndexsReply) ProtoMessage() {}
 
 func (x *GetAccessKeyIndexsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[31]
+	mi := &file_proto_qkms_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2010,7 +2267,7 @@ func (x *GetAccessKeyIndexsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAccessKeyIndexsReply.ProtoReflect.Descriptor instead.
 func (*GetAccessKeyIndexsReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{31}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *GetAccessKeyIndexsReply) GetAccessKeys() []*GetAccessKeyIndexsReply_AccessKey {
@@ -2043,7 +2300,7 @@ type GenerateCredentialRequest struct {
 
 func (x *GenerateCredentialRequest) Reset() {
 	*x = GenerateCredentialRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[32]
+	mi := &file_proto_qkms_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2055,7 +2312,7 @@ func (x *GenerateCredentialRequest) String() string {
 func (*GenerateCredentialRequest) ProtoMessage() {}
 
 func (x *GenerateCredentialRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[32]
+	mi := &file_proto_qkms_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2068,7 +2325,7 @@ func (x *GenerateCredentialRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateCredentialRequest.ProtoReflect.Descriptor instead.
 func (*GenerateCredentialRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{32}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *GenerateCredentialRequest) GetName() string {
@@ -2091,7 +2348,7 @@ type GenerateCredentialReply struct {
 
 func (x *GenerateCredentialReply) Reset() {
 	*x = GenerateCredentialReply{}
-	mi := &file_proto_qkms_proto_msgTypes[33]
+	mi := &file_proto_qkms_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2103,7 +2360,7 @@ func (x *GenerateCredentialReply) String() string {
 func (*GenerateCredentialReply) ProtoMessage() {}
 
 func (x *GenerateCredentialReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[33]
+	mi := &file_proto_qkms_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2116,7 +2373,7 @@ func (x *GenerateCredentialReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateCredentialReply.ProtoReflect.Descriptor instead.
 func (*GenerateCredentialReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{33}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *GenerateCredentialReply) GetErrorCode() uint64 {
@@ -2163,7 +2420,7 @@ type RevokeCredentialRequest struct {
 
 func (x *RevokeCredentialRequest) Reset() {
 	*x = RevokeCredentialRequest{}
-	mi := &file_proto_qkms_proto_msgTypes[34]
+	mi := &file_proto_qkms_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2175,7 +2432,7 @@ func (x *RevokeCredentialRequest) String() string {
 func (*RevokeCredentialRequest) ProtoMessage() {}
 
 func (x *RevokeCredentialRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[34]
+	mi := &file_proto_qkms_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2188,7 +2445,7 @@ func (x *RevokeCredentialRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeCredentialRequest.ProtoReflect.Descriptor instead.
 func (*RevokeCredentialRequest) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{34}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *RevokeCredentialRequest) GetAppKey() string {
@@ -2208,7 +2465,7 @@ type RevokeCredentialReply struct {
 
 func (x *RevokeCredentialReply) Reset() {
 	*x = RevokeCredentialReply{}
-	mi := &file_proto_qkms_proto_msgTypes[35]
+	mi := &file_proto_qkms_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2220,7 +2477,7 @@ func (x *RevokeCredentialReply) String() string {
 func (*RevokeCredentialReply) ProtoMessage() {}
 
 func (x *RevokeCredentialReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[35]
+	mi := &file_proto_qkms_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2233,7 +2490,7 @@ func (x *RevokeCredentialReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeCredentialReply.ProtoReflect.Descriptor instead.
 func (*RevokeCredentialReply) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{35}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *RevokeCredentialReply) GetErrorCode() uint64 {
@@ -2250,6 +2507,66 @@ func (x *RevokeCredentialReply) GetErrorMsg() string {
 	return ""
 }
 
+type GetAccessKeyIndexByTagsReply_AccessKey struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	NameSpace     string                 `protobuf:"bytes,1,opt,name=NameSpace,proto3" json:"NameSpace,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=Name,proto3" json:"Name,omitempty"`
+	Environment   string                 `protobuf:"bytes,3,opt,name=Environment,proto3" json:"Environment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAccessKeyIndexByTagsReply_AccessKey) Reset() {
+	*x = GetAccessKeyIndexByTagsReply_AccessKey{}
+	mi := &file_proto_qkms_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAccessKeyIndexByTagsReply_AccessKey) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAccessKeyIndexByTagsReply_AccessKey) ProtoMessage() {}
+
+func (x *GetAccessKeyIndexByTagsReply_AccessKey) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_qkms_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAccessKeyIndexByTagsReply_AccessKey.ProtoReflect.Descriptor instead.
+func (*GetAccessKeyIndexByTagsReply_AccessKey) Descriptor() ([]byte, []int) {
+	return file_proto_qkms_proto_rawDescGZIP(), []int{3, 0}
+}
+
+func (x *GetAccessKeyIndexByTagsReply_AccessKey) GetNameSpace() string {
+	if x != nil {
+		return x.NameSpace
+	}
+	return ""
+}
+
+func (x *GetAccessKeyIndexByTagsReply_AccessKey) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *GetAccessKeyIndexByTagsReply_AccessKey) GetEnvironment() string {
+	if x != nil {
+		return x.Environment
+	}
+	return ""
+}
+
 type GetAccessKeyIndexsReply_AccessKey struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	NameSpace     string                 `protobuf:"bytes,1,opt,name=NameSpace,proto3" json:"NameSpace,omitempty"`
@@ -2261,7 +2578,7 @@ type GetAccessKeyIndexsReply_AccessKey struct {
 
 func (x *GetAccessKeyIndexsReply_AccessKey) Reset() {
 	*x = GetAccessKeyIndexsReply_AccessKey{}
-	mi := &file_proto_qkms_proto_msgTypes[36]
+	mi := &file_proto_qkms_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2273,7 +2590,7 @@ func (x *GetAccessKeyIndexsReply_AccessKey) String() string {
 func (*GetAccessKeyIndexsReply_AccessKey) ProtoMessage() {}
 
 func (x *GetAccessKeyIndexsReply_AccessKey) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_qkms_proto_msgTypes[36]
+	mi := &file_proto_qkms_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2286,7 +2603,7 @@ func (x *GetAccessKeyIndexsReply_AccessKey) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use GetAccessKeyIndexsReply_AccessKey.ProtoReflect.Descriptor instead.
 func (*GetAccessKeyIndexsReply_AccessKey) Descriptor() ([]byte, []int) {
-	return file_proto_qkms_proto_rawDescGZIP(), []int{31, 0}
+	return file_proto_qkms_proto_rawDescGZIP(), []int{35, 0}
 }
 
 func (x *GetAccessKeyIndexsReply_AccessKey) GetNameSpace() string {
@@ -2328,7 +2645,25 @@ const file_proto_qkms_proto_rawDesc = "" +
 	"\vAKPlaintext\x18\x05 \x01(\tR\vAKPlaintext\x12\x18\n" +
 	"\aKeyType\x18\x06 \x01(\tR\aKeyType\x12 \n" +
 	"\vEnvironment\x18\a \x01(\tR\vEnvironment\x12\x18\n" +
-	"\aVersion\x18\b \x01(\x04R\aVersion\"r\n" +
+	"\aVersion\x18\b \x01(\x04R\aVersion\"\xb0\x02\n" +
+	"\x1eGetAccessKeyIndexByTagsRequest\x12\x1c\n" +
+	"\tNameSpace\x18\x01 \x01(\tR\tNameSpace\x12\x12\n" +
+	"\x04Name\x18\x02 \x01(\tR\x04Name\x12 \n" +
+	"\vEnvironment\x18\x03 \x01(\tR\vEnvironment\x12s\n" +
+	"\x13required_attributes\x18\x04 \x03(\v2B.qkms_proto.GetAccessKeyIndexByTagsRequest.RequiredAttributesEntryR\x12requiredAttributes\x1aE\n" +
+	"\x17RequiredAttributesEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x8d\x02\n" +
+	"\x1cGetAccessKeyIndexByTagsReply\x12R\n" +
+	"\n" +
+	"AccessKeys\x18\x01 \x03(\v22.qkms_proto.GetAccessKeyIndexByTagsReply.AccessKeyR\n" +
+	"AccessKeys\x12\x1c\n" +
+	"\tErrorCode\x18\x02 \x01(\x04R\tErrorCode\x12\x1a\n" +
+	"\bErrorMsg\x18\x03 \x01(\tR\bErrorMsg\x1a_\n" +
+	"\tAccessKey\x12\x1c\n" +
+	"\tNameSpace\x18\x01 \x01(\tR\tNameSpace\x12\x12\n" +
+	"\x04Name\x18\x02 \x01(\tR\x04Name\x12 \n" +
+	"\vEnvironment\x18\x03 \x01(\tR\vEnvironment\"r\n" +
 	"\x1cReadReadableAccessKeyRequest\x12\x1c\n" +
 	"\tNameSpace\x18\x01 \x01(\tR\tNameSpace\x12\x12\n" +
 	"\x04Name\x18\x02 \x01(\tR\x04Name\x12 \n" +
@@ -2390,6 +2725,15 @@ const file_proto_qkms_proto_rawDesc = "" +
 	"\vEnvironment\x18\x05 \x01(\tR\vEnvironment\x12\x18\n" +
 	"\aVersion\x18\x06 \x01(\x04R\aVersion\"P\n" +
 	"\x14UpdateAccessKeyReply\x12\x1c\n" +
+	"\tErrorCode\x18\x01 \x01(\x04R\tErrorCode\x12\x1a\n" +
+	"\bErrorMsg\x18\x02 \x01(\tR\bErrorMsg\"\x9d\x01\n" +
+	"\x13TagAccessKeyRequest\x12\x1c\n" +
+	"\tNameSpace\x18\x01 \x01(\tR\tNameSpace\x12\x12\n" +
+	"\x04Name\x18\x02 \x01(\tR\x04Name\x12 \n" +
+	"\vEnvironment\x18\x03 \x01(\tR\vEnvironment\x12\x16\n" +
+	"\x06TagKey\x18\x04 \x01(\tR\x06TagKey\x12\x1a\n" +
+	"\bTagValue\x18\x05 \x01(\tR\bTagValue\"M\n" +
+	"\x11TagAccessKeyReply\x12\x1c\n" +
 	"\tErrorCode\x18\x01 \x01(\x04R\tErrorCode\x12\x1a\n" +
 	"\bErrorMsg\x18\x02 \x01(\tR\bErrorMsg\"\xd1\x01\n" +
 	"+CreateOrUpdateKeyAuthorizationPolicyRequest\x12\x1c\n" +
@@ -2475,7 +2819,7 @@ const file_proto_qkms_proto_rawDesc = "" +
 	"\x06AppKey\x18\x01 \x01(\tR\x06AppKey\"Q\n" +
 	"\x15RevokeCredentialReply\x12\x1c\n" +
 	"\tErrorCode\x18\x01 \x01(\x04R\tErrorCode\x12\x1a\n" +
-	"\bErrorMsg\x18\x02 \x01(\tR\bErrorMsg2\xcd\r\n" +
+	"\bErrorMsg\x18\x02 \x01(\tR\bErrorMsg2\x92\x0f\n" +
 	"\x04qkms\x12S\n" +
 	"\rReadAccessKey\x12 .qkms_proto.ReadAccessKeyRequest\x1a\x1e.qkms_proto.ReadAccessKeyReply\"\x00\x12k\n" +
 	"\x15ReadReadableAccessKey\x12(.qkms_proto.ReadReadableAccessKeyRequest\x1a&.qkms_proto.ReadReadableAccessKeyReply\"\x00\x12_\n" +
@@ -2486,7 +2830,9 @@ const file_proto_qkms_proto_rawDesc = "" +
 	"\rReadNameSpace\x12 .qkms_proto.ReadNameSpaceRequest\x1a\x1e.qkms_proto.ReadNameSpaceReply\"\x00\x12Y\n" +
 	"\x0fUpdateAccessKey\x12\".qkms_proto.UpdateAccessKeyRequest\x1a .qkms_proto.UpdateAccessKeyReply\"\x00\x12\x98\x01\n" +
 	"$CreateOrUpdateKeyAuthorizationPolicy\x127.qkms_proto.CreateOrUpdateKeyAuthorizationPolicyRequest\x1a5.qkms_proto.CreateOrUpdateKeyAuthorizationPolicyReply\"\x00\x12b\n" +
-	"\x12GetAccessKeyIndexs\x12%.qkms_proto.GetAccessKeyIndexsRequest\x1a#.qkms_proto.GetAccessKeyIndexsReply\"\x00\x12b\n" +
+	"\x12GetAccessKeyIndexs\x12%.qkms_proto.GetAccessKeyIndexsRequest\x1a#.qkms_proto.GetAccessKeyIndexsReply\"\x00\x12q\n" +
+	"\x17GetAccessKeyIndexByTags\x12*.qkms_proto.GetAccessKeyIndexByTagsRequest\x1a(.qkms_proto.GetAccessKeyIndexByTagsReply\"\x00\x12P\n" +
+	"\fTagAccessKey\x12\x1f.qkms_proto.TagAccessKeyRequest\x1a\x1d.qkms_proto.TagAccessKeyReply\"\x00\x12b\n" +
 	"\x12GenerateCredential\x12%.qkms_proto.GenerateCredentialRequest\x1a#.qkms_proto.GenerateCredentialReply\"\x00\x12\\\n" +
 	"\x10RevokeCredential\x12#.qkms_proto.RevokeCredentialRequest\x1a!.qkms_proto.RevokeCredentialReply\"\x00\x12J\n" +
 	"\n" +
@@ -2508,87 +2854,99 @@ func file_proto_qkms_proto_rawDescGZIP() []byte {
 	return file_proto_qkms_proto_rawDescData
 }
 
-var file_proto_qkms_proto_msgTypes = make([]protoimpl.MessageInfo, 37)
+var file_proto_qkms_proto_msgTypes = make([]protoimpl.MessageInfo, 43)
 var file_proto_qkms_proto_goTypes = []any{
 	(*ReadAccessKeyRequest)(nil),                        // 0: qkms_proto.ReadAccessKeyRequest
 	(*ReadAccessKeyReply)(nil),                          // 1: qkms_proto.ReadAccessKeyReply
-	(*ReadReadableAccessKeyRequest)(nil),                // 2: qkms_proto.ReadReadableAccessKeyRequest
-	(*ReadReadableAccessKeyReply)(nil),                  // 3: qkms_proto.ReadReadableAccessKeyReply
-	(*GenerateAccessKeyRequest)(nil),                    // 4: qkms_proto.GenerateAccessKeyRequest
-	(*GenerateAccessKeyReply)(nil),                      // 5: qkms_proto.GenerateAccessKeyReply
-	(*RotateAccessKeyRequest)(nil),                      // 6: qkms_proto.RotateAccessKeyRequest
-	(*RotateAccessKeyReply)(nil),                        // 7: qkms_proto.RotateAccessKeyReply
-	(*CreateAccessKeyRequest)(nil),                      // 8: qkms_proto.CreateAccessKeyRequest
-	(*CreateAccessKeyReply)(nil),                        // 9: qkms_proto.CreateAccessKeyReply
-	(*CreateReadableAccessKeyRequest)(nil),              // 10: qkms_proto.CreateReadableAccessKeyRequest
-	(*CreateReadableAccessKeyReply)(nil),                // 11: qkms_proto.CreateReadableAccessKeyReply
-	(*UpdateAccessKeyRequest)(nil),                      // 12: qkms_proto.UpdateAccessKeyRequest
-	(*UpdateAccessKeyReply)(nil),                        // 13: qkms_proto.UpdateAccessKeyReply
-	(*CreateOrUpdateKeyAuthorizationPolicyRequest)(nil), // 14: qkms_proto.CreateOrUpdateKeyAuthorizationPolicyRequest
-	(*CreateOrUpdateKeyAuthorizationPolicyReply)(nil),   // 15: qkms_proto.CreateOrUpdateKeyAuthorizationPolicyReply
-	(*CreateNameSpaceRequest)(nil),                      // 16: qkms_proto.CreateNameSpaceRequest
-	(*CreateNameSpaceReply)(nil),                        // 17: qkms_proto.CreateNameSpaceReply
-	(*RotateNameSpaceKeyEncryptionKeyRequest)(nil),      // 18: qkms_proto.RotateNameSpaceKeyEncryptionKeyRequest
-	(*RotateNameSpaceKeyEncryptionKeyReply)(nil),        // 19: qkms_proto.RotateNameSpaceKeyEncryptionKeyReply
-	(*CreateKeyEncryptionKeyRequest)(nil),               // 20: qkms_proto.CreateKeyEncryptionKeyRequest
-	(*CreateKeyEncryptionKeyReply)(nil),                 // 21: qkms_proto.CreateKeyEncryptionKeyReply
-	(*ReadNameSpaceRequest)(nil),                        // 22: qkms_proto.ReadNameSpaceRequest
-	(*ReadNameSpaceReply)(nil),                          // 23: qkms_proto.ReadNameSpaceReply
-	(*UpdateNameSpaceInfoRequest)(nil),                  // 24: qkms_proto.UpdateNameSpaceInfoRequest
-	(*UpdateNameSpaceInfoReply)(nil),                    // 25: qkms_proto.UpdateNameSpaceInfoReply
-	(*CreateRoleRequest)(nil),                           // 26: qkms_proto.CreateRoleRequest
-	(*CreateRoleReply)(nil),                             // 27: qkms_proto.CreateRoleReply
-	(*GrantAdminRequest)(nil),                           // 28: qkms_proto.GrantAdminRequest
-	(*GrantAdminReply)(nil),                             // 29: qkms_proto.GrantAdminReply
-	(*GetAccessKeyIndexsRequest)(nil),                   // 30: qkms_proto.GetAccessKeyIndexsRequest
-	(*GetAccessKeyIndexsReply)(nil),                     // 31: qkms_proto.GetAccessKeyIndexsReply
-	(*GenerateCredentialRequest)(nil),                   // 32: qkms_proto.GenerateCredentialRequest
-	(*GenerateCredentialReply)(nil),                     // 33: qkms_proto.GenerateCredentialReply
-	(*RevokeCredentialRequest)(nil),                     // 34: qkms_proto.RevokeCredentialRequest
-	(*RevokeCredentialReply)(nil),                       // 35: qkms_proto.RevokeCredentialReply
-	(*GetAccessKeyIndexsReply_AccessKey)(nil),           // 36: qkms_proto.GetAccessKeyIndexsReply.AccessKey
+	(*GetAccessKeyIndexByTagsRequest)(nil),              // 2: qkms_proto.GetAccessKeyIndexByTagsRequest
+	(*GetAccessKeyIndexByTagsReply)(nil),                // 3: qkms_proto.GetAccessKeyIndexByTagsReply
+	(*ReadReadableAccessKeyRequest)(nil),                // 4: qkms_proto.ReadReadableAccessKeyRequest
+	(*ReadReadableAccessKeyReply)(nil),                  // 5: qkms_proto.ReadReadableAccessKeyReply
+	(*GenerateAccessKeyRequest)(nil),                    // 6: qkms_proto.GenerateAccessKeyRequest
+	(*GenerateAccessKeyReply)(nil),                      // 7: qkms_proto.GenerateAccessKeyReply
+	(*RotateAccessKeyRequest)(nil),                      // 8: qkms_proto.RotateAccessKeyRequest
+	(*RotateAccessKeyReply)(nil),                        // 9: qkms_proto.RotateAccessKeyReply
+	(*CreateAccessKeyRequest)(nil),                      // 10: qkms_proto.CreateAccessKeyRequest
+	(*CreateAccessKeyReply)(nil),                        // 11: qkms_proto.CreateAccessKeyReply
+	(*CreateReadableAccessKeyRequest)(nil),              // 12: qkms_proto.CreateReadableAccessKeyRequest
+	(*CreateReadableAccessKeyReply)(nil),                // 13: qkms_proto.CreateReadableAccessKeyReply
+	(*UpdateAccessKeyRequest)(nil),                      // 14: qkms_proto.UpdateAccessKeyRequest
+	(*UpdateAccessKeyReply)(nil),                        // 15: qkms_proto.UpdateAccessKeyReply
+	(*TagAccessKeyRequest)(nil),                         // 16: qkms_proto.TagAccessKeyRequest
+	(*TagAccessKeyReply)(nil),                           // 17: qkms_proto.TagAccessKeyReply
+	(*CreateOrUpdateKeyAuthorizationPolicyRequest)(nil), // 18: qkms_proto.CreateOrUpdateKeyAuthorizationPolicyRequest
+	(*CreateOrUpdateKeyAuthorizationPolicyReply)(nil),   // 19: qkms_proto.CreateOrUpdateKeyAuthorizationPolicyReply
+	(*CreateNameSpaceRequest)(nil),                      // 20: qkms_proto.CreateNameSpaceRequest
+	(*CreateNameSpaceReply)(nil),                        // 21: qkms_proto.CreateNameSpaceReply
+	(*RotateNameSpaceKeyEncryptionKeyRequest)(nil),      // 22: qkms_proto.RotateNameSpaceKeyEncryptionKeyRequest
+	(*RotateNameSpaceKeyEncryptionKeyReply)(nil),        // 23: qkms_proto.RotateNameSpaceKeyEncryptionKeyReply
+	(*CreateKeyEncryptionKeyRequest)(nil),               // 24: qkms_proto.CreateKeyEncryptionKeyRequest
+	(*CreateKeyEncryptionKeyReply)(nil),                 // 25: qkms_proto.CreateKeyEncryptionKeyReply
+	(*ReadNameSpaceRequest)(nil),                        // 26: qkms_proto.ReadNameSpaceRequest
+	(*ReadNameSpaceReply)(nil),                          // 27: qkms_proto.ReadNameSpaceReply
+	(*UpdateNameSpaceInfoRequest)(nil),                  // 28: qkms_proto.UpdateNameSpaceInfoRequest
+	(*UpdateNameSpaceInfoReply)(nil),                    // 29: qkms_proto.UpdateNameSpaceInfoReply
+	(*CreateRoleRequest)(nil),                           // 30: qkms_proto.CreateRoleRequest
+	(*CreateRoleReply)(nil),                             // 31: qkms_proto.CreateRoleReply
+	(*GrantAdminRequest)(nil),                           // 32: qkms_proto.GrantAdminRequest
+	(*GrantAdminReply)(nil),                             // 33: qkms_proto.GrantAdminReply
+	(*GetAccessKeyIndexsRequest)(nil),                   // 34: qkms_proto.GetAccessKeyIndexsRequest
+	(*GetAccessKeyIndexsReply)(nil),                     // 35: qkms_proto.GetAccessKeyIndexsReply
+	(*GenerateCredentialRequest)(nil),                   // 36: qkms_proto.GenerateCredentialRequest
+	(*GenerateCredentialReply)(nil),                     // 37: qkms_proto.GenerateCredentialReply
+	(*RevokeCredentialRequest)(nil),                     // 38: qkms_proto.RevokeCredentialRequest
+	(*RevokeCredentialReply)(nil),                       // 39: qkms_proto.RevokeCredentialReply
+	nil,                                                 // 40: qkms_proto.GetAccessKeyIndexByTagsRequest.RequiredAttributesEntry
+	(*GetAccessKeyIndexByTagsReply_AccessKey)(nil),      // 41: qkms_proto.GetAccessKeyIndexByTagsReply.AccessKey
+	(*GetAccessKeyIndexsReply_AccessKey)(nil),           // 42: qkms_proto.GetAccessKeyIndexsReply.AccessKey
 }
 var file_proto_qkms_proto_depIdxs = []int32{
-	36, // 0: qkms_proto.GetAccessKeyIndexsReply.AccessKeys:type_name -> qkms_proto.GetAccessKeyIndexsReply.AccessKey
-	0,  // 1: qkms_proto.qkms.ReadAccessKey:input_type -> qkms_proto.ReadAccessKeyRequest
-	2,  // 2: qkms_proto.qkms.ReadReadableAccessKey:input_type -> qkms_proto.ReadReadableAccessKeyRequest
-	4,  // 3: qkms_proto.qkms.GenerateAccessKey:input_type -> qkms_proto.GenerateAccessKeyRequest
-	10, // 4: qkms_proto.qkms.CreateReadableAccessKey:input_type -> qkms_proto.CreateReadableAccessKeyRequest
-	8,  // 5: qkms_proto.qkms.CreateAccessKey:input_type -> qkms_proto.CreateAccessKeyRequest
-	16, // 6: qkms_proto.qkms.CreateNameSpace:input_type -> qkms_proto.CreateNameSpaceRequest
-	22, // 7: qkms_proto.qkms.ReadNameSpace:input_type -> qkms_proto.ReadNameSpaceRequest
-	12, // 8: qkms_proto.qkms.UpdateAccessKey:input_type -> qkms_proto.UpdateAccessKeyRequest
-	14, // 9: qkms_proto.qkms.CreateOrUpdateKeyAuthorizationPolicy:input_type -> qkms_proto.CreateOrUpdateKeyAuthorizationPolicyRequest
-	30, // 10: qkms_proto.qkms.GetAccessKeyIndexs:input_type -> qkms_proto.GetAccessKeyIndexsRequest
-	32, // 11: qkms_proto.qkms.GenerateCredential:input_type -> qkms_proto.GenerateCredentialRequest
-	34, // 12: qkms_proto.qkms.RevokeCredential:input_type -> qkms_proto.RevokeCredentialRequest
-	28, // 13: qkms_proto.qkms.GrantAdmin:input_type -> qkms_proto.GrantAdminRequest
-	18, // 14: qkms_proto.qkms.RotateNameSpaceKeyEncryptionKey:input_type -> qkms_proto.RotateNameSpaceKeyEncryptionKeyRequest
-	6,  // 15: qkms_proto.qkms.RotateAccessKey:input_type -> qkms_proto.RotateAccessKeyRequest
-	24, // 16: qkms_proto.qkms.UpdateNameSpaceInfo:input_type -> qkms_proto.UpdateNameSpaceInfoRequest
-	20, // 17: qkms_proto.qkms.CreateKeyEncryptionKey:input_type -> qkms_proto.CreateKeyEncryptionKeyRequest
-	1,  // 18: qkms_proto.qkms.ReadAccessKey:output_type -> qkms_proto.ReadAccessKeyReply
-	3,  // 19: qkms_proto.qkms.ReadReadableAccessKey:output_type -> qkms_proto.ReadReadableAccessKeyReply
-	5,  // 20: qkms_proto.qkms.GenerateAccessKey:output_type -> qkms_proto.GenerateAccessKeyReply
-	11, // 21: qkms_proto.qkms.CreateReadableAccessKey:output_type -> qkms_proto.CreateReadableAccessKeyReply
-	9,  // 22: qkms_proto.qkms.CreateAccessKey:output_type -> qkms_proto.CreateAccessKeyReply
-	17, // 23: qkms_proto.qkms.CreateNameSpace:output_type -> qkms_proto.CreateNameSpaceReply
-	23, // 24: qkms_proto.qkms.ReadNameSpace:output_type -> qkms_proto.ReadNameSpaceReply
-	13, // 25: qkms_proto.qkms.UpdateAccessKey:output_type -> qkms_proto.UpdateAccessKeyReply
-	15, // 26: qkms_proto.qkms.CreateOrUpdateKeyAuthorizationPolicy:output_type -> qkms_proto.CreateOrUpdateKeyAuthorizationPolicyReply
-	31, // 27: qkms_proto.qkms.GetAccessKeyIndexs:output_type -> qkms_proto.GetAccessKeyIndexsReply
-	33, // 28: qkms_proto.qkms.GenerateCredential:output_type -> qkms_proto.GenerateCredentialReply
-	35, // 29: qkms_proto.qkms.RevokeCredential:output_type -> qkms_proto.RevokeCredentialReply
-	29, // 30: qkms_proto.qkms.GrantAdmin:output_type -> qkms_proto.GrantAdminReply
-	19, // 31: qkms_proto.qkms.RotateNameSpaceKeyEncryptionKey:output_type -> qkms_proto.RotateNameSpaceKeyEncryptionKeyReply
-	7,  // 32: qkms_proto.qkms.RotateAccessKey:output_type -> qkms_proto.RotateAccessKeyReply
-	25, // 33: qkms_proto.qkms.UpdateNameSpaceInfo:output_type -> qkms_proto.UpdateNameSpaceInfoReply
-	21, // 34: qkms_proto.qkms.CreateKeyEncryptionKey:output_type -> qkms_proto.CreateKeyEncryptionKeyReply
-	18, // [18:35] is the sub-list for method output_type
-	1,  // [1:18] is the sub-list for method input_type
-	1,  // [1:1] is the sub-list for extension type_name
-	1,  // [1:1] is the sub-list for extension extendee
-	0,  // [0:1] is the sub-list for field type_name
+	40, // 0: qkms_proto.GetAccessKeyIndexByTagsRequest.required_attributes:type_name -> qkms_proto.GetAccessKeyIndexByTagsRequest.RequiredAttributesEntry
+	41, // 1: qkms_proto.GetAccessKeyIndexByTagsReply.AccessKeys:type_name -> qkms_proto.GetAccessKeyIndexByTagsReply.AccessKey
+	42, // 2: qkms_proto.GetAccessKeyIndexsReply.AccessKeys:type_name -> qkms_proto.GetAccessKeyIndexsReply.AccessKey
+	0,  // 3: qkms_proto.qkms.ReadAccessKey:input_type -> qkms_proto.ReadAccessKeyRequest
+	4,  // 4: qkms_proto.qkms.ReadReadableAccessKey:input_type -> qkms_proto.ReadReadableAccessKeyRequest
+	6,  // 5: qkms_proto.qkms.GenerateAccessKey:input_type -> qkms_proto.GenerateAccessKeyRequest
+	12, // 6: qkms_proto.qkms.CreateReadableAccessKey:input_type -> qkms_proto.CreateReadableAccessKeyRequest
+	10, // 7: qkms_proto.qkms.CreateAccessKey:input_type -> qkms_proto.CreateAccessKeyRequest
+	20, // 8: qkms_proto.qkms.CreateNameSpace:input_type -> qkms_proto.CreateNameSpaceRequest
+	26, // 9: qkms_proto.qkms.ReadNameSpace:input_type -> qkms_proto.ReadNameSpaceRequest
+	14, // 10: qkms_proto.qkms.UpdateAccessKey:input_type -> qkms_proto.UpdateAccessKeyRequest
+	18, // 11: qkms_proto.qkms.CreateOrUpdateKeyAuthorizationPolicy:input_type -> qkms_proto.CreateOrUpdateKeyAuthorizationPolicyRequest
+	34, // 12: qkms_proto.qkms.GetAccessKeyIndexs:input_type -> qkms_proto.GetAccessKeyIndexsRequest
+	2,  // 13: qkms_proto.qkms.GetAccessKeyIndexByTags:input_type -> qkms_proto.GetAccessKeyIndexByTagsRequest
+	16, // 14: qkms_proto.qkms.TagAccessKey:input_type -> qkms_proto.TagAccessKeyRequest
+	36, // 15: qkms_proto.qkms.GenerateCredential:input_type -> qkms_proto.GenerateCredentialRequest
+	38, // 16: qkms_proto.qkms.RevokeCredential:input_type -> qkms_proto.RevokeCredentialRequest
+	32, // 17: qkms_proto.qkms.GrantAdmin:input_type -> qkms_proto.GrantAdminRequest
+	22, // 18: qkms_proto.qkms.RotateNameSpaceKeyEncryptionKey:input_type -> qkms_proto.RotateNameSpaceKeyEncryptionKeyRequest
+	8,  // 19: qkms_proto.qkms.RotateAccessKey:input_type -> qkms_proto.RotateAccessKeyRequest
+	28, // 20: qkms_proto.qkms.UpdateNameSpaceInfo:input_type -> qkms_proto.UpdateNameSpaceInfoRequest
+	24, // 21: qkms_proto.qkms.CreateKeyEncryptionKey:input_type -> qkms_proto.CreateKeyEncryptionKeyRequest
+	1,  // 22: qkms_proto.qkms.ReadAccessKey:output_type -> qkms_proto.ReadAccessKeyReply
+	5,  // 23: qkms_proto.qkms.ReadReadableAccessKey:output_type -> qkms_proto.ReadReadableAccessKeyReply
+	7,  // 24: qkms_proto.qkms.GenerateAccessKey:output_type -> qkms_proto.GenerateAccessKeyReply
+	13, // 25: qkms_proto.qkms.CreateReadableAccessKey:output_type -> qkms_proto.CreateReadableAccessKeyReply
+	11, // 26: qkms_proto.qkms.CreateAccessKey:output_type -> qkms_proto.CreateAccessKeyReply
+	21, // 27: qkms_proto.qkms.CreateNameSpace:output_type -> qkms_proto.CreateNameSpaceReply
+	27, // 28: qkms_proto.qkms.ReadNameSpace:output_type -> qkms_proto.ReadNameSpaceReply
+	15, // 29: qkms_proto.qkms.UpdateAccessKey:output_type -> qkms_proto.UpdateAccessKeyReply
+	19, // 30: qkms_proto.qkms.CreateOrUpdateKeyAuthorizationPolicy:output_type -> qkms_proto.CreateOrUpdateKeyAuthorizationPolicyReply
+	35, // 31: qkms_proto.qkms.GetAccessKeyIndexs:output_type -> qkms_proto.GetAccessKeyIndexsReply
+	3,  // 32: qkms_proto.qkms.GetAccessKeyIndexByTags:output_type -> qkms_proto.GetAccessKeyIndexByTagsReply
+	17, // 33: qkms_proto.qkms.TagAccessKey:output_type -> qkms_proto.TagAccessKeyReply
+	37, // 34: qkms_proto.qkms.GenerateCredential:output_type -> qkms_proto.GenerateCredentialReply
+	39, // 35: qkms_proto.qkms.RevokeCredential:output_type -> qkms_proto.RevokeCredentialReply
+	33, // 36: qkms_proto.qkms.GrantAdmin:output_type -> qkms_proto.GrantAdminReply
+	23, // 37: qkms_proto.qkms.RotateNameSpaceKeyEncryptionKey:output_type -> qkms_proto.RotateNameSpaceKeyEncryptionKeyReply
+	9,  // 38: qkms_proto.qkms.RotateAccessKey:output_type -> qkms_proto.RotateAccessKeyReply
+	29, // 39: qkms_proto.qkms.UpdateNameSpaceInfo:output_type -> qkms_proto.UpdateNameSpaceInfoReply
+	25, // 40: qkms_proto.qkms.CreateKeyEncryptionKey:output_type -> qkms_proto.CreateKeyEncryptionKeyReply
+	22, // [22:41] is the sub-list for method output_type
+	3,  // [3:22] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_proto_qkms_proto_init() }
@@ -2602,7 +2960,7 @@ func file_proto_qkms_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_qkms_proto_rawDesc), len(file_proto_qkms_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   37,
+			NumMessages:   43,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -8,6 +8,8 @@ import (
 	qkms_dal "qkms/dal"
 	qkms_proto "qkms/proto"
 
+	"gorm.io/datatypes"
+
 	"github.com/golang/glog"
 )
 
@@ -71,6 +73,7 @@ func (server *QkmsRealServer) CreateAKInternal(ctx context.Context, namespace st
 			Version:     0,
 			KEK:         plain_cache_kek.Name,
 			OwnerAppkey: owner_appkey,
+			Attributes:  datatypes.JSON([]byte(fmt.Sprintf("{\"tags\": {\"env\": \"%s\", \"key_type\": \"%s\"}}", environment, key_type))),
 		}
 		model_ak, err := PlainCacheAK2ModelAK(plain_cache_ak, kek_plaintext)
 
@@ -120,6 +123,7 @@ func (server *QkmsRealServer) GenerateAKInternal(ctx context.Context, namespace 
 			RotateDuration: rotate_duration,
 			KEK:            plain_cache_kek.Name,
 			OwnerAppkey:    owner_appkey,
+			Attributes:     datatypes.JSON([]byte(fmt.Sprintf("{\"tags\": {\"env\": \"%s\", \"key_type\": \"%s\"}}", environment, key_type))),
 		}
 
 		if check, ok := server.cipher_key_len_map.Get(key_type); ok {
@@ -177,6 +181,7 @@ func (server *QkmsRealServer) UpdateAKInternal(ctx context.Context, namespace st
 		Version:     version,
 		KEK:         plain_cache_kek.Name,
 		OwnerAppkey: owner_appkey,
+		Attributes:  datatypes.JSON([]byte(fmt.Sprintf("{\"tags\": {\"env\": \"%s\", \"key_type\": \"%s\"}}", environment, key_type))),
 	}
 	model_ak, err := PlainCacheAK2ModelAK(plain_cache_ak, kek_plaintext)
 	if err != nil {
@@ -216,4 +221,32 @@ func (server *QkmsRealServer) GetAccessKeyIndexsInternal(ctx context.Context, na
 		reply_aks = append(reply_aks, reply_ak)
 	}
 	return reply_aks, nil
+}
+
+func (server *QkmsRealServer) GetAccessKeyIndexsBytagsInternal(ctx context.Context, namespace string, name string, environment string, attributes map[string]string) ([]*qkms_proto.GetAccessKeyIndexByTagsReply_AccessKey, error) {
+	aks, err := qkms_dal.GetDal().AccquireAccessKeyByTags(ctx, namespace, name, environment, attributes)
+	if err != nil {
+		return nil, err
+	}
+	var reply_aks []*qkms_proto.GetAccessKeyIndexByTagsReply_AccessKey
+	for _, ak := range *aks {
+		reply_ak := &qkms_proto.GetAccessKeyIndexByTagsReply_AccessKey{
+			NameSpace:   ak.NameSpace,
+			Name:        ak.Name,
+			Environment: ak.Environment,
+		}
+		reply_aks = append(reply_aks, reply_ak)
+	}
+	return reply_aks, nil
+}
+
+func (server *QkmsRealServer) TagAccessKeyInternal(ctx context.Context, namespace string, name string, environment string, tag_key string, tag_value string) error {
+
+	// not cache this key, I'm not sure if this is a good idea
+	_, err := qkms_dal.GetDal().TagAccessKey(ctx, namespace, name, environment, tag_key, tag_value)
+	if err != nil {
+		glog.Error(fmt.Sprintf("Tag AccessKey failed, error: %s", err.Error()))
+		return err
+	}
+	return nil
 }

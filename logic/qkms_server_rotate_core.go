@@ -65,6 +65,7 @@ func (server *QkmsRealServer) RotateAccessKeyInternal(namespace string, name str
 		RotateDuration: old_plain_cache_ak.RotateDuration,
 		KEK:            plain_cache_kek.Name,
 		OwnerAppkey:    old_plain_cache_ak.OwnerAppkey,
+		Attributes:     old_plain_cache_ak.Attributes,
 	}
 
 	if check, ok := server.cipher_key_len_map.Get(key_type); ok {

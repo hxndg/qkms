@@ -7,6 +7,8 @@ import (
 	qkms_model "qkms/model"
 	qkms_proto "qkms/proto"
 
+	"gorm.io/datatypes"
+
 	"github.com/golang/glog"
 )
 
@@ -21,6 +23,7 @@ type PlainCacheAK struct {
 	LifeTime       uint64
 	RotateDuration uint64
 	OwnerAppkey    string
+	Attributes     datatypes.JSON
 }
 
 type CipherCacheAK struct {
@@ -36,6 +39,7 @@ type CipherCacheAK struct {
 	LifeTime       uint64
 	RotateDuration uint64
 	OwnerAppkey    string
+	Attributes     datatypes.JSON
 }
 
 func ModelAK2CipherCacheAK(in *qkms_model.AccessKey, decypt_key []byte, encrypt_key []byte) (*CipherCacheAK, error) {
@@ -54,6 +58,7 @@ func ModelAK2CipherCacheAK(in *qkms_model.AccessKey, decypt_key []byte, encrypt_
 		OwnerAppkey:    in.OwnerAppkey,
 		LifeTime:       in.LifeTime,
 		RotateDuration: in.RotateDuration,
+		Attributes:     in.Attributes,
 	}
 	out.Srand, out.TimeStamp = qkms_crypto.GenerateSrandAndTimeStamp()
 	ak_ciphertext, err := EncryptAESCtrBySrandTimeStamp(qkms_crypto.Base64Encoding(ak_plaintext), out.Srand, out.TimeStamp, encrypt_key)
@@ -96,6 +101,7 @@ func PlainCacheAK2CipherCacheAK(in *PlainCacheAK, key []byte) (*CipherCacheAK, e
 		OwnerAppkey:    in.OwnerAppkey,
 		LifeTime:       in.LifeTime,
 		RotateDuration: in.RotateDuration,
+		Attributes:     in.Attributes,
 	}
 	out.Srand, out.TimeStamp = qkms_crypto.GenerateSrandAndTimeStamp()
 	encrypt_iv := qkms_crypto.GenerateIVFromTwoNumber(out.Srand, out.TimeStamp)
@@ -125,6 +131,7 @@ func CipherCacheAK2PlainCacheAK(in *CipherCacheAK, key []byte) (*PlainCacheAK, e
 		OwnerAppkey:    in.OwnerAppkey,
 		LifeTime:       in.LifeTime,
 		RotateDuration: in.RotateDuration,
+		Attributes:     in.Attributes,
 	}
 	ak_plaintext, err := DecryptedAESCtrBySrandTimeStamp(in.AKCiphertext, in.Srand, in.TimeStamp, key)
 	if err != nil {
@@ -146,6 +153,7 @@ func PlainCacheAK2ModelAK(in *PlainCacheAK, key []byte) (*qkms_model.AccessKey, 
 		OwnerAppkey:    in.OwnerAppkey,
 		LifeTime:       in.LifeTime,
 		RotateDuration: in.RotateDuration,
+		Attributes:     in.Attributes,
 	}
 	out.Srand, out.TimeStamp = qkms_crypto.GenerateSrandAndTimeStamp()
 	encrypt_iv := qkms_crypto.GenerateIVFromTwoNumber(out.Srand, out.TimeStamp)
